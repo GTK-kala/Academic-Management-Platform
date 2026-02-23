@@ -6,6 +6,7 @@ import MainLayout from "./components/layout/MainLayout";
 // Pages
 import Login from "./pages/auth/Login";
 import Unauthorized from "./pages/Unauthorized";
+import UserManagement from "./pages/admin/UserManagement";
 
 // Placeholder pages for each role (we'll build them later)
 import SuperAdminDashboard from "./pages/superadmin/Dashboard";
@@ -44,10 +45,7 @@ function App() {
             }
           >
             <Route index element={<SuperAdminDashboard />} />
-            <Route
-              path="users"
-              element={<Placeholder title="User Management" />}
-            />
+            <Route path="users" element={<UserManagement />} />
             <Route path="logs" element={<Placeholder title="System Logs" />} />
             <Route path="settings" element={<Placeholder title="Settings" />} />
           </Route>
@@ -74,10 +72,7 @@ function App() {
               path="timetable"
               element={<Placeholder title="Timetable" />}
             />
-            <Route
-              path="users"
-              element={<Placeholder title="User Management" />}
-            />
+            <Route path="users" element={<UserManagement />} />
           </Route>
 
           {/* Teacher Routes */}

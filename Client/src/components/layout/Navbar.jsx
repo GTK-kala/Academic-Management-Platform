@@ -21,7 +21,7 @@ const Navbar = ({ setSidebarOpen }) => {
     <div className="sticky top-0 z-10 flex-shrink-0 flex h-16 bg-white dark:bg-gray-800 shadow">
       <button
         type="button"
-        className="px-4 border-r border-primary dark:border-secondary text-secondary dark:text-primary focus:outline-none focus:ring-2 focus:ring-inset focus:ring-secondary dark:focus:ring-primary lg:hidden"
+        className="px-4 border-r border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 lg:hidden"
         onClick={() => setSidebarOpen(true)}
       >
         <span className="sr-only">Open sidebar</span>
@@ -37,7 +37,7 @@ const Navbar = ({ setSidebarOpen }) => {
           {/* Dark mode toggle */}
           <button
             onClick={toggleDarkMode}
-            className="p-1 rounded-full text-secondary dark:text-primary hover:text-secondary-light dark:hover:text-primary-dark focus:outline-none"
+            className="p-1 rounded-full text-gray-400 dark:text-gray-300 hover:text-gray-500 dark:hover:text-white focus:outline-none"
           >
             {darkMode ? (
               <SunIcon className="h-6 w-6" />
@@ -47,15 +47,15 @@ const Navbar = ({ setSidebarOpen }) => {
           </button>
 
           {/* Notifications */}
-          <button className="p-1 rounded-full text-secondary dark:text-primary hover:text-secondary-light dark:hover:text-primary-dark">
+          <button className="p-1 rounded-full text-gray-400 dark:text-gray-300 hover:text-gray-500 dark:hover:text-white">
             <BellIcon className="h-6 w-6" />
           </button>
 
           {/* Profile dropdown */}
           <Menu as="div" className="relative">
-            <Menu.Button className="flex items-center max-w-xs rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary dark:focus:ring-primary">
+            <Menu.Button className="flex items-center max-w-xs rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
               <span className="sr-only">Open user menu</span>
-              <div className="h-8 w-8 rounded-full bg-primary dark:bg-secondary flex items-center justify-center text-secondary dark:text-primary">
+              <div className="h-8 w-8 rounded-full bg-blue-500 dark:bg-blue-600 flex items-center justify-center text-white">
                 {user?.name?.charAt(0) || "U"}
               </div>
             </Menu.Button>
@@ -71,13 +71,13 @@ const Navbar = ({ setSidebarOpen }) => {
             >
               <Menu.Items className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 divide-y divide-gray-200 dark:divide-gray-700 focus:outline-none">
                 <div className="px-4 py-3">
-                  <p className="text-sm font-medium text-secondary dark:text-primary">
+                  <p className="text-sm font-medium text-gray-900 dark:text-white">
                     {user?.name}
                   </p>
-                  <p className="text-xs text-secondary dark:text-primary">
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
                     {user?.email}
                   </p>
-                  <p className="text-xs text-secondary dark:text-primary capitalize">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 capitalize">
                     {user?.role?.replace("_", " ")}
                   </p>
                 </div>
@@ -87,8 +87,8 @@ const Navbar = ({ setSidebarOpen }) => {
                       <button
                         onClick={logout}
                         className={classNames(
-                          active ? "bg-primary dark:bg-secondary" : "",
-                          "block w-full text-left px-4 py-2 text-sm text-secondary dark:text-primary",
+                          active ? "bg-gray-100 dark:bg-gray-700" : "",
+                          "block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300",
                         )}
                       >
                         Sign out

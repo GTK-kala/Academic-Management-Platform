@@ -95,13 +95,13 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         } lg:translate-x-0 lg:static lg:inset-0`}
       >
-        <div className="flex items-center justify-between h-16 px-4 border-b border-primary dark:border-secondary">
-          <h1 className="text-xl font-bold text-secondary dark:text-primary">
+        <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200 dark:border-gray-700">
+          <h1 className="text-xl font-bold text-gray-800 dark:text-white">
             Academic Manager
           </h1>
           <button
             onClick={() => setSidebarOpen(false)}
-            className="lg:hidden p-1 rounded-md text-secondary dark:text-primary hover:bg-primary dark:hover:bg-secondary"
+            className="lg:hidden p-1 rounded-md text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
           >
             <XMarkIcon className="h-6 w-6" />
           </button>
@@ -118,15 +118,15 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                 to={item.href}
                 className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md ${
                   isActive
-                    ? "bg-primary dark:bg-secondary text-secondary dark:text-primary"
-                    : "text-secondary dark:text-primary hover:bg-primary dark:hover:bg-secondary"
+                    ? "bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300"
+                    : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white"
                 }`}
               >
                 <item.icon
                   className={`mr-3 h-5 w-5 ${
                     isActive
-                      ? "text-secondary dark:text-primary"
-                      : "text-secondary dark:text-primary group-hover:text-secondary dark:group-hover:text-primary"
+                      ? "text-blue-500 dark:text-blue-300"
+                      : "text-gray-400 dark:text-gray-500 group-hover:text-gray-500 dark:group-hover:text-gray-300"
                   }`}
                   aria-hidden="true"
                 />
