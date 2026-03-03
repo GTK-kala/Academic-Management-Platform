@@ -2,7 +2,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
 import cookieParser from "cookie-parser";
-import db from "./src/config/database.js";
+import authRoutes from "./src/routes/authRoutes.js";
 
 dotenv.config();
 const app = express();
@@ -37,3 +37,5 @@ app.get("/", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+
+app.use("/api/auth", authRoutes);
