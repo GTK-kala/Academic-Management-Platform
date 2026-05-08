@@ -1,12 +1,71 @@
-import React from "react";
-import Navbar from "./components/layout/Navbar";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import Layout from "./components/layout/Layout";
+import ProtectedRoute from "./components/routes/ProtectedRoute";
+import Login from "./pages/auth/Login";
+import Register from "./pages/auth/Register";
+import AdminDashboard from "./pages/dashboard/AdminDashboard";
+import TeacherDashboard from "./pages/dashboard/TeacherDashboard";
+import StudentDashboard from "./pages/dashboard/StudentDashboard";
+import StudentList from "./pages/students/StudentList";
+import AddStudent from "./pages/students/AddStudent";
+import CourseList from "./pages/courses/CourseList";
+import FeeManagement from "./pages/fees/FeeManagement";
+import Attendance from "./pages/academics/Attendance";
+import Grades from "./pages/academics/Grades";
+import Settings from "./pages/settings/Settings";
+import NotFound from "./pages/NotFound";
 
-const App = () => {
+function App() {
   return (
-    <div className="min-h-screen bg-surface dark:bg-dark-bg">
-      <Navbar />
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+
+        {/* Protected dashboard layout */}
+        <Route
+          element={
+            <ProtectedRoute roles={["admin", "teacher", "student"]}>
+              <Layout />
+            </ProtectedRoute>
+          }
+        >
+          <Route
+            path="/dashboard"
+            element={<Navigate to="/dashboard/admin" />}
+          />
+          <Route path="/dashboard/admin" element={<AdminDashboard />} />
+          <Route path="/dashboard/teacher" element={<TeacherDashboard />} />
+          <Route path="/dashboard/student" element={<StudentDashboard />} />
+
+          <Route
+            path="/students"
+            element={
+              <ProtectedRoute roles={["admin"]}>
+                <StudentList />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/students/add"
+            element={
+              <ProtectedRoute roles={["admin"]}>
+                <AddStudent />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route path="/courses" element={<CourseList />} />
+          <Route path="/fees" element={<FeeManagement />} />
+          <Route path="/attendance" element={<Attendance />} />
+          <Route path="/grades" element={<Grades />} />
+          <Route path="/settings" element={<Settings />} />
+        </Route>
+
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </BrowserRouter>
   );
-};
+}
 
 export default App;
