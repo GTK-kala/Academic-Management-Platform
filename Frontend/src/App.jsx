@@ -1,9 +1,9 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import Layout from "./components/layout/Layout";
 import ProtectedRoute from "./routes/ProtectedRoute";
+import Layout from "./components/layout/Layout";
+import Register from "./pages/auth/Register";
 import Login from "./pages/auth/Login";
 import Home from "./pages/Home/Home";
-import Register from "./pages/auth/Register";
 // import AdminDashboard from "./pages/dashboard/AdminDashboard";
 // import TeacherDashboard from "./pages/dashboard/TeacherDashboard";
 // import StudentDashboard from "./pages/dashboard/StudentDashboard";

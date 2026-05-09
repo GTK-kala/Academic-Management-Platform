@@ -1,45 +1,33 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import api from "../../services/api";
+import { Link, useNavigate } from "react-router-dom";
 
 const Register = () => {
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-    confirmPassword: "",
-    role: "student",
-    firstName: "",
-    lastName: "",
-  });
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
-
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  const [email, setEmail] = useState("");
+  const [error, setError] = useState("");
+  const [role, setRole] = useState("student");
+  const [lastName, setLastName] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [firstName, setFirstName] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const handleSubmit = async (e) => {
+    const BASE_URL = "http://localhost:3001";
     e.preventDefault();
     setError("");
 
-    // Basic validation
-    if (
-      !formData.email ||
-      !formData.password ||
-      !formData.firstName ||
-      !formData.lastName
-    ) {
-      setError("All fields are required except Confirm Password.");
+    if (!firstName || !lastName || !email || !password || !confirmPassword) {
+      setError("All fields are required.");
       return;
     }
-    if (formData.password !== formData.confirmPassword) {
+    if (password !== confirmPassword) {
       setError("Passwords do not match.");
       return;
     }
-    if (formData.password.length < 6) {
+    if (password.length < 6) {
       setError("Password must be at least 6 characters.");
       return;
     }
@@ -47,22 +35,36 @@ const Register = () => {
     setLoading(true);
     try {
       const body = {
-        email: formData.email,
-        password: formData.password,
-        role: formData.role,
-        firstName: formData.firstName,
-        lastName: formData.lastName,
+        role: role,
+        email: email,
+        password: password,
+        last_name: lastName,
+        first_name: firstName,
       };
-
-      const data = await api.post("/auth/register", body);
-      // data: { success, message, data: { token, user } }
-      const { token, user } = data.data;
-      login(user.email, user.role, token);
-      navigate(`/dashboard/${user.role}`);
+      const res = await fetch(`${BASE_URL}/api/auth/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+        credentials: "include",
+      });
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || "Failed to register user");
+      } else {
+        const data = await res.json();
+        alert(data.message);
+      }
     } catch (err) {
       setError(err.message || "Registration failed.");
     } finally {
       setLoading(false);
+      setEmail("");
+      setPassword("");
+      setFirstName("");
+      setLastName("");
+      setConfirmPassword("");
     }
   };
 
@@ -95,8 +97,8 @@ const Register = () => {
             </label>
             <select
               name="role"
-              value={formData.role}
-              onChange={handleChange}
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
               className="w-full px-4 py-3 border border-gray-300 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
             >
               <option value="student">Student</option>
@@ -119,8 +121,8 @@ const Register = () => {
                 name="firstName"
                 type="text"
                 required
-                value={formData.firstName}
-                onChange={handleChange}
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
                 className="w-full px-4 py-3 border border-gray-300 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-transparent"
                 placeholder="John"
               />
@@ -137,8 +139,8 @@ const Register = () => {
                 name="lastName"
                 type="text"
                 required
-                value={formData.lastName}
-                onChange={handleChange}
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
                 className="w-full px-4 py-3 border border-gray-300 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-transparent"
                 placeholder="Doe"
               />
@@ -158,8 +160,8 @@ const Register = () => {
               name="email"
               type="email"
               required
-              value={formData.email}
-              onChange={handleChange}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="w-full px-4 py-3 border border-gray-300 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-transparent"
               placeholder="you@example.com"
             />
@@ -178,8 +180,8 @@ const Register = () => {
               name="password"
               type="password"
               required
-              value={formData.password}
-              onChange={handleChange}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               className="w-full px-4 py-3 border border-gray-300 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-transparent"
               placeholder="Min. 6 characters"
             />
@@ -198,8 +200,8 @@ const Register = () => {
               name="confirmPassword"
               type="password"
               required
-              value={formData.confirmPassword}
-              onChange={handleChange}
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
               className="w-full px-4 py-3 border border-gray-300 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-transparent"
               placeholder="Re-enter password"
             />
