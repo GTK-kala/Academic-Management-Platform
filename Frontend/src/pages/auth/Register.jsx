@@ -47,7 +47,6 @@ const Register = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(body),
-        credentials: "include",
       });
       if (!res.ok) {
         const errorData = await res.json();

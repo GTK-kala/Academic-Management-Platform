@@ -1,4 +1,5 @@
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 import db from "../config/db.js";
 
 const CreateUser = (req, res) => {
@@ -6,12 +7,6 @@ const CreateUser = (req, res) => {
     const { first_name, last_name, email, password, role } = req.body;
     const sql1 = "SELECT * FROM users WHERE email = ?";
 
-    // Basic validation
-    if (!first_name || !last_name || !email || !password || !role) {
-      return res.status(400).json({
-        message: "All fields are required",
-      });
-    }
     db.query(sql1, [email], (err, results) => {
       if (err) {
         return res.status(500).json({
@@ -62,4 +57,61 @@ const CreateUser = (req, res) => {
   }
 };
 
-export { CreateUser };
+const LoginUser = (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const sql = "SELECT * FROM users WHERE email = ?";
+    db.query(sql, [email], (err, results) => {
+      if (err) {
+        return res.status(500).json({
+          message: "Failed to check email",
+          error: err.message,
+        });
+      }
+      if (results.length === 0) {
+        return res.status(400).json({
+          message: "Invalid email or password",
+        });
+      }
+      const user = results[0];
+      bcrypt.compare(password, user.password_hash, (err, isMatch) => {
+        if (err) {
+          return res.status(500).json({
+            message: "Failed to compare passwords",
+            error: err.message,
+          });
+        }
+        if (!isMatch) {
+          return res.status(400).json({
+            message: "Invalid email or password",
+          });
+        }
+        const cookie = {
+          httpOnly: true,
+          secure: false,
+          sameSite: "lax",
+        };
+        const token = jwt.sign(
+          { userId: user.id, role: user.role },
+          process.env.JWT_SECRET,
+          {
+            expiresIn: "8h",
+          },
+        );
+
+        res.status(200).cookie("token", token, cookie).json({
+          message: "Login successful",
+          userId: user.id,
+        });
+      });
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to login user",
+      error: error.message,
+    });
+  }
+  // Implement login logic here
+};
+
+export { CreateUser, LoginUser };

@@ -5,29 +5,45 @@ import { Link, useNavigate } from "react-router-dom";
 import { useTheme } from "../../context/ThemeContext";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
   const { darkMode } = useTheme();
+  const [email, setEmail] = useState("");
+  const [error, setError] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
+    const BASE_URL = "http://localhost:3001";
     e.preventDefault();
     setError("");
     setLoading(true);
 
     try {
-      const data = await api.post("/auth/login", { email, password });
-      // data: { success: true, message, data: { token, user: { id, email, role } } }
-      const { token, user } = data.data;
-      login(user.email, user.role, token);
-      navigate(`/dashboard/${user.role}`);
+      const body = { email, password };
+      const res = await fetch(`${BASE_URL}/api/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+        credentials: "include",
+      });
+      if (!res.ok) {
+        const errorData = await res.json();
+        alert(errorData.message || "Login failed");
+      } else {
+        const data = await res.json();
+        login(data.userId, email, data.message);
+        alert(data.message || "Login successful");
+      }
     } catch (err) {
-      setError(err.message || "Invalid email or password");
+      setError(err.message);
+      console.log(error);
     } finally {
       setLoading(false);
+      setPassword("");
+      setEmail("");
     }
   };
 

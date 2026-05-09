@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import express from "express";
 import db from "./config/db.js";
 import bodyParser from "body-parser";
+import cookieParser from "cookie-parser";
 import UserRoutes from "./routes/userRoutes.js";
 
 dotenv.config();
@@ -16,6 +17,7 @@ app.use(
     credentials: true,
   }),
 );
+app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
