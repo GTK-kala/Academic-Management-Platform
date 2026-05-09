@@ -1,4 +1,5 @@
 import { useState } from "react";
+import toast from "react-hot-toast";
 // import api from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
@@ -31,11 +32,12 @@ const Login = () => {
       });
       if (!res.ok) {
         const errorData = await res.json();
-        alert(errorData.message || "Login failed");
+        toast.error(errorData.message || "Login failed");
+        setError(errorData.message || "Login failed");
       } else {
         const data = await res.json();
         login(data.userId, email, data.message);
-        alert(data.message || "Login successful");
+        toast.success(data.message || "Login successful");
       }
     } catch (err) {
       setError(err.message);

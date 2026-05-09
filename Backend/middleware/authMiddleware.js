@@ -14,12 +14,13 @@ export const VerifyToken = (req, res, next) => {
       return res.status(403).json({ message: "Invalid or expired token" });
     }
     req.user = decoded;
+    console.log(req.user);
     next();
   });
 };
 
-export const VerifyUser = (req, res) => {
-  const userId = req.user.id;
+export const VerifyUser = (req, res, next) => {
+  const userId = req.user.userId;
 
   const sql = "SELECT * FROM users WHERE id = ?";
 
