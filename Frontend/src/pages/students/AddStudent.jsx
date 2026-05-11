@@ -7,42 +7,86 @@ import Button from "../../components/common/Button";
 
 const AddStudent = () => {
   const navigate = useNavigate();
-  const [form, setForm] = useState({
-    email: "",
-    password: "",
-    firstName: "",
-    lastName: "",
-    phone: "",
-    address: "",
-  });
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [dateOfBirth, setDateOfBirth] = useState("");
+  const [gender, setGender] = useState("male");
+  const [phone, setPhone] = useState("");
+  const [address, setAddress] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e) =>
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    switch (name) {
+      case "firstName":
+        setFirstName(value);
+        break;
+      case "lastName":
+        setLastName(value);
+        break;
+      case "dateOfBirth":
+        setDateOfBirth(value);
+        break;
+      case "gender":
+        setGender(value);
+        break;
+      case "phone":
+        setPhone(value);
+        break;
+      case "address":
+        setAddress(value);
+        break;
+      default:
+        break;
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
     // Validate
-    if (!form.email || !form.password || !form.firstName || !form.lastName) {
-      setError("Email, password, first name, and last name are required.");
+    if (
+      !firstName ||
+      !lastName ||
+      !dateOfBirth ||
+      !gender ||
+      !address ||
+      !phone
+    ) {
+      setError(
+        "Date of birth, password, first name, last name, gender, address, and phone are required.",
+      );
       return;
     }
 
     setLoading(true);
     try {
-      await Add_Student(form);
+      const formData = {
+        firstName,
+        lastName,
+        dateOfBirth,
+        gender,
+        address,
+        phone,
+      };
+      await Add_Student(formData);
       if (error) {
         navigate("/students");
       } else {
+        console.log(error);
       }
     } catch (err) {
       setError(err.message || "Failed to create student.");
     } finally {
       setLoading(false);
-      setForm({});
+      setGender("male");
+      setFirstName("");
+      setLastName("");
+      setDateOfBirth("");
+      setPhone("");
+      setAddress("");
     }
   };
 
@@ -74,8 +118,8 @@ const AddStudent = () => {
               </label>
               <input
                 name="firstName"
-                value={form.firstName}
-                onChange={handleChange}
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
                 required
                 className="w-full px-4 py-2 border border-gray-300 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary"
               />
@@ -86,37 +130,38 @@ const AddStudent = () => {
               </label>
               <input
                 name="lastName"
-                value={form.lastName}
-                onChange={handleChange}
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
                 required
                 className="w-full px-4 py-2 border border-gray-300 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary"
               />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Email *
+                Date of Birth
               </label>
               <input
-                name="email"
-                type="email"
-                value={form.email}
-                onChange={handleChange}
+                name="dateOfBirth"
+                type="date"
+                value={dateOfBirth}
+                onChange={(e) => setDateOfBirth(e.target.value)}
                 required
                 className="w-full px-4 py-2 border border-gray-300 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Password *
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                gender
               </label>
-              <input
-                name="password"
-                type="password"
-                value={form.password}
-                onChange={handleChange}
-                required
-                className="w-full px-4 py-2 border border-gray-300 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary"
-              />
+              <select
+                name="gender"
+                value={gender}
+                onChange={(e) => setGender(e.target.value)}
+                className="w-full px-4 py-3 border border-gray-300 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
+              >
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+              </select>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -124,8 +169,8 @@ const AddStudent = () => {
               </label>
               <input
                 name="phone"
-                value={form.phone}
-                onChange={handleChange}
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
                 className="w-full px-4 py-2 border border-gray-300 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary"
               />
             </div>
@@ -135,8 +180,8 @@ const AddStudent = () => {
               </label>
               <textarea
                 name="address"
-                value={form.address}
-                onChange={handleChange}
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
                 rows="3"
                 className="w-full px-4 py-2 border border-gray-300 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary"
               />
@@ -148,7 +193,7 @@ const AddStudent = () => {
               Cancel
             </Button>
             <Button type="submit" disabled={loading}>
-              {loading ? "Creating..." : "Create Student"}
+              {loading ? "Creating..." : "Add Student"}
             </Button>
           </div>
         </form>
