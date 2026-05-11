@@ -4,11 +4,12 @@ import toast from "react-hot-toast";
 
 const Add_Student = async (studentData) => {
   try {
-    const res = await fetch(`${BASE_URL}/api/students/add`, {
+    const res = await fetch(`${BASE_URL}/students/add`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
+      body: JSON.stringify(studentData),
       credentials: "include",
     });
     if (!res.ok) {
@@ -26,4 +27,4 @@ const Add_Student = async (studentData) => {
   }
 };
 
-export { Add_Student };
+export default Add_Student;

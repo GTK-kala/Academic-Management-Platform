@@ -4,6 +4,7 @@ const AddStudent = () => {
   try {
     const { firstName, lastName, dateOfBirth, gender, address, phone } =
       req.body;
+    console.log(req.body);
     const sql = "SELECT * FROM users WHERE phone = ?";
     db.query(sql, [phone], (err, results) => {
       if (err) {

@@ -21,13 +21,13 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const body = { email, password };
+      const data = { email, password };
       const res = await fetch(`${BASE_URL}/api/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(body),
+        body: JSON.stringify(data),
         credentials: "include",
       });
       if (!res.ok) {
@@ -51,24 +51,24 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-primary-50 dark:bg-dark-bg px-4">
-      <div className="bg-white dark:bg-dark-card p-8 rounded-2xl shadow-xl w-full max-w-lg">
+    <div className="flex items-center justify-center min-h-screen px-4 bg-primary-50 dark:bg-dark-bg">
+      <div className="w-full max-w-lg p-8 bg-white shadow-xl dark:bg-dark-card rounded-2xl">
         {/* Logo / Title */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-primary rounded-xl mb-4">
-            <span className="text-white text-2xl font-bold">AM</span>
+        <div className="mb-8 text-center">
+          <div className="inline-flex items-center justify-center w-16 h-16 mb-4 bg-primary rounded-xl">
+            <span className="text-2xl font-bold text-white">AM</span>
           </div>
           <h2 className="text-3xl font-bold text-primary dark:text-white">
             Welcome Back
           </h2>
-          <p className="text-gray-500 dark:text-gray-400 mt-1">
+          <p className="mt-1 text-gray-500 dark:text-gray-400">
             Sign in to your account
           </p>
         </div>
 
         {/* Error message */}
         {error && (
-          <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-red-600 dark:text-red-400 text-sm">
+          <div className="p-3 mb-4 text-sm text-red-600 border border-red-200 rounded-lg bg-red-50 dark:bg-red-900/20 dark:border-red-800 dark:text-red-400">
             {error}
           </div>
         )}
@@ -78,7 +78,7 @@ const Login = () => {
           <div>
             <label
               htmlFor="email"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+              className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300"
             >
               Email Address
             </label>
@@ -88,7 +88,7 @@ const Login = () => {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-transparent transition-colors"
+              className="w-full px-4 py-3 text-gray-900 placeholder-gray-400 transition-colors bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
               placeholder="you@example.com"
             />
           </div>
@@ -97,7 +97,7 @@ const Login = () => {
           <div>
             <label
               htmlFor="password"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+              className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300"
             >
               Password
             </label>
@@ -107,7 +107,7 @@ const Login = () => {
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-transparent transition-colors"
+              className="w-full px-4 py-3 text-gray-900 placeholder-gray-400 transition-colors bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
               placeholder="••••••••"
             />
           </div>
@@ -116,11 +116,11 @@ const Login = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 bg-primary hover:bg-primary-dark text-white font-semibold rounded-lg transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center justify-center w-full py-3 font-semibold text-white transition-colors rounded-lg bg-primary hover:bg-primary-dark disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? (
               <svg
-                className="animate-spin h-5 w-5 text-white"
+                className="w-5 h-5 text-white animate-spin"
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -146,11 +146,11 @@ const Login = () => {
         </form>
 
         {/* Footer */}
-        <p className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
+        <p className="mt-6 text-sm text-center text-gray-600 dark:text-gray-400">
           Don’t have an account?{" "}
           <Link
             to="/register"
-            className="text-primary hover:underline font-medium"
+            className="font-medium text-primary hover:underline"
           >
             Create one
           </Link>
