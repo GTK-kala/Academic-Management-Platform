@@ -1,5 +1,6 @@
 import { useState } from "react";
 import api from "../../services/api";
+import { Add_Student } from "../../services/studentService";
 import { FiArrowLeft } from "react-icons/fi";
 import { useNavigate, Link } from "react-router-dom";
 import Button from "../../components/common/Button";
@@ -32,21 +33,16 @@ const AddStudent = () => {
 
     setLoading(true);
     try {
-      // Use register endpoint (role student) to create student with credentials
-      await api.post("/auth/register", {
-        email: form.email,
-        password: form.password,
-        role: "student",
-        firstName: form.firstName,
-        lastName: form.lastName,
-      });
-      // Optionally update phone/address via separate call
-      // For now, navigate back
-      navigate("/students");
+      await Add_Student(form);
+      if (error) {
+        navigate("/students");
+      } else {
+      }
     } catch (err) {
       setError(err.message || "Failed to create student.");
     } finally {
       setLoading(false);
+      setForm({});
     }
   };
 
@@ -54,7 +50,7 @@ const AddStudent = () => {
     <div>
       <Link
         to="/students"
-        className="inline-flex items-center gap-2 text-primary dark:text-primary-300 hover:underline mb-6"
+        className="inline-flex  items-center gap-2 text-primary dark:text-primary-300 mb-6"
       >
         <FiArrowLeft /> Back to Students
       </Link>

@@ -15,30 +15,30 @@ const AdminDashboard = () => {
   const [stats, setStats] = useState(null);
   const [recentStudents, setRecentStudents] = useState([]);
 
-  useEffect(() => {
-    const fetchDashboard = async () => {
-      try {
-        // In real app you'd have a /api/admin/dashboard endpoint; for now we call separate services
-        const [studentRes, courseRes] = await Promise.all([
-          api.get("/students"),
-          api.get("/courses"),
-        ]);
-        // Derive stats from returned arrays (simplified)
-        const totalStudents = studentRes.data?.students?.length || 0;
-        const totalCourses = courseRes.data?.courses?.length || 0;
-        setStats({
-          totalStudents,
-          totalCourses,
-          feeCollected: "$0", // you'll implement fee stats later
-          attendanceRate: "0%",
-        });
-        setRecentStudents(studentRes.data?.students?.slice(0, 5) || []);
-      } catch (err) {
-        console.error("Dashboard fetch error:", err);
-      }
-    };
-    fetchDashboard();
-  }, []);
+  // useEffect(() => {
+  //   const fetchDashboard = async () => {
+  //     try {
+  //       // In real app you'd have a /api/admin/dashboard endpoint; for now we call separate services
+  //       const [studentRes, courseRes] = await Promise.all([
+  //         api.get("/students"),
+  //         api.get("/courses"),
+  //       ]);
+  //       // Derive stats from returned arrays (simplified)
+  //       const totalStudents = studentRes.data?.students?.length || 0;
+  //       const totalCourses = courseRes.data?.courses?.length || 0;
+  //       setStats({
+  //         totalStudents,
+  //         totalCourses,
+  //         feeCollected: "$0", // you'll implement fee stats later
+  //         attendanceRate: "0%",
+  //       });
+  //       setRecentStudents(studentRes.data?.students?.slice(0, 5) || []);
+  //     } catch (err) {
+  //       console.error("Dashboard fetch error:", err);
+  //     }
+  //   };
+  //   fetchDashboard();
+  // }, []);
 
   const statItems = [
     {
