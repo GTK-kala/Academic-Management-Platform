@@ -89,61 +89,61 @@ const Home = () => {
   const { darkMode } = useTheme();
 
   return (
-    <div className="min-h-screen bg-white dark:bg-dark-bg overflow-x-hidden">
+    <div className="min-h-screen overflow-x-hidden bg-white dark:bg-dark-bg">
       {/* ========== HERO ========== */}
       <section className="relative px-4 pt-10 pb-10 md:pt-32 md:pb-32 bg-gradient-to-br from-primary-50 via-white to-white dark:from-dark-bg dark:via-dark-bg dark:to-dark-bg">
-        <div className="max-w-7xl mx-auto flex flex-col items-center text-center">
-          <div className="inline-flex items-center gap-2 bg-primary-100 dark:bg-primary-900/20 text-primary dark:text-primary-300 px-4 py-2 rounded-full text-sm font-medium mb-6">
-            <span className="relative flex h-3 w-3">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
+        <div className="flex flex-col items-center mx-auto text-center max-w-7xl">
+          <div className="inline-flex items-center gap-2 px-4 py-2 mb-6 text-sm font-medium rounded-full bg-primary-100 dark:bg-primary-900/20 text-primary dark:text-primary-300">
+            <span className="relative flex w-3 h-3">
+              <span className="absolute inline-flex w-full h-full rounded-full opacity-75 animate-ping bg-primary"></span>
+              <span className="relative inline-flex w-3 h-3 rounded-full bg-primary"></span>
             </span>
             New: Advanced Analytics just launched
           </div>
-          <h1 className="text-5xl md:text-7xl font-extrabold text-primary dark:text-white leading-tight max-w-4xl">
+          <h1 className="max-w-4xl text-5xl font-extrabold leading-tight md:text-7xl text-primary dark:text-white">
             The Smarter Way to{" "}
-            <span className="text-primary dark:text-primary-300 underline decoration-primary decoration-4 underline-offset-8">
+            <span className="underline text-primary dark:text-primary-300 decoration-primary decoration-4 underline-offset-8">
               Manage
             </span>{" "}
             Your Academy
           </h1>
-          <p className="mt-6 text-xl md:text-2xl text-gray-600 dark:text-gray-300 max-w-3xl">
+          <p className="max-w-3xl mt-6 text-xl text-gray-600 md:text-2xl dark:text-gray-300">
             From enrollment to graduation — one unified platform for students,
             teachers, and administrators.
           </p>
-          <div className="mt-10 flex flex-col sm:flex-row gap-4">
+          <div className="flex flex-col gap-4 mt-10 sm:flex-row">
             <Link
               to="/register"
-              className="group px-8 py-4 bg-primary hover:bg-primary-dark text-white font-semibold rounded-xl transition-all flex items-center gap-2 shadow-lg shadow-primary/25 hover:shadow-primary/40"
+              className="flex items-center gap-2 px-8 py-4 font-semibold text-white transition-all shadow-lg group bg-primary hover:bg-primary-dark rounded-xl shadow-primary/25 hover:shadow-primary/40"
             >
               Start Free Today{" "}
-              <FiArrowRight className="group-hover:translate-x-1 transition-transform" />
+              <FiArrowRight className="transition-transform group-hover:translate-x-1" />
             </Link>
             <Link
               to="/login"
-              className="px-8 py-4 border-2 border-primary text-primary dark:text-primary-300 hover:bg-primary-50 dark:hover:bg-dark-card font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
+              className="flex items-center justify-center gap-2 px-8 py-4 font-semibold transition-colors border-2 border-primary text-primary dark:text-primary-300 hover:bg-primary-50 dark:hover:bg-dark-card rounded-xl"
             >
               Live Demo
             </Link>
           </div>
         </div>
         {/* Background decorative blobs */}
-        <div className="absolute top-0 left-0 w-96 h-96 bg-primary/10 dark:bg-primary/5 rounded-full blur-3xl -z-10"></div>
-        <div className="absolute bottom-0 right-0 w-80 h-80 bg-primary/10 dark:bg-primary/5 rounded-full blur-3xl -z-10"></div>
+        <div className="absolute top-0 left-0 rounded-full w-96 h-96 bg-primary/10 dark:bg-primary/5 blur-3xl -z-10"></div>
+        <div className="absolute bottom-0 right-0 rounded-full w-80 h-80 bg-primary/10 dark:bg-primary/5 blur-3xl -z-10"></div>
       </section>
 
       {/* ========== STATS COUNTER ========== */}
-      <section className="py-16 px-4 bg-white dark:bg-dark-bg border-y border-gray-100 dark:border-dark-border">
-        <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6">
+      <section className="px-4 py-16 bg-white border-gray-100 dark:bg-dark-bg border-y dark:border-dark-border">
+        <div className="grid max-w-6xl grid-cols-2 gap-6 mx-auto md:grid-cols-4">
           {stats.map((stat, idx) => (
-            <div key={idx} className="text-center p-4">
-              <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary-100 dark:bg-primary-900/20 mb-3">
+            <div key={idx} className="p-4 text-center">
+              <div className="inline-flex items-center justify-center w-12 h-12 mb-3 rounded-xl bg-primary-100 dark:bg-primary-900/20">
                 <stat.icon className="w-6 h-6 text-primary dark:text-primary-300" />
               </div>
               <div className="text-3xl font-bold text-primary dark:text-white">
                 {stat.value}
               </div>
-              <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+              <div className="mt-1 text-sm text-gray-500 dark:text-gray-400">
                 {stat.label}
               </div>
             </div>
@@ -152,24 +152,24 @@ const Home = () => {
       </section>
 
       {/* ========== FEATURES ========== */}
-      <section className="py-20 px-4 bg-primary-50 dark:bg-dark-card/30">
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-center text-primary dark:text-white mb-6">
+      <section className="px-4 py-20 bg-primary-50 dark:bg-dark-card/30">
+        <div className="mx-auto max-w-7xl">
+          <h2 className="mb-6 text-3xl font-bold text-center md:text-4xl text-primary dark:text-white">
             Everything in One Place
           </h2>
-          <p className="text-center text-gray-500 dark:text-gray-400 max-w-2xl mx-auto mb-14">
+          <p className="max-w-2xl mx-auto text-center text-gray-500 dark:text-gray-400 mb-14">
             Powerful tools designed specifically for educational institutions.
           </p>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
             {features.map((feat, idx) => (
               <div
                 key={idx}
-                className="group bg-white dark:bg-dark-bg p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-dark-border hover:shadow-md transition-shadow"
+                className="p-6 transition-shadow bg-white border border-gray-100 shadow-sm group dark:bg-dark-bg rounded-2xl dark:border-dark-border hover:shadow-md"
               >
-                <div className="w-12 h-12 bg-primary-100 dark:bg-primary-900/20 rounded-xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
+                <div className="flex items-center justify-center w-12 h-12 mb-5 transition-transform bg-primary-100 dark:bg-primary-900/20 rounded-xl group-hover:scale-110">
                   <feat.icon className="w-6 h-6 text-primary dark:text-primary-300" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                <h3 className="mb-2 text-xl font-semibold text-gray-900 dark:text-white">
                   {feat.title}
                 </h3>
                 <p className="text-gray-500 dark:text-gray-400">{feat.desc}</p>
@@ -180,12 +180,12 @@ const Home = () => {
       </section>
 
       {/* ========== HOW IT WORKS (timeline) ========== */}
-      <section className="py-20 px-4 bg-white dark:bg-dark-bg">
+      <section className="px-4 py-20 bg-white dark:bg-dark-bg">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-center text-primary dark:text-white mb-14">
+          <h2 className="text-3xl font-bold text-center md:text-4xl text-primary dark:text-white mb-14">
             How It Works
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 relative">
+          <div className="relative grid grid-cols-1 gap-8 md:grid-cols-4">
             {/* Connector line (hidden on mobile) */}
             <div className="hidden md:block absolute top-12 left-0 w-full h-0.5 bg-gray-200 dark:bg-dark-border -z-0"></div>
             {howItWorks.map((item, idx) => (
@@ -193,13 +193,13 @@ const Home = () => {
                 key={idx}
                 className="relative z-10 flex flex-col items-center text-center"
               >
-                <div className="w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center font-bold text-lg shadow-md mb-4">
+                <div className="flex items-center justify-center w-12 h-12 mb-4 text-lg font-bold text-white rounded-full shadow-md bg-primary">
                   {item.step}
                 </div>
                 <h3 className="font-semibold text-gray-900 dark:text-white">
                   {item.title}
                 </h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+                <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
                   {item.desc}
                 </p>
               </div>
@@ -209,25 +209,25 @@ const Home = () => {
       </section>
 
       {/* ========== TESTIMONIALS ========== */}
-      <section className="py-20 px-4 bg-primary-50 dark:bg-dark-card/30">
+      <section className="px-4 py-20 bg-primary-50 dark:bg-dark-card/30">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-center text-primary dark:text-white mb-12">
+          <h2 className="mb-12 text-3xl font-bold text-center md:text-4xl text-primary dark:text-white">
             Loved by Educators
           </h2>
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid gap-8 md:grid-cols-3">
             {testimonials.map((t, idx) => (
               <div
                 key={idx}
-                className="bg-white dark:bg-dark-bg p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-dark-border"
+                className="p-8 bg-white border border-gray-100 shadow-sm dark:bg-dark-bg rounded-2xl dark:border-dark-border"
               >
-                <div className="text-primary dark:text-primary-300 text-4xl mb-4">
+                <div className="mb-4 text-4xl text-primary dark:text-primary-300">
                   “
                 </div>
-                <p className="text-gray-700 dark:text-gray-300 mb-6">
+                <p className="mb-6 text-gray-700 dark:text-gray-300">
                   {t.quote}
                 </p>
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-bold">
+                  <div className="flex items-center justify-center w-10 h-10 font-bold text-white rounded-full bg-primary">
                     {t.name[0]}
                   </div>
                   <div>
@@ -246,24 +246,24 @@ const Home = () => {
       </section>
 
       {/* ========== CTA BANNER ========== */}
-      <section className="py-16 px-4 bg-primary dark:bg-primary-900">
+      <section className="px-4 py-16 bg-primary dark:bg-primary-900">
         <div className="max-w-4xl mx-auto text-center text-white">
-          <h2 className="text-3xl md:text-4xl font-bold">
+          <h2 className="text-3xl font-bold md:text-4xl">
             Join 200+ institutions already on AcadManage
           </h2>
-          <p className="mt-4 text-white/80 text-lg">
+          <p className="mt-4 text-lg text-white/80">
             Start your free trial today — no credit card required.
           </p>
-          <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col justify-center gap-4 mt-8 sm:flex-row">
             <Link
               to="/register"
-              className="bg-white text-primary font-semibold px-8 py-3 rounded-xl hover:bg-gray-100 transition-colors inline-flex items-center gap-2"
+              className="inline-flex items-center justify-center gap-2 px-8 py-3 font-semibold transition-colors bg-white text-primary rounded-xl hover:bg-gray-100"
             >
               Create Account <FiArrowRight />
             </Link>
             <Link
               to="/login"
-              className="border-2 border-white text-white font-semibold px-8 py-3 rounded-xl hover:bg-white/10 transition-colors flex items-center justify-center"
+              className="flex items-center justify-center px-8 py-3 font-semibold text-white transition-colors border-2 border-white rounded-xl hover:bg-white/10"
             >
               Sign In
             </Link>
@@ -272,76 +272,76 @@ const Home = () => {
       </section>
 
       {/* ========== FOOTER ========== */}
-      <footer className="bg-gray-900 dark:bg-gray-950 text-gray-400 py-12 px-4">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
+      <footer className="px-4 py-12 text-gray-400 bg-gray-900 dark:bg-gray-950">
+        <div className="grid grid-cols-1 gap-8 mx-auto max-w-7xl md:grid-cols-4">
           <div>
-            <h3 className="text-white text-lg font-bold mb-4">AcadManage</h3>
+            <h3 className="mb-4 text-lg font-bold text-white">AcadManage</h3>
             <p className="text-sm">
               Modern student management system for forward‑thinking academies.
             </p>
           </div>
           <div>
-            <h4 className="text-white font-medium mb-4">Product</h4>
+            <h4 className="mb-4 font-medium text-white">Product</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link to="#" className="hover:text-white transition-colors">
+                <Link to="#" className="transition-colors hover:text-white">
                   Features
                 </Link>
               </li>
               <li>
-                <Link to="#" className="hover:text-white transition-colors">
+                <Link to="#" className="transition-colors hover:text-white">
                   Pricing
                 </Link>
               </li>
               <li>
-                <Link to="#" className="hover:text-white transition-colors">
+                <Link to="#" className="transition-colors hover:text-white">
                   Updates
                 </Link>
               </li>
             </ul>
           </div>
           <div>
-            <h4 className="text-white font-medium mb-4">Company</h4>
+            <h4 className="mb-4 font-medium text-white">Company</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link to="#" className="hover:text-white transition-colors">
+                <Link to="#" className="transition-colors hover:text-white">
                   About
                 </Link>
               </li>
               <li>
-                <Link to="#" className="hover:text-white transition-colors">
+                <Link to="#" className="transition-colors hover:text-white">
                   Blog
                 </Link>
               </li>
               <li>
-                <Link to="#" className="hover:text-white transition-colors">
+                <Link to="#" className="transition-colors hover:text-white">
                   Careers
                 </Link>
               </li>
             </ul>
           </div>
           <div>
-            <h4 className="text-white font-medium mb-4">Support</h4>
+            <h4 className="mb-4 font-medium text-white">Support</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link to="#" className="hover:text-white transition-colors">
+                <Link to="#" className="transition-colors hover:text-white">
                   Help Center
                 </Link>
               </li>
               <li>
-                <Link to="#" className="hover:text-white transition-colors">
+                <Link to="#" className="transition-colors hover:text-white">
                   Contact
                 </Link>
               </li>
               <li>
-                <Link to="#" className="hover:text-white transition-colors">
+                <Link to="#" className="transition-colors hover:text-white">
                   Privacy Policy
                 </Link>
               </li>
             </ul>
           </div>
         </div>
-        <div className="max-w-7xl mx-auto mt-10 pt-8 border-t border-gray-800 dark:border-dark-border text-center text-sm">
+        <div className="pt-8 mx-auto mt-10 text-sm text-center border-t border-gray-800 max-w-7xl dark:border-dark-border">
           © 2025 Khalid. All rights reserved.
         </div>
       </footer>

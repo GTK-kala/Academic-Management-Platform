@@ -36,8 +36,9 @@ const Login = () => {
         setError(errorData.message || "Login failed");
       } else {
         const data = await res.json();
-        login(data.userId, email, data.message);
-        toast.success(data.message || "Login successful");
+        console.log(data);
+        login(data.email, data.role);
+        navigate("/dashboard/admin");
       }
     } catch (err) {
       setError(err.message);

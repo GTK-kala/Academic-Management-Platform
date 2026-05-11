@@ -5,12 +5,12 @@ import Register from "./pages/auth/Register";
 import { Toaster } from "react-hot-toast";
 import Login from "./pages/auth/Login";
 import Home from "./pages/Home/Home";
-// import AdminDashboard from "./pages/dashboard/AdminDashboard";
+import AdminDashboard from "./pages/dashboard/AdminDashboard";
 // import TeacherDashboard from "./pages/dashboard/TeacherDashboard";
 // import StudentDashboard from "./pages/dashboard/StudentDashboard";
-// import StudentList from "./pages/students/StudentList";
-// import AddStudent from "./pages/students/AddStudent";
-// import CourseList from "./pages/courses/CourseList";
+import StudentList from "./pages/students/StudentList";
+import AddStudent from "./pages/students/AddStudent";
+import CourseList from "./pages/courses/CourseList";
 // import FeeManagement from "./pages/fees/FeeManagement";
 // import Attendance from "./pages/academics/Attendance";
 // import Grades from "./pages/academics/Grades";
@@ -34,32 +34,32 @@ function App() {
             </ProtectedRoute>
           }
         >
-          {/* <Route
+          <Route
             path="/dashboard"
             element={<Navigate to="/dashboard/admin" />}
-          /> */}
-          {/* <Route path="/dashboard/admin" element={<AdminDashboard />} />
-          <Route path="/dashboard/teacher" element={<TeacherDashboard />} />
+          />
+          <Route path="/dashboard/admin" element={<AdminDashboard />} />
+          {/* <Route path="/dashboard/teacher" element={<TeacherDashboard />} />
           <Route path="/dashboard/student" element={<StudentDashboard />} /> */}
 
-          {/* <Route
+          <Route
             path="/students"
             element={
               <ProtectedRoute roles={["admin"]}>
                 <StudentList />
               </ProtectedRoute>
             }
-          /> */}
-          {/* <Route
+          />
+          <Route
             path="/students/add"
             element={
               <ProtectedRoute roles={["admin"]}>
                 <AddStudent />
               </ProtectedRoute>
             }
-          /> */}
-          {/* 
-          <Route path="/courses" element={<CourseList />} />
+          />
+
+          {/* <Route path="/courses" element={<CourseList />} />
           <Route path="/fees" element={<FeeManagement />} />
           <Route path="/attendance" element={<Attendance />} />
           <Route path="/grades" element={<Grades />} />
