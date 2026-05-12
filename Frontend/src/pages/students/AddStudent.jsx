@@ -1,6 +1,6 @@
 import { useState } from "react";
+import toast from "react-hot-toast";
 import api from "../../services/api";
-import Add_Student from "../../services/studentService";
 import { FiArrowLeft } from "react-icons/fi";
 import { useNavigate, Link } from "react-router-dom";
 import Button from "../../components/common/Button";
@@ -16,33 +16,8 @@ const AddStudent = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    switch (name) {
-      case "firstName":
-        setFirstName(value);
-        break;
-      case "lastName":
-        setLastName(value);
-        break;
-      case "dateOfBirth":
-        setDateOfBirth(value);
-        break;
-      case "gender":
-        setGender(value);
-        break;
-      case "phone":
-        setPhone(value);
-        break;
-      case "address":
-        setAddress(value);
-        break;
-      default:
-        break;
-    }
-  };
-
   const handleSubmit = async (e) => {
+    const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
     e.preventDefault();
     setError("");
 
@@ -71,11 +46,22 @@ const AddStudent = () => {
         address,
         phone,
       };
-      await Add_Student(formData);
-      if (error) {
-        navigate("/students");
+      const res = await fetch(`${BASE_URL}/students/add`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+        credentials: "include",
+      });
+      if (!res.ok) {
+        const errorData = await res.json();
+        console.log(errorData);
+        toast.error(errorData.message || "Failed to add student");
       } else {
-        console.log(error);
+        const data = await res.json();
+        console.log(formData);
+        toast.success(data.message || "Student added successfully");
       }
     } catch (err) {
       setError(err.message || "Failed to create student.");

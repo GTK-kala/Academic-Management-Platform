@@ -44,7 +44,7 @@ const StudentList = () => {
 
   return (
     <div>
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
+      <div className="flex flex-col gap-4 mb-6 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-3xl font-bold text-primary dark:text-white">
           Students
         </h1>
@@ -57,18 +57,18 @@ const StudentList = () => {
 
       {/* Search */}
       <div className="relative mb-6">
-        <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+        <FiSearch className="absolute text-gray-400 -translate-y-1/2 left-3 top-1/2" />
         <input
           type="text"
           placeholder="Search by name or email..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
+          className="w-full py-3 pl-10 pr-4 text-gray-900 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
         />
       </div>
 
       {/* Table */}
-      <div className="bg-white dark:bg-dark-card rounded-xl shadow-sm border border-gray-100 dark:border-dark-border overflow-hidden">
+      <div className="overflow-hidden bg-white border border-gray-100 shadow-sm dark:bg-dark-card rounded-xl dark:border-dark-border">
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead className="bg-gray-50 dark:bg-dark-bg">
@@ -113,7 +113,7 @@ const StudentList = () => {
                     <td className="px-6 py-4 text-gray-600 dark:text-gray-300">
                       {new Date(student.enrollment_date).toLocaleDateString()}
                     </td>
-                    <td className="px-6 py-4 flex gap-2">
+                    <td className="flex gap-2 px-6 py-4">
                       <Link
                         to={`/students/${student.id}`}
                         className="text-primary hover:text-primary-dark"

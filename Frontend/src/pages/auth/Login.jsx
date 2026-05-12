@@ -36,7 +36,6 @@ const Login = () => {
         setError(errorData.message || "Login failed");
       } else {
         const data = await res.json();
-        console.log(data);
         login(data.email, data.role);
         navigate("/dashboard/admin");
       }
