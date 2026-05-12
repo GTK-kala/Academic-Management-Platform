@@ -18,25 +18,28 @@ export const VerifyToken = (req, res, next) => {
   });
 };
 
-export const VerifyUser = (req, res) => {
-  const userId = req.user.userId;
+export const VerifyUser = (req, res, next) => {
+  const role = req.user.role;
 
-  const sql = "SELECT * FROM users WHERE id = ?";
-
-  db.query(sql, [userId], (err, result) => {
-    if (err) {
-      return res.status(500).json({
-        message: "Server Error!!!",
-      });
-    } else if (result.length === 0) {
-      return res.status(500).json({
-        message: "User not found!!!",
-      });
-    } else {
-      return res.status(200).json({
-        message: "Users is Found!!!",
-        result: result[0],
-      });
-    }
-  });
+  const sql = "SELECT * FROM users WHERE role = ?";
+  if (role === "admin") {
+    db.query(sql, [role], (err, result) => {
+      if (err) {
+        return res.status(500).json({
+          message: "Server Error!!!",
+        });
+      } else if (result.length === 0) {
+        return res.status(500).json({
+          message: "User not found!!!",
+        });
+      } else {
+        req.user = result[0];
+        next();
+      }
+    });
+  } else {
+    return res.status(403).json({
+      message: "Access denied. Admins only.",
+    });
+  }
 };
