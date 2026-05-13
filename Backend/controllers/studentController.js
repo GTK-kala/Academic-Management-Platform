@@ -2,13 +2,21 @@ import db from "../config/db.js";
 
 const AddStudent = (req, res) => {
   try {
-    const { firstName, lastName, dateOfBirth, gender, address, phone } =
-      req.body;
-    const sql = "SELECT * FROM students WHERE phone = ?";
-    db.query(sql, [phone], (err, results) => {
+    const {
+      firstName,
+      lastName,
+      email,
+      password,
+      dateOfBirth,
+      gender,
+      phone,
+      address,
+    } = req.body;
+    const sql = "SELECT * FROM students WHERE email = ?";
+    db.query(sql, [email], (err, results) => {
       if (err) {
         return res.status(500).json({
-          message: "Failed to check phone",
+          message: "Failed to check email",
           error: err.message,
         });
       }
@@ -18,12 +26,14 @@ const AddStudent = (req, res) => {
         });
       } else {
         const sql2 =
-          "INSERT INTO students (first_name, last_name,date_of_birth,gender,address, phone, enrollment_date) VALUES (?, ?, ?, ?, ?, ?)";
+          "INSERT INTO students (first_name, last_name, email, password, date_of_birth,gender, phone,address, enrollment_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         db.query(
           sql2,
           [
             firstName,
             lastName,
+            email,
+            password,
             dateOfBirth,
             gender,
             address,
