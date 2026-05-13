@@ -1,9 +1,10 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
 import api from "../../services/api";
+import Add_Student from "../../services/studentService";
 import { FiArrowLeft } from "react-icons/fi";
-import { useNavigate, Link } from "react-router-dom";
 import Button from "../../components/common/Button";
+import { useNavigate, Link } from "react-router-dom";
 
 const AddStudent = () => {
   const navigate = useNavigate();
@@ -17,11 +18,8 @@ const AddStudent = () => {
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
-    const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
     e.preventDefault();
     setError("");
-
-    // Validate
     if (
       !firstName ||
       !lastName ||
@@ -35,7 +33,6 @@ const AddStudent = () => {
       );
       return;
     }
-
     setLoading(true);
     try {
       const formData = {
@@ -46,23 +43,7 @@ const AddStudent = () => {
         address,
         phone,
       };
-      const res = await fetch(`${BASE_URL}/students/add`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-        credentials: "include",
-      });
-      if (!res.ok) {
-        const errorData = await res.json();
-        console.log(errorData);
-        toast.error(errorData.message || "Failed to add student");
-      } else {
-        const data = await res.json();
-        console.log(formData);
-        toast.success(data.message || "Student added successfully");
-      }
+      await Add_Student(formData);
     } catch (err) {
       setError(err.message || "Failed to create student.");
     } finally {
