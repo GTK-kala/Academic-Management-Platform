@@ -1,4 +1,5 @@
 import { useState } from "react";
+import toast from "react-hot-toast";
 import { useAuth } from "../../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -74,7 +75,13 @@ const Register = () => {
         throw new Error(errorData.message || "Failed to register user");
       } else {
         const data = await res.json();
-        navigate("/login");
+        if (data.role === "student") {
+          toast.success("Student Registered successful! Please log in.");
+        } else if (data.role === "teacher") {
+          toast.success("Teacher Registered successful! Please log in.");
+        } else if (data.role === "admin") {
+          navigate("/login");
+        }
       }
     } catch (err) {
       setError(err.message || "Registration failed.");
@@ -84,6 +91,10 @@ const Register = () => {
       setPassword("");
       setFirstName("");
       setLastName("");
+      setPhone("");
+      setAddress("");
+      setDateOfBirth("");
+      setDepartment("");
     }
   };
 

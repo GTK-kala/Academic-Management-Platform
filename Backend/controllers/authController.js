@@ -6,21 +6,9 @@ import db from "../config/db.js";
 
 const CreateUser = (req, res) => {
   try {
-    const {
-      first_name,
-      last_name,
-      email,
-      password,
-      date_of_birth,
-      role,
-      department,
-      gender,
-      phone,
-      address,
-    } = req.body;
-    const sql1 = "SELECT * FROM users WHERE email = ?";
-
-    db.query(sql1, [email], (err, results) => {
+    const { first_name, last_name, email, password, role } = req.body;
+    const sql = "SELECT * FROM users WHERE email = ?";
+    db.query(sql, [email], (err, results) => {
       if (err) {
         return res.status(500).json({
           message: "Failed to check email",
@@ -31,25 +19,18 @@ const CreateUser = (req, res) => {
         return res.status(400).json({
           message: "Email already exists",
         });
-      }
-      // Hash the password
-      bcrypt.hash(password, 10, (err, hashedPassword) => {
-        if (err) {
-          return res.status(500).json({
-            message: "Failed to hash password",
-            error: err.message,
-          });
-        }
-        // Insert the new user according to their role
+      } else if (results.length === 0) {
+        // Hash the password
+        const hashedPassword = bcrypt.hashSync(password, 10);
         if (role === "student") {
-          const sql2 =
+          const { date_of_birth, gender, phone, address } = req.body;
+          const sql_student_first =
             "INSERT INTO users (first_name, last_name, email, password_hash, role) VALUES (?, ?, ?, ?, ?)";
           db.query(
-            sql2,
+            sql_student_first,
             [first_name, last_name, email, hashedPassword, role],
             (err, results) => {
               if (err) {
-                console.log(err.message);
                 return res.status(500).json({
                   message: "Failed to create user",
                   error: err.message,
@@ -64,17 +45,16 @@ const CreateUser = (req, res) => {
                 const sql_user_id = "SELECT id FROM users WHERE email = ?";
                 db.query(sql_user_id, [email], (err, userResults) => {
                   if (err) {
-                    console.log(err.message);
-                    return res.status(500).json({
-                      message: "Failed to create student",
+                    res.status(500).json({
+                      message: "Failed to retrieve user ID",
                       error: err.message,
                     });
                   } else {
                     const userId = userResults[0].id;
-                    const sql_student =
-                      "INSERT INTO students (user_id, first_name, last_name, email, password, date_of_birth, gender, phone, address, enrollment_date)";
+                    const sql_student_second =
+                      "INSERT INTO students (user_id, first_name, last_name, email, password, date_of_birth, gender, phone, address, enrollment_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                     db.query(
-                      sql_student,
+                      sql_student_second,
                       [
                         userId,
                         first_name,
@@ -89,7 +69,6 @@ const CreateUser = (req, res) => {
                       ],
                       (err) => {
                         if (err) {
-                          console.log(err.message);
                           return res.status(500).json({
                             message: "Failed to create student",
                             error: err.message,
@@ -98,6 +77,7 @@ const CreateUser = (req, res) => {
                         res.status(201).json({
                           message: "User created successfully",
                           userId: results.insertId,
+                          role: role,
                         });
                       },
                     );
@@ -107,23 +87,56 @@ const CreateUser = (req, res) => {
             },
           );
         } else if (role === "teacher") {
-          const sql2 =
+          const { department, phone } = req.body;
+          const sql_teacher_first =
             "INSERT INTO users (first_name, last_name, email, password_hash, role) VALUES (?, ?, ?, ?, ?)";
           db.query(
-            sql2,
+            sql_teacher_first,
             [first_name, last_name, email, hashedPassword, role],
             (err, results) => {
               if (err) {
-                console.log(err.message);
                 return res.status(500).json({
                   message: "Failed to create user",
                   error: err.message,
                 });
+              } else {
+                const teacher_id = results.insertId;
+                const sql_teacher_second =
+                  "INSERT INTO teachers (user_id, first_name, last_name, email, password, department, phone, hire_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                const hire_date =
+                  new Date().getFullYear() +
+                  "-" +
+                  (new Date().getMonth() + 1) +
+                  "-" +
+                  new Date().getDate();
+                db.query(
+                  sql_teacher_second,
+                  [
+                    teacher_id,
+                    first_name,
+                    last_name,
+                    email,
+                    hashedPassword,
+                    department,
+                    phone,
+                    hire_date,
+                  ],
+                  (err, results) => {
+                    if (err) {
+                      res.status(500).json({
+                        message: "Failed to create teacher",
+                        error: err.message,
+                      });
+                    } else {
+                      res.status(201).json({
+                        message: "User created successfully",
+                        userId: teacher_id,
+                        role: role,
+                      });
+                    }
+                  },
+                );
               }
-              res.status(201).json({
-                message: "User created successfully",
-                userId: results.insertId,
-              });
             },
           );
         } else if (role === "admin") {
@@ -134,7 +147,6 @@ const CreateUser = (req, res) => {
             [first_name, last_name, email, hashedPassword, role],
             (err, results) => {
               if (err) {
-                console.log(err.message);
                 return res.status(500).json({
                   message: "Failed to create user",
                   error: err.message,
@@ -143,11 +155,12 @@ const CreateUser = (req, res) => {
               res.status(201).json({
                 message: "User created successfully",
                 userId: results.insertId,
+                role: role,
               });
             },
           );
         }
-      });
+      }
     });
   } catch (error) {
     res.status(500).json({
