@@ -28,6 +28,9 @@ const Register = () => {
     } else if (role === "teacher") {
       setStudentRole(false);
       setTeacherRole(false);
+    } else if (role === "admin") {
+      setStudentRole(false);
+      setTeacherRole(false);
     }
   };
 
@@ -36,16 +39,7 @@ const Register = () => {
     e.preventDefault();
     setError("");
 
-    if (
-      !department ||
-      !firstName ||
-      !password ||
-      !lastName ||
-      !gender ||
-      !email ||
-      !phone ||
-      !address
-    ) {
+    if (!firstName || !password || !lastName || !email || !phone) {
       setError("All fields are required.");
       return;
     }
@@ -66,7 +60,7 @@ const Register = () => {
         last_name: lastName,
         first_name: firstName,
         department: department,
-        dateOfBirth: dateOfBirth,
+        date_of_birth: dateOfBirth,
       };
       const res = await fetch(`${BASE_URL}/api/auth/register`, {
         method: "POST",
@@ -90,27 +84,26 @@ const Register = () => {
       setPassword("");
       setFirstName("");
       setLastName("");
-      setConfirmPassword("");
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-primary-50 dark:bg-dark-bg px-4 py-8">
-      <div className="bg-white dark:bg-dark-card p-8 rounded-2xl shadow-xl w-full max-w-lg">
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-primary rounded-xl mb-4">
-            <span className="text-white text-2xl font-bold">AM</span>
+    <div className="flex items-center justify-center min-h-screen px-4 py-8 bg-primary-50 dark:bg-dark-bg">
+      <div className="w-full max-w-lg p-8 bg-white shadow-xl dark:bg-dark-card rounded-2xl">
+        <div className="mb-8 text-center">
+          <div className="inline-flex items-center justify-center w-16 h-16 mb-4 bg-primary rounded-xl">
+            <span className="text-2xl font-bold text-white">AM</span>
           </div>
           <h2 className="text-3xl font-bold text-primary dark:text-white">
             Create Account
           </h2>
-          <p className="text-gray-500 dark:text-gray-400 mt-1">
+          <p className="mt-1 text-gray-500 dark:text-gray-400">
             Join the Student Management System
           </p>
         </div>
 
         {error && (
-          <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-red-600 dark:text-red-400 text-sm">
+          <div className="p-3 mb-4 text-sm text-red-600 border border-red-200 rounded-lg bg-red-50 dark:bg-red-900/20 dark:border-red-800 dark:text-red-400">
             {error}
           </div>
         )}
@@ -118,7 +111,7 @@ const Register = () => {
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Role selection */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
               Role
             </label>
             <select
@@ -127,7 +120,7 @@ const Register = () => {
               onChange={(e) => {
                 (setRole(e.target.value), HandleRole());
               }}
-              className="w-full px-4 py-3 border border-gray-300 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
+              className="w-full px-4 py-3 text-gray-900 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
             >
               <option value="student">Student</option>
               <option value="teacher">Teacher</option>
@@ -136,11 +129,11 @@ const Register = () => {
           </div>
 
           {/* First & Last Name */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
               <label
                 htmlFor="firstName"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300"
               >
                 First Name
               </label>
@@ -151,14 +144,14 @@ const Register = () => {
                 required
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-transparent"
+                className="w-full px-4 py-3 text-gray-900 placeholder-gray-400 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
                 placeholder="John"
               />
             </div>
             <div>
               <label
                 htmlFor="lastName"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300"
               >
                 Last Name
               </label>
@@ -169,7 +162,7 @@ const Register = () => {
                 required
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-transparent"
+                className="w-full px-4 py-3 text-gray-900 placeholder-gray-400 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
                 placeholder="Doe"
               />
             </div>
@@ -180,7 +173,7 @@ const Register = () => {
             <div>
               <label
                 htmlFor="department"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300"
               >
                 Department
               </label>
@@ -191,7 +184,7 @@ const Register = () => {
                 required
                 value={department}
                 onChange={(e) => setDepartment(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
+                className="w-full px-4 py-3 text-gray-900 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
                 placeholder="Computer Science"
               >
                 <option value="It">It</option>
@@ -216,11 +209,11 @@ const Register = () => {
           ) : null}
 
           {/* Email & Password */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300"
               >
                 Email
               </label>
@@ -231,7 +224,7 @@ const Register = () => {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-transparent"
+                className="w-full px-4 py-3 text-gray-900 placeholder-gray-400 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
                 placeholder="you@example.com"
               />
             </div>
@@ -240,7 +233,7 @@ const Register = () => {
             <div>
               <label
                 htmlFor="password"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300"
               >
                 Password
               </label>
@@ -251,13 +244,13 @@ const Register = () => {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-transparent"
+                className="w-full px-4 py-3 text-gray-900 placeholder-gray-400 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
                 placeholder="Min. 6 characters"
               />
             </div>
           </div>
           {/* Date of Birth & Gender */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
               <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                 Date of Birth
@@ -320,11 +313,11 @@ const Register = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 bg-primary hover:bg-primary-dark text-white font-semibold rounded-lg transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed mt-2"
+            className="flex items-center justify-center w-full py-3 mt-2 font-semibold text-white transition-colors rounded-lg bg-primary hover:bg-primary-dark disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? (
               <svg
-                className="animate-spin h-5 w-5 text-white"
+                className="w-5 h-5 text-white animate-spin"
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -349,11 +342,11 @@ const Register = () => {
           </button>
         </form>
 
-        <p className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
+        <p className="mt-6 text-sm text-center text-gray-600 dark:text-gray-400">
           Already have an account?{" "}
           <Link
             to="/login"
-            className="text-primary hover:underline font-medium"
+            className="font-medium text-primary hover:underline"
           >
             Sign in
           </Link>

@@ -2,6 +2,8 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import db from "../config/db.js";
 
+////////////////// Create User Logic ///////////////
+
 const CreateUser = (req, res) => {
   try {
     const {
@@ -9,6 +11,7 @@ const CreateUser = (req, res) => {
       last_name,
       email,
       password,
+      date_of_birth,
       role,
       department,
       gender,
@@ -52,8 +55,12 @@ const CreateUser = (req, res) => {
                   error: err.message,
                 });
               } else {
-                const enrollment_date = new Date();
-                toISOString().split("T")[0];
+                const enrollment_date =
+                  new Date().getFullYear() +
+                  "-" +
+                  (new Date().getMonth() + 1) +
+                  "-" +
+                  new Date().getDate();
                 const sql_user_id = "SELECT id FROM users WHERE email = ?";
                 db.query(sql_user_id, [email], (err, userResults) => {
                   if (err) {
@@ -96,14 +103,30 @@ const CreateUser = (req, res) => {
                     );
                   }
                 });
-                
-               
-                  
-            
-              
+              }
             },
           );
         } else if (role === "teacher") {
+          const sql2 =
+            "INSERT INTO users (first_name, last_name, email, password_hash, role) VALUES (?, ?, ?, ?, ?)";
+          db.query(
+            sql2,
+            [first_name, last_name, email, hashedPassword, role],
+            (err, results) => {
+              if (err) {
+                console.log(err.message);
+                return res.status(500).json({
+                  message: "Failed to create user",
+                  error: err.message,
+                });
+              }
+              res.status(201).json({
+                message: "User created successfully",
+                userId: results.insertId,
+              });
+            },
+          );
+        } else if (role === "admin") {
           const sql2 =
             "INSERT INTO users (first_name, last_name, email, password_hash, role) VALUES (?, ?, ?, ?, ?)";
           db.query(
@@ -133,6 +156,8 @@ const CreateUser = (req, res) => {
     });
   }
 };
+
+/////////////// Login User Logic ///////////////
 
 const LoginUser = (req, res) => {
   try {
