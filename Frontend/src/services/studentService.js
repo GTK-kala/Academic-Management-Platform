@@ -14,11 +14,9 @@ const Add_Student = async (studentData) => {
     });
     if (!res.ok) {
       const errorData = await res.json();
-      console.log(errorData);
       toast.error(errorData.message || "Failed to add student");
     } else {
       const data = await res.json();
-      console.log(studentData);
       toast.success(data.message || "Student added successfully");
     }
   } catch (error) {

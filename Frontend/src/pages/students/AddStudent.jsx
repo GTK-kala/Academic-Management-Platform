@@ -38,9 +38,11 @@ const AddStudent = () => {
     setLoading(true);
     try {
       const formData = {
-        firstName,
-        lastName,
-        dateOfBirth,
+        first_name: firstName,
+        last_name: lastName,
+        password,
+        email,
+        date_of_birth: dateOfBirth,
         gender,
         address,
         phone,
@@ -54,6 +56,8 @@ const AddStudent = () => {
       setFirstName("");
       setLastName("");
       setDateOfBirth("");
+      setEmail("");
+      setPassword("");
       setPhone("");
       setAddress("");
     }
