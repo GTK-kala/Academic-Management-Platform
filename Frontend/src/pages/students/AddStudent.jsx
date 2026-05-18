@@ -26,6 +26,8 @@ const AddStudent = () => {
       !firstName ||
       !lastName ||
       !dateOfBirth ||
+      !password ||
+      !email ||
       !gender ||
       !address ||
       !phone

@@ -6,8 +6,8 @@ import { Toaster } from "react-hot-toast";
 import Login from "./pages/auth/Login";
 import Home from "./pages/Home/Home";
 import AdminDashboard from "./pages/dashboard/AdminDashboard";
-// import TeacherDashboard from "./pages/dashboard/TeacherDashboard";
-// import StudentDashboard from "./pages/dashboard/StudentDashboard";
+import TeacherDashboard from "./pages/dashboard/TeacherDashboard";
+import StudentDashboard from "./pages/dashboard/StudentDashboard";
 import StudentList from "./pages/students/StudentList";
 import AddStudent from "./pages/students/AddStudent";
 import CourseList from "./pages/courses/CourseList";
@@ -39,8 +39,8 @@ function App() {
             element={<Navigate to="/dashboard/admin" />}
           />
           <Route path="/dashboard/admin" element={<AdminDashboard />} />
-          {/* <Route path="/dashboard/teacher" element={<TeacherDashboard />} />
-          <Route path="/dashboard/student" element={<StudentDashboard />} /> */}
+          <Route path="/dashboard/teacher" element={<TeacherDashboard />} />
+          <Route path="/dashboard/student" element={<StudentDashboard />} />
 
           <Route
             path="/students"
