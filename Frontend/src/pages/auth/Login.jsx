@@ -36,8 +36,16 @@ const Login = () => {
         setError(errorData.message || "Login failed");
       } else {
         const data = await res.json();
-        login(data.email, data.role);
-        navigate("/dashboard/admin");
+        if (data.role === "admin") {
+          toast.success("Admin login successful! Redirecting...");
+          navigate("/dashboard/admin");
+        } else if (data.role === "teacher") {
+          toast.success("Teacher login successful! Redirecting...");
+          navigate("/dashboard/teacher");
+        } else if (data.role === "student") {
+          toast.success("Student login successful! Redirecting...");
+          navigate("/dashboard/student");
+        }
       }
     } catch (err) {
       setError(err.message);

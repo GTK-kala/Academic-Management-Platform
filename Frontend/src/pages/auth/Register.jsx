@@ -6,62 +6,57 @@ import { Link, useNavigate } from "react-router-dom";
 const Register = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
-  const [date, setDate] = useState("");
+
+  const [role, setRole] = useState("student");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
-  const [error, setError] = useState("");
+  const [password, setPassword] = useState("");
+  const [dateOfBirth, setDateOfBirth] = useState("");
+  const [gender, setGender] = useState("male");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
-  const [role, setRole] = useState("student");
-  const [lastName, setLastName] = useState("");
-  const [password, setPassword] = useState("");
-  const [gender, setGender] = useState("male");
-  const [loading, setLoading] = useState(false);
-  const [firstName, setFirstName] = useState("");
   const [department, setDepartment] = useState("");
-  const [dateOfBirth, setDateOfBirth] = useState("");
-  const [studentRole, setStudentRole] = useState(false);
-  const [teacherRole, setTeacherRole] = useState(false);
 
-  const HandleRole = () => {
-    if (role === "student") {
-      setStudentRole(true);
-      setTeacherRole(true);
-    } else if (role === "teacher") {
-      setStudentRole(false);
-      setTeacherRole(false);
-    } else if (role === "admin") {
-      setStudentRole(false);
-      setTeacherRole(false);
-    }
-  };
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
-    const BASE_URL = "http://localhost:3001";
     e.preventDefault();
+
+    const BASE_URL = "http://localhost:3001";
+
     setError("");
 
-    if (!firstName || !password || !lastName || !email || !phone) {
+    if (!firstName || !lastName || !email || !password || !phone) {
       setError("All fields are required.");
       return;
     }
+
     if (password.length < 6) {
       setError("Password must be at least 6 characters.");
       return;
     }
 
+    if (role === "teacher" && !department) {
+      setError("Department is required for teachers.");
+      return;
+    }
+
     setLoading(true);
+
     try {
       const body = {
-        role: role,
-        email: email,
-        phone: phone,
-        gender: gender,
-        address: address,
-        password: password,
-        last_name: lastName,
+        role,
         first_name: firstName,
-        department: department,
+        last_name: lastName,
+        email,
+        password,
+        phone,
+        address,
+        gender,
         date_of_birth: dateOfBirth,
+        ...(role === "teacher" && { department }),
       };
       const res = await fetch(`${BASE_URL}/api/auth/register`, {
         method: "POST",
@@ -70,31 +65,30 @@ const Register = () => {
         },
         body: JSON.stringify(body),
       });
+
+      const data = await res.json();
+
       if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.message || "Failed to register user");
+        throw new Error(data.message || "Failed to register user");
       } else {
-        const data = await res.json();
-        if (data.role === "student") {
-          toast.success("Student Registered successful! Please log in.");
-        } else if (data.role === "teacher") {
-          toast.success("Teacher Registered successful! Please log in.");
-        } else if (data.role === "admin") {
-          navigate("/login");
-        }
+        await login(email, role);
+        navigate("/login");
       }
     } catch (err) {
       setError(err.message || "Registration failed.");
     } finally {
       setLoading(false);
-      setEmail("");
-      setPassword("");
+
       setFirstName("");
       setLastName("");
+      setEmail("");
+      setPassword("");
       setPhone("");
       setAddress("");
-      setDateOfBirth("");
       setDepartment("");
+      setDateOfBirth("");
+      setRole("student");
+      setGender("male");
     }
   };
 
@@ -102,12 +96,14 @@ const Register = () => {
     <div className="flex items-center justify-center min-h-screen px-4 py-8 bg-primary-50 dark:bg-dark-bg">
       <div className="w-full max-w-lg p-8 bg-white shadow-xl dark:bg-dark-card rounded-2xl">
         <div className="mb-8 text-center">
-          <div className="inline-flex items-center justify-center w-16 h-16 mb-4 bg-primary rounded-xl">
+          <div className="inline-flex items-center justify-center w-16 h-16 mb-4 rounded-xl bg-primary">
             <span className="text-2xl font-bold text-white">AM</span>
           </div>
+
           <h2 className="text-3xl font-bold text-primary dark:text-white">
             Create Account
           </h2>
+
           <p className="mt-1 text-gray-500 dark:text-gray-400">
             Join the Student Management System
           </p>
@@ -120,17 +116,15 @@ const Register = () => {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Role selection */}
+          {/* Role */}
           <div>
             <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
               Role
             </label>
+
             <select
-              name="role"
               value={role}
-              onChange={(e) => {
-                (setRole(e.target.value), HandleRole());
-              }}
+              onChange={(e) => setRole(e.target.value)}
               className="w-full px-4 py-3 text-gray-900 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
             >
               <option value="student">Student</option>
@@ -139,66 +133,53 @@ const Register = () => {
             </select>
           </div>
 
-          {/* First & Last Name */}
+          {/* Names */}
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
-              <label
-                htmlFor="firstName"
-                className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300"
-              >
+              <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
                 First Name
               </label>
+
               <input
-                id="firstName"
-                name="firstName"
                 type="text"
                 required
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
-                className="w-full px-4 py-3 text-gray-900 placeholder-gray-400 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
                 placeholder="John"
+                className="w-full px-4 py-3 text-gray-900 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
               />
             </div>
+
             <div>
-              <label
-                htmlFor="lastName"
-                className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300"
-              >
+              <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
                 Last Name
               </label>
+
               <input
-                id="lastName"
-                name="lastName"
                 type="text"
                 required
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
-                className="w-full px-4 py-3 text-gray-900 placeholder-gray-400 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
                 placeholder="Doe"
+                className="w-full px-4 py-3 text-gray-900 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
               />
             </div>
           </div>
 
           {/* Department */}
-          {teacherRole ? (
+          {role === "teacher" && (
             <div>
-              <label
-                htmlFor="department"
-                className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300"
-              >
+              <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
                 Department
               </label>
+
               <select
-                id="department"
-                name="department"
-                type="text"
-                required
                 value={department}
                 onChange={(e) => setDepartment(e.target.value)}
-                className="w-full px-4 py-3 text-gray-900 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
-                placeholder="Computer Science"
+                className="w-full px-4 py-3 text-gray-900 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
               >
-                <option value="It">It</option>
+                <option value="">Select Department</option>
+                <option value="IT">IT</option>
                 <option value="Art">Art</option>
                 <option value="Maths">Maths</option>
                 <option value="Biology">Biology</option>
@@ -206,7 +187,7 @@ const Register = () => {
                 <option value="Computer Science">Computer Science</option>
                 <option value="Civil Engineering">Civil Engineering</option>
                 <option value="Water Engineering">Water Engineering</option>
-                <option value="Software engineering">
+                <option value="Software Engineering">
                   Software Engineering
                 </option>
                 <option value="Electrical Engineering">
@@ -217,75 +198,66 @@ const Register = () => {
                 </option>
               </select>
             </div>
-          ) : null}
+          )}
 
           {/* Email & Password */}
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
-              <label
-                htmlFor="email"
-                className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300"
-              >
+              <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
                 Email
               </label>
+
               <input
-                id="email"
-                name="email"
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 text-gray-900 placeholder-gray-400 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
                 placeholder="you@example.com"
+                className="w-full px-4 py-3 text-gray-900 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
               />
             </div>
 
-            {/* Password */}
             <div>
-              <label
-                htmlFor="password"
-                className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300"
-              >
+              <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
                 Password
               </label>
+
               <input
-                id="password"
-                name="password"
                 type="password"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 text-gray-900 placeholder-gray-400 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
                 placeholder="Min. 6 characters"
+                className="w-full px-4 py-3 text-gray-900 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
               />
             </div>
           </div>
+
           {/* Date of Birth & Gender */}
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
               <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                 Date of Birth
               </label>
+
               <input
-                name="dateOfBirth"
                 type="date"
+                required
                 value={dateOfBirth}
                 onChange={(e) => setDateOfBirth(e.target.value)}
-                required
                 className="w-full px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
               />
             </div>
 
-            {/* Gender */}
             <div>
               <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
-                gender
+                Gender
               </label>
+
               <select
-                name="gender"
                 value={gender}
                 onChange={(e) => setGender(e.target.value)}
-                className="w-full px-4 py-3 text-gray-900 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
+                className="w-full px-4 py-3 text-gray-900 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
               >
                 <option value="male">Male</option>
                 <option value="female">Female</option>
@@ -298,8 +270,9 @@ const Register = () => {
             <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
               Phone
             </label>
+
             <input
-              name="phone"
+              type="text"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               className="w-full px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
@@ -307,12 +280,12 @@ const Register = () => {
           </div>
 
           {/* Address */}
-          <div className="sm:col-span-2">
+          <div>
             <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
               Address
             </label>
+
             <textarea
-              name="address"
               value={address}
               onChange={(e) => setAddress(e.target.value)}
               rows="3"
@@ -340,12 +313,16 @@ const Register = () => {
                   r="10"
                   stroke="currentColor"
                   strokeWidth="4"
-                ></circle>
+                />
+
                 <path
                   className="opacity-75"
                   fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                ></path>
+                  d="M4 12a8 8 0 018-8V0C5.373 
+                  0 0 5.373 0 12h4zm2 5.291A7.962 
+                  7.962 0 014 12H0c0 3.042 
+                  1.135 5.824 3 7.938l3-2.647z"
+                />
               </svg>
             ) : (
               "Create Account"

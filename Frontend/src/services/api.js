@@ -1,5 +1,3 @@
-const API_BASE_URL = "http://localhost:8080/api";
-
-const api = {};
+const api = async (data) => {};
 
 export default api;
