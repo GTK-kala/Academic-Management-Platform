@@ -17,7 +17,7 @@ import StudentDashboard from "../pages/dashboard/StudentDashboard";
 // Student Pages
 import StudentList from "../pages/students/StudentList";
 import AddStudent from "../pages/students/AddStudent";
-// import StudentProfile from "../pages/students/StudentProfile";
+import StudentProfile from "../pages/students/StudentProfile";
 
 // Course Pages
 import CourseList from "../pages/courses/CourseList";
@@ -164,25 +164,25 @@ const AppRoutes = () => {
 
         {/* Add new course - Admin only */}
 
-        {/* <Route
+        <Route
           path="/courses/add"
           element={
             <ProtectedRoute roles={["admin"]}>
               <AddCourse />
             </ProtectedRoute>
           }
-        /> */}
+        />
 
         {/* Edit course - Admin only */}
 
-        {/* <Route
+        <Route
           path="/courses/:id/edit"
           element={
             <ProtectedRoute roles={["admin"]}>
               <AddCourse />
             </ProtectedRoute>
           }
-        /> */}
+        />
 
         {/* ===== FEE MANAGEMENT ROUTES ===== */}
 

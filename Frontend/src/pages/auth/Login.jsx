@@ -10,14 +10,12 @@ const Login = () => {
   const navigate = useNavigate();
   const { darkMode } = useTheme();
   const [email, setEmail] = useState("");
-  const [error, setError] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     const BASE_URL = "http://localhost:3001";
     e.preventDefault();
-    setError("");
     setLoading(true);
 
     try {
@@ -33,7 +31,6 @@ const Login = () => {
       if (!res.ok) {
         const errorData = await res.json();
         toast.error(errorData.message || "Login failed");
-        setError(errorData.message || "Login failed");
       } else {
         const data = await res.json();
         login(data.email, data.role);
@@ -46,8 +43,8 @@ const Login = () => {
         }
       }
     } catch (err) {
-      setError(err.message);
-      console.log(error);
+      toast.error("An error occurred during login");
+      console.log(err);
     } finally {
       setLoading(false);
       setPassword("");
@@ -70,13 +67,6 @@ const Login = () => {
             Sign in to your account
           </p>
         </div>
-
-        {/* Error message */}
-        {error && (
-          <div className="p-3 mb-4 text-sm text-red-600 border border-red-200 rounded-lg bg-red-50 dark:bg-red-900/20 dark:border-red-800 dark:text-red-400">
-            {error}
-          </div>
-        )}
 
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Email */}

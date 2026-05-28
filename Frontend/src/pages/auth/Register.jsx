@@ -17,8 +17,6 @@ const Register = () => {
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [department, setDepartment] = useState("");
-
-  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
@@ -26,20 +24,20 @@ const Register = () => {
 
     const BASE_URL = "http://localhost:3001";
 
-    setError("");
+    toast.dismiss(); // Dismiss any existing toasts
 
     if (!firstName || !lastName || !email || !password || !phone) {
-      setError("All fields are required.");
+      toast.error("All fields are required.");
       return;
     }
 
     if (password.length < 6) {
-      setError("Password must be at least 6 characters.");
+      toast.error("Password must be at least 6 characters.");
       return;
     }
 
     if (role === "teacher" && !department) {
-      setError("Department is required for teachers.");
+      toast.error("Department is required for teachers.");
       return;
     }
 
@@ -75,7 +73,7 @@ const Register = () => {
         navigate("/login");
       }
     } catch (err) {
-      setError(err.message || "Registration failed.");
+      toast.error(err.message || "Registration failed.");
     } finally {
       setLoading(false);
 
@@ -108,12 +106,6 @@ const Register = () => {
             Join the Student Management System
           </p>
         </div>
-
-        {error && (
-          <div className="p-3 mb-4 text-sm text-red-600 border border-red-200 rounded-lg bg-red-50 dark:bg-red-900/20 dark:border-red-800 dark:text-red-400">
-            {error}
-          </div>
-        )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Role */}
