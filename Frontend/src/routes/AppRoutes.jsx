@@ -29,8 +29,9 @@ import CourseDetail from "../pages/courses/CourseDetail";
 // import PaymentHistory from "../pages/fees/PaymentHistory";
 
 // Academic Pages
-// import Attendance from "../pages/academics/Attendance";
-// import Grades from "../pages/academics/Grades";
+import Attendance from "../pages/academics/Attendance";
+import Grades from "../pages/academics/Grades";
+import Schedule from "../pages/academics/Schedule";
 
 // Settings Pages
 // import ProfileSettings from "../pages/settings/ProfileSettings";
@@ -63,9 +64,11 @@ const AppRoutes = () => {
         {/* ===== DASHBOARD ROUTES ===== */}
 
         {/* Default dashboard redirect based on role */}
+
         <Route path="/dashboard" element={<DashboardRedirect />} />
 
         {/* Admin Dashboard */}
+
         <Route
           path="/dashboard/admin"
           element={
@@ -76,6 +79,7 @@ const AppRoutes = () => {
         />
 
         {/* Teacher Dashboard */}
+
         <Route
           path="/dashboard/teacher"
           element={
@@ -86,6 +90,7 @@ const AppRoutes = () => {
         />
 
         {/* Student Dashboard */}
+
         <Route
           path="/dashboard/student"
           element={
@@ -136,6 +141,7 @@ const AppRoutes = () => {
         {/* ===== COURSE ROUTES ===== */}
 
         {/* View all courses - accessible by all authenticated users */}
+
         <Route
           path="/courses"
           element={
@@ -146,6 +152,7 @@ const AppRoutes = () => {
         />
 
         {/* View course details - accessible by all authenticated users */}
+
         <Route
           path="/courses/:id"
           element={
@@ -156,6 +163,7 @@ const AppRoutes = () => {
         />
 
         {/* Add new course - Admin only */}
+
         {/* <Route
           path="/courses/add"
           element={
@@ -166,6 +174,7 @@ const AppRoutes = () => {
         /> */}
 
         {/* Edit course - Admin only */}
+
         {/* <Route
           path="/courses/:id/edit"
           element={
@@ -178,6 +187,7 @@ const AppRoutes = () => {
         {/* ===== FEE MANAGEMENT ROUTES ===== */}
 
         {/* Fee management - Admin and Student */}
+
         {/* <Route
           path="/fees"
           element={
@@ -188,6 +198,7 @@ const AppRoutes = () => {
         /> */}
 
         {/* Payment history - Admin and Student */}
+
         {/* <Route
           path="/fees/history"
           element={
@@ -200,28 +211,42 @@ const AppRoutes = () => {
         {/* ===== ACADEMIC ROUTES ===== */}
 
         {/* Attendance - accessible by all authenticated users */}
-        {/* <Route
+
+        <Route
           path="/attendance"
           element={
             <ProtectedRoute roles={["admin", "teacher", "student"]}>
               <Attendance />
             </ProtectedRoute>
           }
-        /> */}
+        />
 
         {/* Grades - accessible by all authenticated users */}
-        {/* <Route
+
+        <Route
           path="/grades"
           element={
             <ProtectedRoute roles={["admin", "teacher", "student"]}>
               <Grades />
             </ProtectedRoute>
           }
-        /> */}
+        />
+
+        {/* In the academic routes section */}
+
+        <Route
+          path="/schedule"
+          element={
+            <ProtectedRoute roles={["admin", "teacher", "student"]}>
+              <Schedule />
+            </ProtectedRoute>
+          }
+        />
 
         {/* ===== SETTINGS ROUTES ===== */}
 
         {/* Profile Settings - accessible by all authenticated users */}
+
         {/* <Route
           path="/settings"
           element={
@@ -232,6 +257,7 @@ const AppRoutes = () => {
         /> */}
 
         {/* Change Password */}
+
         {/* <Route
           path="/settings/password"
           element={
