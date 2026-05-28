@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import { useTheme } from "../../context/ThemeContext";
 import {
   FiBookOpen,
   FiUsers,
@@ -11,6 +10,7 @@ import {
   FiShield,
   FiMousePointer,
 } from "react-icons/fi";
+import { useTheme } from "../../context/ThemeContext";
 
 const stats = [
   { icon: FiUsers, value: "10K+", label: "Active Students" },

@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
 import {
   FiArrowLeft,
   FiUsers,
@@ -14,6 +13,7 @@ import {
 import api from "../../services/api";
 import Button from "../../components/common/Button";
 import { useAuth } from "../../context/AuthContext";
+import { useParams, useNavigate, Link } from "react-router-dom";
 
 const CourseDetail = () => {
   const { id } = useParams();

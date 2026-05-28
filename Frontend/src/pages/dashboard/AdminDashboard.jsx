@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   FiUsers,
@@ -9,6 +8,7 @@ import {
   FiEye,
 } from "react-icons/fi";
 import api from "../../services/api";
+import { useState, useEffect } from "react";
 import Button from "../../components/common/Button";
 
 const AdminDashboard = () => {

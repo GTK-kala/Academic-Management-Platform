@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
 import {
   FiSearch,
   FiPlus,
@@ -11,6 +10,7 @@ import {
 import api from "../../services/api";
 import Button from "../../components/common/Button";
 import { useAuth } from "../../context/AuthContext";
+import { Link, useNavigate } from "react-router-dom";
 
 const CourseList = () => {
   const { user } = useAuth();

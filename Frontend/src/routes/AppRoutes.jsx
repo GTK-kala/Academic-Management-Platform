@@ -1,6 +1,6 @@
-import { Routes, Route, Navigate } from "react-router-dom";
-import Layout from "../components/layout/Layout";
 import ProtectedRoute from "./ProtectedRoute";
+import Layout from "../components/layout/Layout";
+import { Routes, Route, Navigate } from "react-router-dom";
 
 // Auth Pages
 import Login from "../pages/auth/Login";
@@ -15,23 +15,23 @@ import TeacherDashboard from "../pages/dashboard/TeacherDashboard";
 import StudentDashboard from "../pages/dashboard/StudentDashboard";
 
 // Student Pages
-import StudentList from "../pages/students/StudentList";
 import AddStudent from "../pages/students/AddStudent";
-import StudentProfile from "../pages/students/StudentProfile";
+import StudentList from "../pages/students/StudentList";
+// import StudentProfile from "../pages/students/StudentProfile";
 
 // Course Pages
+import AddCourse from "../pages/courses/AddCourse";
 import CourseList from "../pages/courses/CourseList";
 import CourseDetail from "../pages/courses/CourseDetail";
-// import AddCourse from "../pages/courses/AddCourse";
 
 // Fee Pages
 // import FeeManagement from "../pages/fees/FeeManagement";
 // import PaymentHistory from "../pages/fees/PaymentHistory";
 
 // Academic Pages
-import Attendance from "../pages/academics/Attendance";
 import Grades from "../pages/academics/Grades";
 import Schedule from "../pages/academics/Schedule";
+import Attendance from "../pages/academics/Attendance";
 
 // Settings Pages
 // import ProfileSettings from "../pages/settings/ProfileSettings";
@@ -151,17 +151,6 @@ const AppRoutes = () => {
           }
         />
 
-        {/* View course details - accessible by all authenticated users */}
-
-        <Route
-          path="/courses/:id"
-          element={
-            <ProtectedRoute roles={["admin", "teacher", "student"]}>
-              <CourseDetail />
-            </ProtectedRoute>
-          }
-        />
-
         {/* Add new course - Admin only */}
 
         <Route
@@ -180,6 +169,17 @@ const AppRoutes = () => {
           element={
             <ProtectedRoute roles={["admin"]}>
               <AddCourse />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* View course details - accessible by all authenticated users */}
+
+        <Route
+          path="/courses/:id"
+          element={
+            <ProtectedRoute roles={["admin", "teacher", "student"]}>
+              <CourseDetail />
             </ProtectedRoute>
           }
         />

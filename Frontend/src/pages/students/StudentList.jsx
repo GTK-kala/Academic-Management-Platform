@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { FiPlus, FiSearch, FiEdit2, FiTrash2 } from "react-icons/fi";
 import api from "../../services/api";
+import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
 import Button from "../../components/common/Button";
+import { FiPlus, FiSearch, FiEdit2, FiTrash2 } from "react-icons/fi";
 
 const StudentList = () => {
   const [students, setStudents] = useState([]);

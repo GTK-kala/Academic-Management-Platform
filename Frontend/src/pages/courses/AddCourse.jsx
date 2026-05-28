@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
-import { useNavigate, useParams, Link } from "react-router-dom";
-import { FiArrowLeft, FiSave, FiX } from "react-icons/fi";
 import api from "../../services/api";
+import { useState, useEffect } from "react";
 import Button from "../../components/common/Button";
+import { FiArrowLeft, FiSave, FiX } from "react-icons/fi";
+import { useNavigate, useParams, Link } from "react-router-dom";
 
 const AddCourse = () => {
   const navigate = useNavigate();

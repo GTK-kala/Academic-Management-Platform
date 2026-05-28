@@ -1,10 +1,10 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
 import api from "../../services/api";
-import Add_Student from "../../services/studentService";
 import { FiArrowLeft } from "react-icons/fi";
 import Button from "../../components/common/Button";
 import { useNavigate, Link } from "react-router-dom";
+import Add_Student from "../../services/studentService";
 
 const AddStudent = () => {
   const navigate = useNavigate();
