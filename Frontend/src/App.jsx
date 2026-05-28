@@ -10,7 +10,7 @@ import TeacherDashboard from "./pages/dashboard/TeacherDashboard";
 import StudentDashboard from "./pages/dashboard/StudentDashboard";
 import StudentList from "./pages/students/StudentList";
 import AddStudent from "./pages/students/AddStudent";
-import CourseList from "./pages/courses/CourseList";
+// import CourseList from "./pages/courses/CourseList";
 // import FeeManagement from "./pages/fees/FeeManagement";
 // import Attendance from "./pages/academics/Attendance";
 // import Grades from "./pages/academics/Grades";
@@ -26,7 +26,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
-        {/* Protected dashboard layout */}
+        {/* Protected routes */}
         <Route
           element={
             <ProtectedRoute roles={["admin", "teacher", "student"]}>
@@ -34,14 +34,14 @@ function App() {
             </ProtectedRoute>
           }
         >
-          <Route
-            path="/dashboard"
-            element={<Navigate to="/dashboard/admin" />}
-          />
+          {/* Dashboard routes */}
+          <Route path="/dashboard" element={<Navigate to="/login" replace />} />
+
           <Route path="/dashboard/admin" element={<AdminDashboard />} />
           <Route path="/dashboard/teacher" element={<TeacherDashboard />} />
           <Route path="/dashboard/student" element={<StudentDashboard />} />
 
+          {/* Students */}
           <Route
             path="/students"
             element={
@@ -50,6 +50,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/students/add"
             element={
@@ -59,6 +60,7 @@ function App() {
             }
           />
 
+          {/* Future routes */}
           {/* <Route path="/courses" element={<CourseList />} />
           <Route path="/fees" element={<FeeManagement />} />
           <Route path="/attendance" element={<Attendance />} />
@@ -66,15 +68,17 @@ function App() {
           <Route path="/settings" element={<Settings />} /> */}
         </Route>
 
+        {/* 404 */}
         <Route path="*" element={<NotFound />} />
       </Routes>
+
       <Toaster
         position="top-center"
         toastOptions={{
           duration: 1000,
           removeDelay: 1000,
           style: {
-            background: "rgba(30, 41, 59, 0.8)", // glassy dark-blue background
+            background: "rgba(30, 41, 59, 0.8)",
             color: "#fff",
             borderRadius: "12px",
             padding: "12px 16px",

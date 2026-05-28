@@ -1,4 +1,5 @@
 import { NavLink } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 import {
   FiHome,
   FiUsers,
@@ -10,53 +11,59 @@ import {
   FiLogOut,
 } from "react-icons/fi";
 
-const navigation = [
-  {
-    name: "Dashboard",
-    to: "/dashboard",
-    icon: FiHome,
-    roles: ["admin", "teacher", "student"],
-  },
-  { name: "Students", to: "/students", icon: FiUsers, roles: ["admin"] },
-  {
-    name: "Courses",
-    to: "/courses",
-    icon: FiBook,
-    roles: ["admin", "teacher", "student"],
-  },
-  {
-    name: "Fees",
-    to: "/fees",
-    icon: FiDollarSign,
-    roles: ["admin", "student"],
-  },
-  {
-    name: "Attendance",
-    to: "/attendance",
-    icon: FiCalendar,
-    roles: ["admin", "teacher", "student"],
-  },
-  {
-    name: "Grades",
-    to: "/grades",
-    icon: FiBarChart2,
-    roles: ["admin", "teacher", "student"],
-  },
-  {
-    name: "Settings",
-    to: "/settings",
-    icon: FiSettings,
-    roles: ["admin", "teacher", "student"],
-  },
-];
-
 const Sidebar = ({ open, setOpen }) => {
-  // In a real app, get user role from auth context – hardcode for now
-  const userRole = "admin"; // or 'teacher' or 'student'
+  const { user } = useAuth();
+
+  const userRole = user?.role;
+
+  const navigation = [
+    {
+      name: "Dashboard",
+      to: `/dashboard/${userRole}`,
+      icon: FiHome,
+      roles: ["admin", "teacher", "student"],
+    },
+    {
+      name: "Students",
+      to: "/students",
+      icon: FiUsers,
+      roles: ["admin"],
+    },
+    {
+      name: "Courses",
+      to: "/courses",
+      icon: FiBook,
+      roles: ["admin", "teacher", "student"],
+    },
+    {
+      name: "Fees",
+      to: "/fees",
+      icon: FiDollarSign,
+      roles: ["admin", "student"],
+    },
+    {
+      name: "Attendance",
+      to: "/attendance",
+      icon: FiCalendar,
+      roles: ["admin", "teacher", "student"],
+    },
+    {
+      name: "Grades",
+      to: "/grades",
+      icon: FiBarChart2,
+      roles: ["admin", "teacher", "student"],
+    },
+    {
+      name: "Settings",
+      to: "/settings",
+      icon: FiSettings,
+      roles: ["admin", "teacher", "student"],
+    },
+  ];
 
   return (
     <>
-      {/* Overlay for mobile */}
+      {/* Mobile overlay */}
       {open && (
         <div
           className="fixed inset-0 z-40 bg-black bg-opacity-50 md:hidden"
@@ -66,12 +73,13 @@ const Sidebar = ({ open, setOpen }) => {
 
       <aside
         className={`
-        fixed top-16 left-0 z-40 h-[calc(100vh-4rem)]
-        w-64 transform transition-transform duration-300
-        bg-white dark:bg-dark-bg border-r border-gray-200 dark:border-dark-border
-        md:translate-x-0
-        ${open ? "translate-x-0" : "-translate-x-full"}
-      `}
+          fixed top-16 left-0 z-40 h-[calc(100vh-4rem)]
+          w-64 transform transition-transform duration-300
+          bg-white dark:bg-dark-bg
+          border-r border-gray-200 dark:border-dark-border
+          md:translate-x-0
+          ${open ? "translate-x-0" : "-translate-x-full"}
+        `}
       >
         <nav className="p-4 space-y-2">
           {navigation
@@ -95,6 +103,7 @@ const Sidebar = ({ open, setOpen }) => {
               </NavLink>
             ))}
 
+          {/* Logout */}
           <button className="flex items-center gap-3 px-4 py-3 mt-8 w-full text-left text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md">
             <FiLogOut className="w-5 h-5" />
             <span>Logout</span>
