@@ -1,7 +1,7 @@
-import api from "../../services/api";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Button from "../../components/common/Button";
+import { fetchRecentStudents } from "../../services/api";
 import { FiPlus, FiSearch, FiEdit2, FiTrash2 } from "react-icons/fi";
 
 const StudentList = () => {
@@ -12,8 +12,8 @@ const StudentList = () => {
 
   const fetchStudents = async () => {
     try {
-      const data = await api.get("/students");
-      setStudents(data.data.students || []);
+      const response = await fetchRecentStudents();
+      setStudents(response.data || []);
     } catch (err) {
       console.error(err);
     } finally {
@@ -28,7 +28,7 @@ const StudentList = () => {
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this student?")) return;
     try {
-      await api.delete(`/students/${id}`);
+      const response = await fetchRecentStudents();
       setStudents(students.filter((s) => s.id !== id));
     } catch (err) {
       alert("Delete failed: " + err.message);

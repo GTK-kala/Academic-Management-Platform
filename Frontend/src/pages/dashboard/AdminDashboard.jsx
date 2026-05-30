@@ -7,31 +7,31 @@ import {
   FiPlus,
   FiEye,
 } from "react-icons/fi";
-import { fetchRecentStudents } from "../../services/api";
 import { useState, useEffect } from "react";
 import Button from "../../components/common/Button";
+import { fetchRecentStudents } from "../../services/api";
 
 const AdminDashboard = () => {
   const [stats, setStats] = useState(null);
   const [recentStudents, setRecentStudents] = useState([]);
 
+  const fetchRecentStudentsData = async () => {
+    try {
+      const response = await fetchRecentStudents();
+      setRecentStudents(response.data);
+      console.log(response);
+    } catch (error) {
+      console.error("Error fetching recent students:", error);
+    }
+  };
   useEffect(() => {
-    const recentStudents = async () => {
-      try {
-        const response = await fetchRecentStudents();
-        setRecentStudents(response.data);
-        console.log(response);
-      } catch (error) {
-        console.error("Error fetching recent students:", error);
-      }
-    };
-    recentStudents();
+    fetchRecentStudentsData();
   }, []);
 
   const statItems = [
     {
       title: "Total Students",
-      value: stats?.totalStudents || 0,
+      value: recentStudents.length || 0,
       icon: FiUsers,
       change: "+12%",
     },
