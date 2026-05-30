@@ -2,6 +2,7 @@ import api from "../../services/api";
 import { useState, useEffect } from "react";
 import Button from "../../components/common/Button";
 import { FiArrowLeft, FiSave, FiX } from "react-icons/fi";
+import { Add_Course } from "../../services/courseService";
 import { useNavigate, useParams, Link } from "react-router-dom";
 
 const AddCourse = () => {
@@ -145,7 +146,7 @@ const AddCourse = () => {
         setSuccess("Course updated successfully!");
       } else {
         // Create new course
-        await api.post("/courses", courseData);
+        await Add_Course(courseData);
         setSuccess("Course created successfully!");
       }
 

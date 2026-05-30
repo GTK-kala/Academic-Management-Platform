@@ -5,6 +5,7 @@ import db from "./config/db.js";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import UserRoutes from "./routes/userRoutes.js";
+import CourseRoutes from "./routes/courseRoutes.js";
 import StudentRoutes from "./routes/studentRoutes.js";
 
 dotenv.config();
@@ -25,6 +26,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 ////// Routes///////////////////
 
 app.use("/api/auth", UserRoutes);
+app.use("/courses", CourseRoutes);
 app.use("/students", StudentRoutes);
 
 app.listen(port, () => {
