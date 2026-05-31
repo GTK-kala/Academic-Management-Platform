@@ -11,6 +11,7 @@ import api from "../../services/api";
 import Button from "../../components/common/Button";
 import { useAuth } from "../../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
+import { GetCourses } from "../../services/courseService";
 
 const CourseList = () => {
   const { user } = useAuth();
@@ -26,8 +27,8 @@ const CourseList = () => {
     const fetchCourses = async () => {
       try {
         // Fetch all courses
-        const coursesRes = await api.get("/courses");
-        const courseData = coursesRes.data?.courses || [];
+        const coursesRes = await GetCourses();
+        const courseData = coursesRes?.courses || [];
         setCourses(courseData);
         setFilteredCourses(courseData);
 
@@ -96,7 +97,7 @@ const CourseList = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+        <div className="w-12 h-12 border-t-2 border-b-2 rounded-full animate-spin border-primary"></div>
       </div>
     );
   }
@@ -104,12 +105,12 @@ const CourseList = () => {
   return (
     <div>
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
+      <div className="flex flex-col gap-4 mb-6 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-3xl font-bold text-primary dark:text-white">
             Courses
           </h1>
-          <p className="text-gray-500 dark:text-gray-400 mt-1">
+          <p className="mt-1 text-gray-500 dark:text-gray-400">
             {user?.role === "admin"
               ? "Manage all courses"
               : user?.role === "teacher"
@@ -127,10 +128,10 @@ const CourseList = () => {
       </div>
 
       {/* Search and Filter Bar */}
-      <div className="bg-white dark:bg-dark-card p-4 rounded-xl shadow-sm border border-gray-100 dark:border-dark-border mb-6">
-        <div className="flex flex-col sm:flex-row gap-4">
+      <div className="p-4 mb-6 bg-white border border-gray-100 shadow-sm dark:bg-dark-card rounded-xl dark:border-dark-border">
+        <div className="flex flex-col gap-4 sm:flex-row">
           <div className="relative flex-1">
-            <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <FiSearch className="absolute text-gray-400 -translate-y-1/2 left-3 top-1/2" />
             <input
               type="text"
               placeholder="Search courses by name, code, or description..."
@@ -160,9 +161,9 @@ const CourseList = () => {
 
       {/* Course Grid */}
       {filteredCourses.length === 0 ? (
-        <div className="text-center py-12 bg-white dark:bg-dark-card rounded-xl shadow-sm">
-          <FiBookOpen className="mx-auto w-16 h-16 text-gray-300 dark:text-gray-600 mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+        <div className="py-12 text-center bg-white shadow-sm dark:bg-dark-card rounded-xl">
+          <FiBookOpen className="w-16 h-16 mx-auto mb-4 text-gray-300 dark:text-gray-600" />
+          <h3 className="mb-2 text-lg font-medium text-gray-900 dark:text-white">
             No courses found
           </h3>
           <p className="text-gray-500 dark:text-gray-400">
@@ -172,11 +173,11 @@ const CourseList = () => {
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {filteredCourses.map((course) => (
             <div
               key={course.id}
-              className="bg-white dark:bg-dark-card rounded-xl shadow-sm border border-gray-100 dark:border-dark-border hover:shadow-md transition-all duration-200 group"
+              className="transition-all duration-200 bg-white border border-gray-100 shadow-sm dark:bg-dark-card rounded-xl dark:border-dark-border hover:shadow-md group"
             >
               {/* Course Card Header */}
               <div className="p-6 pb-4">
@@ -184,23 +185,23 @@ const CourseList = () => {
                   <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 dark:bg-primary-900/20 text-primary dark:text-primary-300">
                     {course.course_code}
                   </span>
-                  <span className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
+                  <span className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
                     <FiClock className="w-3 h-3" />
                     {course.credits} credits
                   </span>
                 </div>
 
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 group-hover:text-primary transition-colors">
+                <h3 className="mb-2 text-lg font-semibold text-gray-900 transition-colors dark:text-white group-hover:text-primary">
                   {course.course_name}
                 </h3>
 
-                <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2 mb-4">
+                <p className="mb-4 text-sm text-gray-500 dark:text-gray-400 line-clamp-2">
                   {course.description || "No description available"}
                 </p>
 
                 {/* Teacher Info */}
                 <div className="flex items-center gap-2 mb-4">
-                  <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                  <div className="flex items-center justify-center w-8 h-8 bg-gray-200 rounded-full dark:bg-gray-700">
                     <FiUsers className="w-4 h-4 text-gray-500 dark:text-gray-400" />
                   </div>
                   <div>
@@ -239,12 +240,12 @@ const CourseList = () => {
               </div>
 
               {/* Card Footer with Actions */}
-              <div className="px-6 py-4 bg-gray-50 dark:bg-dark-bg rounded-b-xl border-t border-gray-100 dark:border-dark-border">
+              <div className="px-6 py-4 border-t border-gray-100 bg-gray-50 dark:bg-dark-bg rounded-b-xl dark:border-dark-border">
                 {user?.role === "student" ? (
                   enrolledCourseIds.includes(course.id) ? (
                     <button
                       disabled
-                      className="w-full py-2 bg-green-100 dark:bg-green-900/20 text-green-600 dark:text-green-400 rounded-lg text-sm font-medium cursor-not-allowed"
+                      className="w-full py-2 text-sm font-medium text-green-600 bg-green-100 rounded-lg cursor-not-allowed dark:bg-green-900/20 dark:text-green-400"
                     >
                       ✓ Enrolled
                     </button>
@@ -252,14 +253,14 @@ const CourseList = () => {
                     (course.max_capacity || 30) ? (
                     <button
                       disabled
-                      className="w-full py-2 bg-gray-100 dark:bg-gray-700 text-gray-400 rounded-lg text-sm font-medium cursor-not-allowed"
+                      className="w-full py-2 text-sm font-medium text-gray-400 bg-gray-100 rounded-lg cursor-not-allowed dark:bg-gray-700"
                     >
                       Course Full
                     </button>
                   ) : (
                     <button
                       onClick={() => handleEnroll(course.id)}
-                      className="w-full py-2 bg-primary hover:bg-primary-dark text-white rounded-lg text-sm font-medium transition-colors"
+                      className="w-full py-2 text-sm font-medium text-white transition-colors rounded-lg bg-primary hover:bg-primary-dark"
                     >
                       Enroll Now
                     </button>
@@ -267,7 +268,7 @@ const CourseList = () => {
                 ) : (
                   <Link
                     to={`/courses/${course.id}`}
-                    className="w-full flex items-center justify-center gap-2 py-2 text-primary dark:text-primary-300 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-lg text-sm font-medium transition-colors"
+                    className="flex items-center justify-center w-full gap-2 py-2 text-sm font-medium transition-colors rounded-lg text-primary dark:text-primary-300 hover:bg-primary-50 dark:hover:bg-primary-900/20"
                   >
                     View Details <FiArrowRight className="w-4 h-4" />
                   </Link>
@@ -279,7 +280,7 @@ const CourseList = () => {
       )}
 
       {/* Results count */}
-      <div className="mt-6 text-center text-sm text-gray-500 dark:text-gray-400">
+      <div className="mt-6 text-sm text-center text-gray-500 dark:text-gray-400">
         Showing {filteredCourses.length} of {courses.length} courses
       </div>
     </div>

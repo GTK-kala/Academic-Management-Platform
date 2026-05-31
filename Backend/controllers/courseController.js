@@ -52,3 +52,23 @@ export const Add_Course = async (req, res) => {
     throw error;
   }
 };
+
+export const Get_Courses = async (req, res) => {
+  try {
+    const sql = "SELECT * FROM courses";
+    db.query(sql, (err, result) => {
+      if (err) {
+        console.error("Error fetching courses:", err);
+        return res.status(500).json({
+          error: "Internal server error",
+        });
+      }
+      res.status(200).json({
+        courses: result,
+      });
+    });
+  } catch (error) {
+    console.error("Error fetching courses:", error);
+    throw error;
+  }
+};
