@@ -19,7 +19,6 @@ const AdminDashboard = () => {
     try {
       const response = await fetchRecentStudents();
       setRecentStudents(response.data);
-      console.log(response);
     } catch (error) {
       console.error("Error fetching recent students:", error);
     }

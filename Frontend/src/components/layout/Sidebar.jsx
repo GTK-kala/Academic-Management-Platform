@@ -12,9 +12,13 @@ import {
 } from "react-icons/fi";
 
 const Sidebar = ({ open, setOpen }) => {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
 
   const userRole = user?.role;
+
+  const HandleLogout = () => {
+    logout();
+  };
 
   const navigation = [
     {
@@ -104,7 +108,12 @@ const Sidebar = ({ open, setOpen }) => {
             ))}
 
           {/* Logout */}
-          <button className="flex items-center gap-3 px-4 py-3 mt-8 w-full text-left text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md">
+          <button
+            className="flex items-center gap-3 px-4 py-3 mt-8 w-full text-left text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md"
+            onClick={() => {
+              HandleLogout();
+            }}
+          >
             <FiLogOut className="w-5 h-5" />
             <span>Logout</span>
           </button>
