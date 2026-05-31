@@ -11,7 +11,7 @@ import api from "../../services/api";
 import Button from "../../components/common/Button";
 import { useAuth } from "../../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
-import { GetCourses } from "../../services/courseService";
+import { Get_Courses } from "../../services/courseService";
 
 const CourseList = () => {
   const { user } = useAuth();
@@ -27,7 +27,7 @@ const CourseList = () => {
     const fetchCourses = async () => {
       try {
         // Fetch all courses
-        const coursesRes = await GetCourses();
+        const coursesRes = await Get_Courses();
         const courseData = coursesRes?.courses || [];
         setCourses(courseData);
         setFilteredCourses(courseData);
