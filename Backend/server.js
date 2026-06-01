@@ -7,6 +7,7 @@ import cookieParser from "cookie-parser";
 import UserRoutes from "./routes/userRoutes.js";
 import CourseRoutes from "./routes/courseRoutes.js";
 import StudentRoutes from "./routes/studentRoutes.js";
+import EnrollmentRoutes from "./routes/enrollmentRoutes.js";
 
 dotenv.config();
 const app = express();
@@ -28,6 +29,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/api/auth", UserRoutes);
 app.use("/courses", CourseRoutes);
 app.use("/students", StudentRoutes);
+app.use("/enrollments", EnrollmentRoutes);
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);

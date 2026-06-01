@@ -42,3 +42,25 @@ export const Get_Courses = async () => {
     throw error;
   }
 };
+
+export const Enroll_Course = async (courseId) => {
+  try {
+    const res = await fetch(`${BASE_URL}/courses/enroll`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ courseId }),
+      credentials: "include",
+    });
+    if (!res.ok) {
+      throw new Error("Failed to enroll in course");
+    } else {
+      const data = await res.json();
+      console.log(data);
+    }
+  } catch (error) {
+    console.error("Error enrolling in course:", error);
+    throw error;
+  }
+};

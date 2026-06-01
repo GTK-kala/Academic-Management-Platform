@@ -1,0 +1,24 @@
+import db from "../config/db.js";
+
+export const Enroll_Course = async (req, res) => {
+  try {
+    const { courseId } = req.body;
+    const studentId = req.session.userId;
+    const sql =
+      "INSERT INTO enrollments (student_id, course_id ) VALUES (?, ?,)";
+    db.query(sql, [studentId, courseId], (err, result) => {
+      if (err) {
+        console.error("Error enrolling in course:", err);
+        return res.status(500).json({
+          error: "Internal server error",
+        });
+      }
+      res.status(201).json({
+        message: "Successfully enrolled in course",
+      });
+    });
+  } catch (error) {
+    console.error("Error enrolling in course:", error);
+    throw error;
+  }
+};

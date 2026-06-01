@@ -7,11 +7,12 @@ import {
   FiClock,
   FiArrowRight,
 } from "react-icons/fi";
+import toast from "react-hot-toast";
 import api from "../../services/api";
 import Button from "../../components/common/Button";
 import { useAuth } from "../../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
-import { Get_Courses } from "../../services/courseService";
+import { Get_Courses, Enroll_Course } from "../../services/courseService";
 
 const CourseList = () => {
   const { user } = useAuth();
@@ -83,14 +84,11 @@ const CourseList = () => {
 
   const handleEnroll = async (courseId) => {
     try {
-      await api.post("/enrollments", {
-        student_id: user?.id, // In real app, get from profile
-        course_id: courseId,
-      });
+      const result = await Enroll_Course(courseId);
       setEnrolledCourseIds([...enrolledCourseIds, courseId]);
-      alert("Successfully enrolled!");
+      toast.success("Successfully enrolled!");
     } catch (error) {
-      alert("Enrollment failed: " + error.message);
+      toast.error("Enrollment failed: " + error.message);
     }
   };
 
