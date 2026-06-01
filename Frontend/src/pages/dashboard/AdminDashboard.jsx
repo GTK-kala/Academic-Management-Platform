@@ -9,22 +9,26 @@ import {
 } from "react-icons/fi";
 import { useState, useEffect } from "react";
 import Button from "../../components/common/Button";
-import { fetchRecentStudents } from "../../services/api";
+import { Get_Courses } from "../../services/courseService";
+import { fetchRecentStudents } from "../../services/studentService";
 
 const AdminDashboard = () => {
   const [stats, setStats] = useState(null);
+  const [courses, setCourses] = useState([]);
   const [recentStudents, setRecentStudents] = useState([]);
 
-  const fetchRecentStudentsData = async () => {
+  const fetchData = async () => {
     try {
       const response = await fetchRecentStudents();
+      const courses = await Get_Courses();
       setRecentStudents(response.data);
+      setCourses(courses.courses);
     } catch (error) {
       console.error("Error fetching recent students:", error);
     }
   };
   useEffect(() => {
-    fetchRecentStudentsData();
+    fetchData();
   }, []);
 
   const statItems = [
@@ -36,7 +40,7 @@ const AdminDashboard = () => {
     },
     {
       title: "Active Courses",
-      value: stats?.totalCourses || 0,
+      value: courses.length || 0,
       icon: FiBook,
       change: "+3",
     },

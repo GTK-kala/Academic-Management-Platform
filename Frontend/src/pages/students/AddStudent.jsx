@@ -4,7 +4,7 @@ import api from "../../services/api";
 import { FiArrowLeft } from "react-icons/fi";
 import Button from "../../components/common/Button";
 import { useNavigate, Link } from "react-router-dom";
-import Add_Student from "../../services/studentService";
+import { Add_Student } from "../../services/studentService";
 
 const AddStudent = () => {
   const navigate = useNavigate();

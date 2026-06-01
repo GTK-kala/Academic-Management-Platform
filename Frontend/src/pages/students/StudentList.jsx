@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Button from "../../components/common/Button";
-import { fetchRecentStudents } from "../../services/api";
+import { fetchRecentStudents } from "../../services/studentService";
 import { FiPlus, FiSearch, FiEdit2, FiTrash2 } from "react-icons/fi";
 
 const StudentList = () => {
