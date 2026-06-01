@@ -84,7 +84,8 @@ const CourseList = () => {
 
   const handleEnroll = async (courseId) => {
     try {
-      const result = await Enroll_Course(courseId);
+      const studentData = JSON.parse(localStorage.getItem("user"));
+      const result = await Enroll_Course(courseId, studentData.userId);
       setEnrolledCourseIds([...enrolledCourseIds, courseId]);
       toast.success("Successfully enrolled!");
     } catch (error) {

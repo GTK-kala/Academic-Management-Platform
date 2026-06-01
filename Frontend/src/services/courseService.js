@@ -43,14 +43,14 @@ export const Get_Courses = async () => {
   }
 };
 
-export const Enroll_Course = async (courseId) => {
+export const Enroll_Course = async (courseId, studentId) => {
   try {
-    const res = await fetch(`${BASE_URL}/courses/enroll`, {
+    const res = await fetch(`${BASE_URL}/enrollments/enroll`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ courseId }),
+      body: JSON.stringify({ courseId, studentId }),
       credentials: "include",
     });
     if (!res.ok) {
