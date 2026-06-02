@@ -55,7 +55,18 @@ export const Add_Course = async (req, res) => {
 
 export const Get_Courses = async (req, res) => {
   try {
-    const sql = "SELECT * FROM courses";
+    const sql = `
+      SELECT 
+        c.id,
+        c.course_code,
+        c.course_name,
+        c.description,
+        c.credits,
+        CONCAT(t.first_name, ' ', t.last_name) AS teacher_name,
+        c.max_capacity
+      FROM courses c
+      LEFT JOIN teachers t ON c.teacher_id = t.id
+    `;
     db.query(sql, (err, result) => {
       if (err) {
         console.error("Error fetching courses:", err);

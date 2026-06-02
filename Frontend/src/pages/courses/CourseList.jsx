@@ -205,9 +205,7 @@ const CourseList = () => {
                   </div>
                   <div>
                     <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                      {course.teacher_first
-                        ? `${course.teacher_first} ${course.teacher_last || ""}`
-                        : "Unassigned"}
+                      {course.teacher_name || "TBA"}
                     </p>
                     {course.teacher_department && (
                       <p className="text-xs text-gray-500 dark:text-gray-400">
