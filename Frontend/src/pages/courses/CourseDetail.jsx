@@ -12,6 +12,7 @@ import {
 } from "react-icons/fi";
 import api from "../../services/api";
 import Button from "../../components/common/Button";
+import { Get_Course } from "../../services/courseService";
 import { useAuth } from "../../context/AuthContext";
 import { useParams, useNavigate, Link } from "react-router-dom";
 
@@ -29,8 +30,9 @@ const CourseDetail = () => {
     const fetchCourseDetails = async () => {
       try {
         // Fetch course details
-        const courseRes = await api.get(`/courses/${id}`);
-        setCourse(courseRes.data?.course || null);
+        const courseRes = await Get_Course(id);
+        const courseData = courseRes?.course || null;
+        setCourse(courseData);
 
         // Fetch enrolled students
         const enrollmentsRes = await api.get(`/enrollments?course_id=${id}`);
@@ -74,20 +76,20 @@ const CourseDetail = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+        <div className="w-12 h-12 border-t-2 border-b-2 rounded-full animate-spin border-primary"></div>
       </div>
     );
   }
 
   if (!course) {
     return (
-      <div className="text-center py-20">
+      <div className="py-20 text-center">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
           Course not found
         </h2>
         <Link
           to="/courses"
-          className="text-primary hover:underline mt-4 inline-block"
+          className="inline-block mt-4 text-primary hover:underline"
         >
           Back to Courses
         </Link>
@@ -101,7 +103,7 @@ const CourseDetail = () => {
       <div className="flex items-center justify-between mb-6">
         <button
           onClick={() => navigate("/courses")}
-          className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary-300 transition-colors"
+          className="flex items-center gap-2 text-gray-600 transition-colors dark:text-gray-400 hover:text-primary dark:hover:text-primary-300"
         >
           <FiArrowLeft className="w-5 h-5" />
           <span>Back to Courses</span>
@@ -125,28 +127,28 @@ const CourseDetail = () => {
       </div>
 
       {/* Course Header */}
-      <div className="bg-white dark:bg-dark-card rounded-2xl shadow-sm border border-gray-100 dark:border-dark-border p-8 mb-6">
-        <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
+      <div className="p-8 mb-6 bg-white border border-gray-100 shadow-sm dark:bg-dark-card rounded-2xl dark:border-dark-border">
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-4">
-              <span className="px-3 py-1 rounded-full text-sm font-medium bg-primary-100 dark:bg-primary-900/20 text-primary dark:text-primary-300">
+              <span className="px-3 py-1 text-sm font-medium rounded-full bg-primary-100 dark:bg-primary-900/20 text-primary dark:text-primary-300">
                 {course.course_code}
               </span>
-              <span className="px-3 py-1 rounded-full text-sm font-medium bg-green-100 dark:bg-green-900/20 text-green-600 dark:text-green-400">
+              <span className="px-3 py-1 text-sm font-medium text-green-600 bg-green-100 rounded-full dark:bg-green-900/20 dark:text-green-400">
                 Active
               </span>
             </div>
-            <h1 className="text-3xl font-bold text-primary dark:text-white mb-3">
+            <h1 className="mb-3 text-3xl font-bold text-primary dark:text-white">
               {course.course_name}
             </h1>
-            <p className="text-gray-600 dark:text-gray-300 mb-6">
+            <p className="mb-6 text-gray-600 dark:text-gray-300">
               {course.description || "No description available"}
             </p>
 
             {/* Course Info Cards */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              <div className="bg-gray-50 dark:bg-dark-bg p-4 rounded-xl">
-                <FiUsers className="w-5 h-5 text-primary dark:text-primary-300 mb-2" />
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+              <div className="p-4 bg-gray-50 dark:bg-dark-bg rounded-xl">
+                <FiUsers className="w-5 h-5 mb-2 text-primary dark:text-primary-300" />
                 <p className="text-sm text-gray-500 dark:text-gray-400">
                   Students
                 </p>
@@ -154,8 +156,8 @@ const CourseDetail = () => {
                   {enrolledStudents.length}/{course.max_capacity}
                 </p>
               </div>
-              <div className="bg-gray-50 dark:bg-dark-bg p-4 rounded-xl">
-                <FiClock className="w-5 h-5 text-primary dark:text-primary-300 mb-2" />
+              <div className="p-4 bg-gray-50 dark:bg-dark-bg rounded-xl">
+                <FiClock className="w-5 h-5 mb-2 text-primary dark:text-primary-300" />
                 <p className="text-sm text-gray-500 dark:text-gray-400">
                   Credits
                 </p>
@@ -163,8 +165,8 @@ const CourseDetail = () => {
                   {course.credits}
                 </p>
               </div>
-              <div className="bg-gray-50 dark:bg-dark-bg p-4 rounded-xl">
-                <FiCalendar className="w-5 h-5 text-primary dark:text-primary-300 mb-2" />
+              <div className="p-4 bg-gray-50 dark:bg-dark-bg rounded-xl">
+                <FiCalendar className="w-5 h-5 mb-2 text-primary dark:text-primary-300" />
                 <p className="text-sm text-gray-500 dark:text-gray-400">
                   Attendance
                 </p>
@@ -172,8 +174,8 @@ const CourseDetail = () => {
                   {attendanceStats?.averageAttendance || 0}%
                 </p>
               </div>
-              <div className="bg-gray-50 dark:bg-dark-bg p-4 rounded-xl">
-                <FiBarChart2 className="w-5 h-5 text-primary dark:text-primary-300 mb-2" />
+              <div className="p-4 bg-gray-50 dark:bg-dark-bg rounded-xl">
+                <FiBarChart2 className="w-5 h-5 mb-2 text-primary dark:text-primary-300" />
                 <p className="text-sm text-gray-500 dark:text-gray-400">
                   Avg Grade
                 </p>
@@ -185,20 +187,18 @@ const CourseDetail = () => {
           </div>
 
           {/* Teacher Card */}
-          <div className="lg:w-64 bg-gray-50 dark:bg-dark-bg p-6 rounded-xl text-center">
-            <div className="w-20 h-20 rounded-full bg-primary-100 dark:bg-primary-900/20 flex items-center justify-center mx-auto mb-4">
+          <div className="p-6 text-center lg:w-64 bg-gray-50 dark:bg-dark-bg rounded-xl">
+            <div className="flex items-center justify-center w-20 h-20 mx-auto mb-4 rounded-full bg-primary-100 dark:bg-primary-900/20">
               <FiUsers className="w-10 h-10 text-primary dark:text-primary-300" />
             </div>
             <h3 className="font-semibold text-gray-900 dark:text-white">
-              {course.teacher_first
-                ? `${course.teacher_first} ${course.teacher_last || ""}`
-                : "Unassigned"}
+              {course.teacher_name || "TBA"}
             </h3>
             <p className="text-sm text-gray-500 dark:text-gray-400">
               Instructor
             </p>
             {course.teacher_department && (
-              <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
+              <p className="mt-2 text-xs text-gray-400 dark:text-gray-500">
                 {course.teacher_department}
               </p>
             )}
@@ -207,7 +207,7 @@ const CourseDetail = () => {
       </div>
 
       {/* Tabs */}
-      <div className="bg-white dark:bg-dark-card rounded-xl shadow-sm border border-gray-100 dark:border-dark-border">
+      <div className="bg-white border border-gray-100 shadow-sm dark:bg-dark-card rounded-xl dark:border-dark-border">
         <div className="border-b border-gray-200 dark:border-dark-border">
           <nav className="flex gap-0">
             {["students", "attendance", "grades", "fees"].map((tab) => (
@@ -243,7 +243,7 @@ const CourseDetail = () => {
                 <div className="overflow-x-auto">
                   <table className="w-full text-left">
                     <thead>
-                      <tr className="text-sm text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-dark-border">
+                      <tr className="text-sm text-gray-500 border-b border-gray-200 dark:text-gray-400 dark:border-dark-border">
                         <th className="pb-3 pr-4">Student</th>
                         <th className="pb-3 pr-4">Email</th>
                         <th className="pb-3 pr-4">Enrollment Date</th>
@@ -256,7 +256,7 @@ const CourseDetail = () => {
                           key={enrollment.id}
                           className="text-sm border-b border-gray-100 dark:border-dark-border"
                         >
-                          <td className="py-3 pr-4 text-gray-900 dark:text-white font-medium">
+                          <td className="py-3 pr-4 font-medium text-gray-900 dark:text-white">
                             {enrollment.first_name} {enrollment.last_name}
                           </td>
                           <td className="py-3 pr-4 text-gray-600 dark:text-gray-300">
@@ -284,7 +284,7 @@ const CourseDetail = () => {
                   </table>
                 </div>
               ) : (
-                <p className="text-gray-500 dark:text-gray-400 text-center py-8">
+                <p className="py-8 text-center text-gray-500 dark:text-gray-400">
                   No students enrolled yet
                 </p>
               )}
@@ -292,14 +292,14 @@ const CourseDetail = () => {
           )}
 
           {activeTab === "attendance" && (
-            <div className="text-center py-8">
-              <FiCalendar className="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+            <div className="py-8 text-center">
+              <FiCalendar className="w-16 h-16 mx-auto mb-4 text-gray-300 dark:text-gray-600" />
               <p className="text-gray-500 dark:text-gray-400">
                 Attendance records for this course
               </p>
               <Link
                 to="/attendance"
-                className="text-primary hover:underline mt-2 inline-block"
+                className="inline-block mt-2 text-primary hover:underline"
               >
                 Go to Attendance
               </Link>
@@ -307,14 +307,14 @@ const CourseDetail = () => {
           )}
 
           {activeTab === "grades" && (
-            <div className="text-center py-8">
-              <FiBarChart2 className="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+            <div className="py-8 text-center">
+              <FiBarChart2 className="w-16 h-16 mx-auto mb-4 text-gray-300 dark:text-gray-600" />
               <p className="text-gray-500 dark:text-gray-400">
                 Grade records for this course
               </p>
               <Link
                 to="/grades"
-                className="text-primary hover:underline mt-2 inline-block"
+                className="inline-block mt-2 text-primary hover:underline"
               >
                 Go to Grades
               </Link>
@@ -322,14 +322,14 @@ const CourseDetail = () => {
           )}
 
           {activeTab === "fees" && (
-            <div className="text-center py-8">
-              <FiDollarSign className="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+            <div className="py-8 text-center">
+              <FiDollarSign className="w-16 h-16 mx-auto mb-4 text-gray-300 dark:text-gray-600" />
               <p className="text-gray-500 dark:text-gray-400">
                 Fee structures for this course
               </p>
               <Link
                 to="/fees"
-                className="text-primary hover:underline mt-2 inline-block"
+                className="inline-block mt-2 text-primary hover:underline"
               >
                 Go to Fees
               </Link>

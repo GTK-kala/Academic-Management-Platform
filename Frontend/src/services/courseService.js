@@ -64,3 +64,24 @@ export const Enroll_Course = async (courseId, studentId) => {
     throw error;
   }
 };
+
+export const Get_Course = async (courseId) => {
+  try {
+    const res = await fetch(`${BASE_URL}/courses/detail/${courseId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    });
+    if (!res.ok) {
+      throw new Error("Failed to fetch course details");
+    } else {
+      const data = await res.json();
+      return data;
+    }
+  } catch (error) {
+    console.error("Error fetching course details:", error);
+    throw error;
+  }
+};

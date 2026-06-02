@@ -83,3 +83,42 @@ export const Get_Courses = async (req, res) => {
     throw error;
   }
 };
+
+export const Get_Course = async (req, res) => {
+  try {
+    const courseId = req.params.id;
+    const sql = `
+      SELECT 
+        c.id,
+        c.course_code,
+        c.course_name,
+        c.description,
+        c.credits,
+        CONCAT(t.first_name, ' ', t.last_name) AS teacher_name,
+        c.max_capacity
+      FROM courses c
+      LEFT JOIN teachers t ON c.teacher_id = t.id
+      WHERE c.id = ?
+    `;
+    db.query(sql, [courseId], (err, result) => {
+      if (err) {
+        console.error("Error fetching course:", err);
+        return res.status(500).json({
+          error: "Internal server error",
+        });
+      }
+      if (result.length === 0) {
+        return res.status(404).json({
+          error: "Course not found",
+        });
+      } else {
+        res.status(200).json({
+          course: result[0],
+        });
+      }
+    });
+  } catch (error) {
+    console.error("Error fetching course:", error);
+    throw error;
+  }
+};
