@@ -200,26 +200,90 @@ const LoginUser = (req, res) => {
           return res.status(400).json({
             message: "Invalid email or password",
           });
-        }
-        const cookie = {
-          httpOnly: true,
-          secure: false,
-          sameSite: "lax",
-        };
-        const token = jwt.sign(
-          { userId: user.id, role: user.role },
-          process.env.JWT_SECRET,
-          {
-            expiresIn: "8h",
-          },
-        );
+        } else {
+          if (user.role === "student") {
+            const sql_student = "SELECT * FROM students WHERE user_id = ?";
+            db.query(sql_student, [user.id], (err, studentResults) => {
+              if (err) {
+                return res.status(500).json({
+                  message: "Failed to retrieve student data",
+                  error: err.message,
+                });
+              } else {
+                const studentData = studentResults[0];
+                const cookie = {
+                  httpOnly: true,
+                  secure: false,
+                  sameSite: "lax",
+                };
+                const token = jwt.sign(
+                  { userId: studentData.id, role: user.role },
+                  process.env.JWT_SECRET,
+                  {
+                    expiresIn: "8h",
+                  },
+                );
+                res.status(200).cookie("token", token, cookie).json({
+                  message: "Login successful",
+                  userId: studentData.id,
+                  role: user.role,
+                  email: user.email,
+                });
+              }
+            });
+          } else if (user.role === "teacher") {
+            const sql_teacher = "SELECT * FROM teachers WHERE user_id = ?";
+            db.query(sql_teacher, [user.id], (err, teacherResults) => {
+              if (err) {
+                return res.status(500).json({
+                  message: "Failed to retrieve teacher data",
+                  error: err.message,
+                });
+              } else {
+                const teacherData = teacherResults[0];
+                const cookie = {
+                  httpOnly: true,
+                  secure: false,
+                  sameSite: "lax",
+                };
+                const token = jwt.sign(
+                  { userId: teacherData.id, role: user.role },
+                  process.env.JWT_SECRET,
+                  {
+                    expiresIn: "8h",
+                  },
+                );
+                res.status(200).cookie("token", token, cookie).json({
+                  message: "Login successful",
+                  userId: teacherData.id,
+                  role: user.role,
+                  email: user.email,
+                });
+              }
+            });
+          } else if (user.role === "admin") {
+            const adminData = user;
+            const cookie = {
+              httpOnly: true,
+              secure: false,
+              sameSite: "lax",
+            };
+            const token = jwt.sign(
+              { userId: adminData.id, role: user.role },
+              process.env.JWT_SECRET,
+              {
+                expiresIn: "8h",
+              },
+            );
 
-        res.status(200).cookie("token", token, cookie).json({
-          message: "Login successful",
-          userId: user.id,
-          role: user.role,
-          email: user.email,
-        });
+            res.status(200).cookie("token", token, cookie).json({
+              message: "Login successful",
+              userId: adminData.id,
+              role: user.role,
+              email: user.email,
+            });
+          }
+        }
       });
     });
   } catch (error) {
