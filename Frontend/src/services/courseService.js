@@ -86,7 +86,7 @@ export const Get_Course = async (courseId) => {
   }
 };
 
-const Enrolled_Courses = async (studentId) => {
+export const Enrolled_Courses = async (studentId) => {
   try {
     const res = await fetch(`${BASE_URL}/enrollments/enrolled/${studentId}`, {
       method: "GET",

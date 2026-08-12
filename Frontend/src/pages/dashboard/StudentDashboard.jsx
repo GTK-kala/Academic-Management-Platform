@@ -28,7 +28,8 @@ const StudentDashboard = () => {
       try {
         // Fetch enrollments for this student
         const user = JSON.parse(localStorage.getItem("user"));
-        const enrollmentsRes = await Enrolled_Courses(user.id); // You need actual student_id
+        const enrollmentsRes = await Enrolled_Courses(user.id);
+        console.log(enrollmentsRes);
         const enrollments = enrollmentsRes.data?.enrollments || [];
 
         // Fetch course details for enrolled courses
