@@ -85,10 +85,17 @@ const CourseList = () => {
 
   const handleEnroll = async (courseId) => {
     try {
-      const studentData = JSON.parse(localStorage.getItem("user"));
-      const result = await Enroll_Course(courseId, studentData.userId);
-      setEnrolledCourseIds([...enrolledCourseIds, courseId]);
-      toast.success("Successfully enrolled!");
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (!user || user.role !== "student") {
+        toast.error("You must be logged in as a student to enroll.");
+        return;
+      }
+      const EnrollRes = await Enroll_Course(courseId, user.id);
+      if (EnrollRes) {
+        toast.success("Successfully enrolled in the course!");
+      } else {
+        toast.error("Enrollment failed. Please try again.");
+      }
     } catch (error) {
       toast.error("Enrollment failed: " + error.message);
     }

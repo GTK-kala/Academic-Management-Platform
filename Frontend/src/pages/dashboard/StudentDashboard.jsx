@@ -2,6 +2,7 @@ import api from "../../services/api";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
+import { Enrolled_Courses } from "../../services/courseService";
 import {
   FiBook,
   FiDollarSign,
@@ -26,7 +27,8 @@ const StudentDashboard = () => {
     const fetchDashboardData = async () => {
       try {
         // Fetch enrollments for this student
-        const enrollmentsRes = await api.get(`/enrollments?student_id=1`); // You need actual student_id
+        const user = JSON.parse(localStorage.getItem("user"));
+        const enrollmentsRes = await Enrolled_Courses(user.id); // You need actual student_id
         const enrollments = enrollmentsRes.data?.enrollments || [];
 
         // Fetch course details for enrolled courses
