@@ -28,20 +28,19 @@ const StudentDashboard = () => {
       try {
         // Fetch enrollments for this student
         const user = JSON.parse(localStorage.getItem("user"));
-        const enrollmentsRes = await Enrolled_Courses(user.id);
-        console.log(enrollmentsRes);
-        const enrollments = enrollmentsRes.data?.enrollments || [];
-
+        const enrollmentsRes = await Enrolled_Courses(user.userId);
+        const enrollments = enrollmentsRes.enrollments || [];
+        console.log("enrollmentsRes:", enrollmentsRes);
         // Fetch course details for enrolled courses
-        const coursePromises = enrollments.map((e) =>
-          api.get(`/courses/${e.course_id}`),
+        const courseDetailsResponses = enrollments.map((enrollment) =>
+          setEnrolledCourses((prev) => [
+            ...prev,
+            {
+              id: enrollment.course_id,
+              // Add other course details you need
+            },
+          ]),
         );
-        const courseResponses = await Promise.all(coursePromises);
-        const courses = courseResponses
-          .map((res) => res.data?.course)
-          .filter(Boolean);
-        setEnrolledCourses(courses);
-
         // Fetch recent grades (you'd filter by student in real app)
         const gradesRes = await api.get("/grades");
         setRecentGrades(gradesRes.data?.grades?.slice(0, 5) || []);

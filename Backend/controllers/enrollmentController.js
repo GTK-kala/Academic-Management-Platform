@@ -25,7 +25,10 @@ export const Enroll_Course = async (req, res) => {
 export const Get_Enrolled_Courses = async (req, res) => {
   try {
     const Id = req.params.studentId;
-    const sql = `SELECT * FROM enrollments WHERE student_id = ?`;
+    const sql = `SELECT courses.id, courses.name, courses.description, courses.instructor_id
+                 FROM enrollments
+                 JOIN courses ON enrollments.course_id = courses.id
+                 WHERE enrollments.student_id = ?`;
     db.query(sql, [Id], (err, results) => {
       if (err) {
         console.error("Error fetching enrolled courses:", err);
