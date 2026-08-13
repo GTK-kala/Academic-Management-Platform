@@ -50,15 +50,14 @@ export const Enroll_Course = async (courseId, studentId) => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ courseId, studentId }),
+      body: JSON.stringify({
+        courseId,
+        studentId,
+      }),
       credentials: "include",
     });
-    if (!res.ok) {
-      throw new Error("Failed to enroll in course");
-    } else {
-      const data = await res.json();
-      console.log(data);
-    }
+
+    return res;
   } catch (error) {
     console.error("Error enrolling in course:", error);
     throw error;
@@ -78,6 +77,7 @@ export const Get_Course = async (courseId) => {
       throw new Error("Failed to fetch course details");
     } else {
       const data = await res.json();
+      // console.log("Data", data);
       return data;
     }
   } catch (error) {

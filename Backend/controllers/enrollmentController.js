@@ -3,25 +3,67 @@ import db from "../config/db.js";
 export const Enroll_Course = async (req, res) => {
   try {
     const { courseId, studentId } = req.body;
-    console.log(courseId, studentId);
-    const sql = "INSERT INTO enrollments (student_id, course_id) VALUES (?, ?)";
-    db.query(sql, [studentId, courseId], (err, result) => {
+
+    console.log("Course ID:", courseId);
+    console.log("Student ID:", studentId);
+
+    const checkSql = `
+      SELECT id
+      FROM enrollments
+      WHERE student_id = ? AND course_id = ?
+    `;
+
+    db.query(checkSql, [studentId, courseId], (err, rows) => {
       if (err) {
-        console.error("Error enrolling in course:", err);
+        console.error("Error checking enrollment:", err);
+
         return res.status(500).json({
           error: "Internal server error",
         });
       }
-      res.status(201).json({
-        message: "Successfully enrolled in course",
+
+      // Already enrolled
+      if (rows.length > 0) {
+        return res.status(409).json({
+          error: "Student is already enrolled in this course",
+        });
+      }
+
+      // Insert enrollment
+      const sql = `
+        INSERT INTO enrollments (student_id, course_id)
+        VALUES (?, ?)
+      `;
+
+      db.query(sql, [studentId, courseId], (err, result) => {
+        if (err) {
+          console.error("Error enrolling in course:", err);
+
+          // Database unique constraint
+          if (err.code === "ER_DUP_ENTRY") {
+            return res.status(409).json({
+              error: "Student is already enrolled in this course",
+            });
+          }
+
+          return res.status(500).json({
+            error: "Internal server error",
+          });
+        }
+
+        return res.status(201).json({
+          message: "Successfully enrolled in the course",
+        });
       });
     });
   } catch (error) {
     console.error("Error enrolling in course:", error);
-    throw error;
+
+    return res.status(500).json({
+      error: "Internal server error",
+    });
   }
 };
-
 export const Get_Enrolled_Courses = async (req, res) => {
   try {
     const Id = req.params.studentId;
