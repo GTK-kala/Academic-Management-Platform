@@ -30,37 +30,33 @@ const StudentDashboard = () => {
         const user = JSON.parse(localStorage.getItem("user"));
         const enrollmentsRes = await Enrolled_Courses(user.userId);
         const enrollments = enrollmentsRes.enrollments || [];
-        console.log("enrollmentsRes:", enrollmentsRes);
         // Fetch course details for enrolled courses
-        const courseDetailsResponses = enrollments.map((enrollment) =>
-          setEnrolledCourses((prev) => [
-            ...prev,
-            {
-              id: enrollment.course_id,
-              // Add other course details you need
-            },
-          ]),
-        );
+        console.log(enrollments);
+        setEnrolledCourses(enrollments);
+        // const courseDetailsResponses = enrollments.map(
+        //   (enrollment) => setEnrolledCourses(enrollment),
+        //   // setEnrolledCourses(enrollment),
+        // );
         // Fetch recent grades (you'd filter by student in real app)
-        const gradesRes = await api.get("/grades");
-        setRecentGrades(gradesRes.data?.grades?.slice(0, 5) || []);
+        // const gradesRes = await api.get("/grades");
+        // setRecentGrades(gradesRes.data?.grades?.slice(0, 5) || []);
 
         // Fetch fee payments
-        const feesRes = await api.get("/fees/payments");
-        const payments = feesRes.data?.payments || [];
-        setFeeSummary({
-          totalDue: payments.reduce((sum, p) => sum + (p.total_due || 0), 0),
-          totalPaid: payments.reduce((sum, p) => sum + p.amount_paid, 0),
-        });
+        // const feesRes = await api.get("/fees/payments");
+        // const payments = feesRes.data?.payments || [];
+        // setFeeSummary({
+        //   totalDue: payments.reduce((sum, p) => sum + (p.total_due || 0), 0),
+        //   totalPaid: payments.reduce((sum, p) => sum + p.amount_paid, 0),
+        // });
 
         // Attendance stats (simplified)
-        const attendanceRes = await api.get("/attendance");
-        const records = attendanceRes.data?.attendance || [];
-        setAttendanceStats({
-          present: records.filter((r) => r.status === "present").length,
-          absent: records.filter((r) => r.status === "absent").length,
-          late: records.filter((r) => r.status === "late").length,
-        });
+        // const attendanceRes = await api.get("/attendance");
+        // const records = attendanceRes.data?.attendance || [];
+        // setAttendanceStats({
+        //   present: records.filter((r) => r.status === "present").length,
+        //   absent: records.filter((r) => r.status === "absent").length,
+        //   late: records.filter((r) => r.status === "late").length,
+        // });
       } catch (error) {
         console.error("Failed to load dashboard:", error);
       } finally {
