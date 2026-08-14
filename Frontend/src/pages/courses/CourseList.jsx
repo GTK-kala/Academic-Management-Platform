@@ -13,6 +13,7 @@ import Button from "../../components/common/Button";
 import { useAuth } from "../../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 import { Get_Courses, Enroll_Course } from "../../services/courseService";
+import { Enrolled_Courses } from "../../services/courseService";
 
 const CourseList = () => {
   const { user } = useAuth();
@@ -36,8 +37,8 @@ const CourseList = () => {
 
         // If student, fetch their enrollments
         if (user?.role === "student") {
-          const enrollmentsRes = await api.get("/enrollments");
-          const enrollments = enrollmentsRes.data?.enrollments || [];
+          const enrollmentsRes = await Enrolled_Courses(user.userId);
+          const enrollments = enrollmentsRes.enrollments || [];
           setEnrolledCourseIds(enrollments.map((e) => e.course_id));
         }
       } catch (error) {

@@ -31,7 +31,6 @@ const StudentDashboard = () => {
         const enrollmentsRes = await Enrolled_Courses(user.userId);
         const enrollments = enrollmentsRes.enrollments || [];
         // Fetch course details for enrolled courses
-        console.log(enrollments);
         setEnrolledCourses(enrollments);
         // const courseDetailsResponses = enrollments.map(
         //   (enrollment) => setEnrolledCourses(enrollment),
