@@ -63,6 +63,7 @@ export const Get_Courses = async (req, res) => {
         c.description,
         c.credits,
         CONCAT(t.first_name, ' ', t.last_name) AS teacher_name,
+        c.count,
         c.max_capacity
       FROM courses c
       LEFT JOIN teachers t ON c.teacher_id = t.id
@@ -94,6 +95,7 @@ export const Get_Course = async (req, res) => {
         c.course_name,
         c.description,
         c.credits,
+        c.count,
         CONCAT(t.first_name, ' ', t.last_name) AS teacher_name,
         c.max_capacity
       FROM courses c

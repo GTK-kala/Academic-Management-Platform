@@ -33,6 +33,7 @@ const CourseList = () => {
         const coursesRes = await Get_Courses(userRole);
         const courseData = coursesRes?.courses || [];
         setCourses(courseData);
+        console.log(courseData);
         setFilteredCourses(courseData);
 
         // If student, fetch their enrollments
@@ -235,19 +236,16 @@ const CourseList = () => {
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-gray-500 dark:text-gray-400">
                     <FiUsers className="inline w-4 h-4 mr-1" />
-                    {course.enrolled_count || 0}/{course.max_capacity || 30}
+                    {course.count}/{course.max_capacity}
                   </span>
                   <span
                     className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      (course.enrolled_count || 0) >=
-                      (course.max_capacity || 30)
+                      course.count >= course.max_capacity
                         ? "bg-red-100 text-red-600 dark:bg-red-900/20 dark:text-red-400"
                         : "bg-green-100 text-green-600 dark:bg-green-900/20 dark:text-green-400"
                     }`}
                   >
-                    {(course.enrolled_count || 0) >= (course.max_capacity || 30)
-                      ? "Full"
-                      : "Available"}
+                    {course.count >= course.max_capacity ? "Full" : "Available"}
                   </span>
                 </div>
               </div>

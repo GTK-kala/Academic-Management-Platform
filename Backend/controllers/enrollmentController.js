@@ -30,12 +30,15 @@ export const Enroll_Course = async (req, res) => {
       }
 
       // Insert enrollment
-      const sql = `
+      const sql_enroll = `
         INSERT INTO enrollments (student_id, course_id)
         VALUES (?, ?)
       `;
+      const sql_count = `UPDATE courses
+SET count = COALESCE(count, 0) + 1
+WHERE id = ?;`;
 
-      db.query(sql, [studentId, courseId], (err, result) => {
+      db.query(sql_enroll, [studentId, courseId], (err, result) => {
         if (err) {
           console.error("Error enrolling in course:", err);
 
@@ -49,11 +52,20 @@ export const Enroll_Course = async (req, res) => {
           return res.status(500).json({
             error: "Internal server error",
           });
+        } else {
+          db.query(sql_count, [courseId], (err, result) => {
+            if (err) {
+              console.error("Error updating course count:", err);
+              return res.status(500).json({
+                error: "Internal server error",
+              });
+            } else {
+              return res.status(200).json({
+                message: "Student enrolled the course successfully",
+              });
+            }
+          });
         }
-
-        return res.status(201).json({
-          message: "Successfully enrolled in the course",
-        });
       });
     });
   } catch (error) {
@@ -67,11 +79,11 @@ export const Enroll_Course = async (req, res) => {
 export const Get_Enrolled_Courses = async (req, res) => {
   try {
     const Id = req.params.studentId;
-    const sql = `SELECT courses.id, courses.course_name, courses.course_code
+    const sql_enrolled = `SELECT courses.id, courses.course_name, courses.course_code
                  FROM enrollments 
                  JOIN courses ON enrollments.course_id = courses.id
                  WHERE enrollments.student_id = ?`;
-    db.query(sql, [Id], (err, results) => {
+    db.query(sql_enrolled, [Id], (err, results) => {
       if (err) {
         console.error("Error fetching enrolled courses:", err);
         return res.status(500).json({

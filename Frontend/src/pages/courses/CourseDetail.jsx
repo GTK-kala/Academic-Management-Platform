@@ -153,7 +153,7 @@ const CourseDetail = () => {
                   Students
                 </p>
                 <p className="text-xl font-bold text-gray-900 dark:text-white">
-                  {enrolledStudents.length}/{course.max_capacity}
+                  {course.count || 0}/{course.max_capacity}
                 </p>
               </div>
               <div className="p-4 bg-gray-50 dark:bg-dark-bg rounded-xl">
