@@ -65,9 +65,11 @@ export const Get_Courses = async (req, res) => {
         CONCAT(t.first_name, ' ', t.last_name) AS teacher_name,
         c.count,
         c.max_capacity,
-        t.department
+        t.department,
+        e.course_id as enrollment_id
       FROM courses c
       LEFT JOIN teachers t ON c.teacher_id = t.id
+      LEFT JOIN enrollments e ON c.id = e.course_id
     `;
     db.query(sql, (err, result) => {
       if (err) {
@@ -75,10 +77,12 @@ export const Get_Courses = async (req, res) => {
         return res.status(500).json({
           error: "Internal server error",
         });
+      } else {
+        console.log(result);
+        res.status(200).json({
+          courses: result,
+        });
       }
-      res.status(200).json({
-        courses: result,
-      });
     });
   } catch (error) {
     console.error("Error fetching courses:", error);

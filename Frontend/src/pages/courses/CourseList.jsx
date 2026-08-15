@@ -34,14 +34,14 @@ const CourseList = () => {
         const coursesRes = await Get_Courses(user.role);
         const courseData = coursesRes?.courses || [];
         setCourses(courseData);
-        console.log(courseData);
+
         setFilteredCourses(courseData);
 
         // If student, fetch their enrollments
         if (user.role === "student") {
           const enrollmentsRes = await Enrolled_Courses(user.userId);
           const enrollments = enrollmentsRes.enrollments || [];
-          setEnrolledCourseIds(enrollments.map((e) => e.course_id));
+          setEnrolledCourseIds(enrollments.map((e) => e.id));
         }
       } catch (error) {
         console.error("Failed to load courses:", error);
