@@ -27,17 +27,18 @@ const CourseList = () => {
 
   useEffect(() => {
     const fetchCourses = async () => {
-      const userRole = JSON.parse(localStorage.getItem("user"))?.role;
+      const user = JSON.parse(localStorage.getItem("user"));
+      console.log(user);
       try {
         // Fetch all courses
-        const coursesRes = await Get_Courses(userRole);
+        const coursesRes = await Get_Courses(user.role);
         const courseData = coursesRes?.courses || [];
         setCourses(courseData);
         console.log(courseData);
         setFilteredCourses(courseData);
 
         // If student, fetch their enrollments
-        if (user?.role === "student") {
+        if (user.role === "student") {
           const enrollmentsRes = await Enrolled_Courses(user.userId);
           const enrollments = enrollmentsRes.enrollments || [];
           setEnrolledCourseIds(enrollments.map((e) => e.course_id));
@@ -224,9 +225,9 @@ const CourseList = () => {
                     <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
                       {course.teacher_name || "TBA"}
                     </p>
-                    {course.teacher_department && (
+                    {course.department && (
                       <p className="text-xs text-gray-500 dark:text-gray-400">
-                        {course.teacher_department}
+                        {course.department}
                       </p>
                     )}
                   </div>
@@ -260,8 +261,7 @@ const CourseList = () => {
                     >
                       ✓ Enrolled
                     </button>
-                  ) : (course.enrolled_count || 0) >=
-                    (course.max_capacity || 30) ? (
+                  ) : (course.count || 0) >= (course.max_capacity || 30) ? (
                     <button
                       disabled
                       className="w-full py-2 text-sm font-medium text-gray-400 bg-gray-100 rounded-lg cursor-not-allowed dark:bg-gray-700"

@@ -34,9 +34,8 @@ export const Enroll_Course = async (req, res) => {
         INSERT INTO enrollments (student_id, course_id)
         VALUES (?, ?)
       `;
-      const sql_count = `UPDATE courses
-SET count = COALESCE(count, 0) + 1
-WHERE id = ?;`;
+      const sql_count = `UPDATE courses   SET count = count + 1
+       WHERE id = ?;`;
 
       db.query(sql_enroll, [studentId, courseId], (err, result) => {
         if (err) {
