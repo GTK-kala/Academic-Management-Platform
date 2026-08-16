@@ -28,13 +28,11 @@ const CourseList = () => {
   useEffect(() => {
     const fetchCourses = async () => {
       const user = JSON.parse(localStorage.getItem("user"));
-      console.log(user);
       try {
         // Fetch all courses
         const coursesRes = await Get_Courses(user.role, user.userId);
         const courseData = coursesRes?.courses || [];
         setCourses(courseData);
-        console.log(courseData);
         setFilteredCourses(courseData);
 
         // If student, fetch their enrollments

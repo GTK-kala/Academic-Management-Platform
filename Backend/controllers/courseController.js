@@ -92,7 +92,7 @@ export const Get_Courses = async (req, res) => {
 
 export const Get_Course = async (req, res) => {
   try {
-    const courseId = req.params.id;
+    const courseId = req.params.courseId;
     const sql = `
       SELECT 
         c.id,

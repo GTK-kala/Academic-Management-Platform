@@ -14,7 +14,7 @@ export const Add_Course = async (courseData) => {
       throw new Error("Failed to add course");
     } else {
       const data = await res.json();
-      console.log(data);
+      return data;
     }
   } catch (error) {
     console.error("Error adding course:", error);
