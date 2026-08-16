@@ -54,6 +54,7 @@ export const Add_Course = async (req, res) => {
 };
 
 export const Get_Courses = async (req, res) => {
+  const studentId = req.params.studentId;
   try {
     const sql = `
       SELECT 
@@ -69,16 +70,15 @@ export const Get_Courses = async (req, res) => {
         e.course_id as enrollment_id
       FROM courses c
       LEFT JOIN teachers t ON c.teacher_id = t.id
-      LEFT JOIN enrollments e ON c.id = e.course_id
+      LEFT JOIN enrollments e ON c.id = e.course_id AND e.student_id = ?
     `;
-    db.query(sql, (err, result) => {
+    db.query(sql, [studentId], (err, result) => {
       if (err) {
         console.error("Error fetching courses:", err);
         return res.status(500).json({
           error: "Internal server error",
         });
       } else {
-        console.log(result);
         res.status(200).json({
           courses: result,
         });

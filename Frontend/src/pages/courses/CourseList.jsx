@@ -31,10 +31,10 @@ const CourseList = () => {
       console.log(user);
       try {
         // Fetch all courses
-        const coursesRes = await Get_Courses(user.role);
+        const coursesRes = await Get_Courses(user.role, user.userId);
         const courseData = coursesRes?.courses || [];
         setCourses(courseData);
-
+        console.log(courseData);
         setFilteredCourses(courseData);
 
         // If student, fetch their enrollments
@@ -73,7 +73,7 @@ const CourseList = () => {
     // Filter by department (using teacher's department if available)
     if (selectedDepartment !== "all") {
       result = result.filter(
-        (course) => course.teacher_department === selectedDepartment,
+        (course) => course.department === selectedDepartment,
       );
     }
 
@@ -83,7 +83,7 @@ const CourseList = () => {
   // Get unique departments for filter
   const departments = [
     "all",
-    ...new Set(courses.map((c) => c.teacher_department).filter(Boolean)),
+    ...new Set(courses.map((c) => c.department).filter(Boolean)),
   ];
 
   const handleEnroll = async (courseId) => {
@@ -157,7 +157,7 @@ const CourseList = () => {
               className="w-full pl-10 pr-4 py-2.5 border border-gray-300 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
             />
           </div>
-          {departments.length > 1 && (
+          {courses.length > 1 && (
             <select
               value={selectedDepartment}
               onChange={(e) => setSelectedDepartment(e.target.value)}

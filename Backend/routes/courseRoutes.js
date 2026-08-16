@@ -8,7 +8,7 @@ import {
 const CourseRouter = express.Router();
 
 CourseRouter.post("/add", Add_Course);
-CourseRouter.get("/list", Get_Courses);
 CourseRouter.get("/detail/:id", Get_Course);
+CourseRouter.get("/list/:studentId", Get_Courses);
 
 export default CourseRouter;
