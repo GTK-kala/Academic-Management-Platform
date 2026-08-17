@@ -8,6 +8,6 @@ import {
 const EnrollmentRouter = express.Router();
 
 EnrollmentRouter.post("/enroll", Enroll_Course);
-EnrollmentRouter.get("/enrolled/:studentId", Get_Enrolled_Courses);
+EnrollmentRouter.get("/enrolled/:userId", Get_Enrolled_Courses);
 
 export default EnrollmentRouter;

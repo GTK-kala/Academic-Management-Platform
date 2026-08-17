@@ -43,27 +43,6 @@ export const Get_Courses = async (role, userId) => {
   }
 };
 
-export const Enroll_Course = async (courseId, studentId) => {
-  try {
-    const res = await fetch(`${BASE_URL}/enrollments/enroll`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        courseId,
-        studentId,
-      }),
-      credentials: "include",
-    });
-
-    return res;
-  } catch (error) {
-    console.error("Error enrolling in course:", error);
-    throw error;
-  }
-};
-
 export const Get_Course = async (courseId) => {
   try {
     const res = await fetch(`${BASE_URL}/courses/detail/${courseId}`, {
@@ -86,15 +65,39 @@ export const Get_Course = async (courseId) => {
   }
 };
 
-export const Enrolled_Courses = async (studentId) => {
+export const Enroll_Course = async (courseId, studentId) => {
   try {
-    const res = await fetch(`${BASE_URL}/enrollments/enrolled/${studentId}`, {
-      method: "GET",
+    const res = await fetch(`${BASE_URL}/enrollments/enroll`, {
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
+      body: JSON.stringify({
+        courseId,
+        studentId,
+      }),
       credentials: "include",
     });
+
+    return res;
+  } catch (error) {
+    console.error("Error enrolling in course:", error);
+    throw error;
+  }
+};
+
+export const Enrolled_Courses = async (userId, userRole) => {
+  try {
+    const res = await fetch(
+      `${BASE_URL}/enrollments/enrolled/${userId}?userRole=${userRole}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      },
+    );
     if (!res.ok) {
       throw new Error("Failed to fetch enrolled courses");
     } else {

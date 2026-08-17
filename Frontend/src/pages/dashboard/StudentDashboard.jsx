@@ -28,7 +28,7 @@ const StudentDashboard = () => {
       try {
         // Fetch enrollments for this student
         const user = JSON.parse(localStorage.getItem("user"));
-        const enrollmentsRes = await Enrolled_Courses(user.userId);
+        const enrollmentsRes = await Enrolled_Courses(user.userId, user.role);
         const enrollments = enrollmentsRes.enrollments || [];
         // Fetch course details for enrolled courses
         setEnrolledCourses(enrollments);

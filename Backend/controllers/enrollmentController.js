@@ -74,23 +74,41 @@ export const Enroll_Course = async (req, res) => {
 };
 export const Get_Enrolled_Courses = async (req, res) => {
   try {
-    const Id = req.params.studentId;
-    const sql_enrolled = `SELECT courses.id, courses.course_name, courses.course_code
+    const { userRole } = req.query;
+    if (userRole === "student") {
+      const Id = req.params.userId;
+      const sql_enrolled = `SELECT courses.id, courses.course_name, courses.course_code
                  FROM enrollments 
                  JOIN courses ON enrollments.course_id = courses.id
                  WHERE enrollments.student_id = ?`;
-    db.query(sql_enrolled, [Id], (err, results) => {
-      if (err) {
-        console.error("Error fetching enrolled courses:", err);
-        return res.status(500).json({
-          error: "Internal server error",
-        });
-      } else {
-        res.status(200).json({
-          enrollments: results,
-        });
-      }
-    });
+      db.query(sql_enrolled, [Id], (err, results) => {
+        if (err) {
+          console.error("Error fetching enrolled courses:", err);
+          return res.status(500).json({
+            error: "Internal server error",
+          });
+        } else {
+          res.status(200).json({
+            enrollments: results,
+          });
+        }
+      });
+    } else if (userRole === "teacher") {
+      const Id = req.params.userId;
+      const sql_enrolled = `SELECT * from courses WHERE teacher_id = ?`;
+      db.query(sql_enrolled, [Id], (err, results) => {
+        if (err) {
+          console.error("Error fetching enrolled courses:", err);
+          return res.status(500).json({
+            error: "Internal server error",
+          });
+        } else {
+          res.status(200).json({
+            enrollments: results,
+          });
+        }
+      });
+    }
   } catch (error) {
     console.error("Error fetching enrolled courses:", error);
     throw error;

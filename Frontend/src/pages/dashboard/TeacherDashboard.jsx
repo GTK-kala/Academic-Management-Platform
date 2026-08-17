@@ -16,7 +16,7 @@ const TeacherDashboard = () => {
     const fetchData = async () => {
       try {
         const user = JSON.parse(localStorage.getItem("user"));
-        // console.log("User from localStorage:", user);
+        console.log("User from localStorage:", user);
         const coursesRes = await Get_Courses(user?.userId);
         const courses = coursesRes.courses || [];
         // Filter courses assigned to this teacher (in real app, use teacher_id)
@@ -26,7 +26,7 @@ const TeacherDashboard = () => {
         setMyCourses(assignedCourses);
 
         // Count total students (simplified)
-        const enrollmentsRes = await Enrolled_Courses(user?.userId);
+        const enrollmentsRes = await Enrolled_Courses(user?.userId, user?.role);
         console.log(enrollmentsRes);
         setTotalStudents(enrollmentsRes.enrollments?.length || 0);
 

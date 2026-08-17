@@ -42,7 +42,7 @@ const CourseList = () => {
         } else if (user.role === "student") {
           setCourses(courseData);
           setFilteredCourses(courseData);
-          const enrollmentsRes = await Enrolled_Courses(user.userId);
+          const enrollmentsRes = await Enrolled_Courses(user.userId, user.role);
           const enrollments = enrollmentsRes.enrollments || [];
           setEnrolledCourseIds(enrollments.map((e) => e.id));
         } else {
