@@ -257,6 +257,8 @@ const LoginUser = (req, res) => {
                   message: "Login successful",
                   userId: teacherData.id,
                   role: user.role,
+                  firstName: teacherData.first_name,
+                  lastName: teacherData.last_name,
                   email: user.email,
                 });
               }

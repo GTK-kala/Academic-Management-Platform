@@ -33,7 +33,13 @@ const Login = () => {
         toast.error(errorData.message || "Login failed");
       } else {
         const data = await res.json();
-        login(data.email, data.role, data.userId);
+        login(
+          data.email,
+          data.role,
+          data.userId,
+          data.firstName,
+          data.lastName,
+        );
         if (data.role === "admin") {
           navigate("/dashboard/admin");
         } else if (data.role === "teacher") {

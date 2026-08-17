@@ -32,14 +32,22 @@ const CourseList = () => {
         // Fetch all courses
         const coursesRes = await Get_Courses(user.role, user.userId);
         const courseData = coursesRes?.courses || [];
-        setCourses(courseData);
-        setFilteredCourses(courseData);
-
-        // If student, fetch their enrollments
-        if (user.role === "student") {
+        if (user.role === "teacher") {
+          const teacherCourses = courseData.filter(
+            (course) =>
+              course.teacher_name === `${user.firstName} ${user.lastName}`,
+          );
+          setCourses(teacherCourses);
+          setFilteredCourses(teacherCourses);
+        } else if (user.role === "student") {
+          setCourses(courseData);
+          setFilteredCourses(courseData);
           const enrollmentsRes = await Enrolled_Courses(user.userId);
           const enrollments = enrollmentsRes.enrollments || [];
           setEnrolledCourseIds(enrollments.map((e) => e.id));
+        } else {
+          setCourses(courseData);
+          setFilteredCourses(courseData);
         }
       } catch (error) {
         console.error("Failed to load courses:", error);

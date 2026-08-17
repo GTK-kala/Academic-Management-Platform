@@ -4,9 +4,6 @@ export const Enroll_Course = async (req, res) => {
   try {
     const { courseId, studentId } = req.body;
 
-    console.log("Course ID:", courseId);
-    console.log("Student ID:", studentId);
-
     const checkSql = `
       SELECT id
       FROM enrollments

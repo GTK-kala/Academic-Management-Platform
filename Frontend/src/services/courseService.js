@@ -22,9 +22,9 @@ export const Add_Course = async (courseData) => {
   }
 };
 
-export const Get_Courses = async (role, studentId) => {
+export const Get_Courses = async (role, userId) => {
   try {
-    const res = await fetch(`${BASE_URL}/courses/list/${studentId}`, {
+    const res = await fetch(`${BASE_URL}/courses/list/${userId}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

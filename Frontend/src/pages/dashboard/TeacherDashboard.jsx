@@ -14,6 +14,8 @@ const TeacherDashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const user = JSON.parse(localStorage.getItem("user"));
+        console.log("User from localStorage:", user);
         const coursesRes = await api.get("/courses");
         const courses = coursesRes.data?.courses || [];
         // Filter courses assigned to this teacher (in real app, use teacher_id)
