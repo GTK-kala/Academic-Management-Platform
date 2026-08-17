@@ -31,7 +31,8 @@ const CourseList = () => {
       try {
         // Fetch all courses
         const coursesRes = await Get_Courses(user.role, user.userId);
-        const courseData = coursesRes?.courses || [];
+        let courseData = coursesRes?.courses || [];
+
         if (user.role === "teacher") {
           const teacherCourses = courseData.filter(
             (course) =>
@@ -92,16 +93,14 @@ const CourseList = () => {
     ...new Set(courses.map((c) => c.department).filter(Boolean)),
   ];
 
-  const handleEnroll = async (courseId) => {
+  const handleEnroll = async (courseId, teacherId) => {
     try {
-      const user = JSON.parse(localStorage.getItem("user"));
-
       if (!user || user.role !== "student") {
         toast.error("You must be logged in as a student to enroll.");
         return;
       }
 
-      const EnrollRes = await Enroll_Course(courseId, user.userId);
+      const EnrollRes = await Enroll_Course(courseId, user.userId, teacherId);
 
       if (EnrollRes.ok) {
         toast.success("Successfully enrolled in the course!");
@@ -276,7 +275,7 @@ const CourseList = () => {
                     </button>
                   ) : (
                     <button
-                      onClick={() => handleEnroll(course.id)}
+                      onClick={() => handleEnroll(course.id, course.teacher_id)}
                       className="w-full py-2 text-sm font-medium text-white transition-colors rounded-lg bg-primary hover:bg-primary-dark"
                     >
                       Enroll Now

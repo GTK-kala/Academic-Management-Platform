@@ -65,7 +65,7 @@ export const Get_Course = async (courseId) => {
   }
 };
 
-export const Enroll_Course = async (courseId, studentId) => {
+export const Enroll_Course = async (courseId, studentId, teacherId) => {
   try {
     const res = await fetch(`${BASE_URL}/enrollments/enroll`, {
       method: "POST",
@@ -75,6 +75,7 @@ export const Enroll_Course = async (courseId, studentId) => {
       body: JSON.stringify({
         courseId,
         studentId,
+        teacherId,
       }),
       credentials: "include",
     });

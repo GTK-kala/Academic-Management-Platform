@@ -2,7 +2,7 @@ import db from "../config/db.js";
 
 export const Enroll_Course = async (req, res) => {
   try {
-    const { courseId, studentId } = req.body;
+    const { courseId, studentId, teacherId } = req.body;
 
     const checkSql = `
       SELECT id
@@ -28,13 +28,13 @@ export const Enroll_Course = async (req, res) => {
 
       // Insert enrollment
       const sql_enroll = `
-        INSERT INTO enrollments (student_id, course_id)
-        VALUES (?, ?)
+        INSERT INTO enrollments (student_id, teacher_id, course_id)
+        VALUES (?, ?, ?)
       `;
       const sql_count = `UPDATE courses   SET count = count + 1
        WHERE id = ?;`;
 
-      db.query(sql_enroll, [studentId, courseId], (err, result) => {
+      db.query(sql_enroll, [studentId, teacherId, courseId], (err, result) => {
         if (err) {
           console.error("Error enrolling in course:", err);
 

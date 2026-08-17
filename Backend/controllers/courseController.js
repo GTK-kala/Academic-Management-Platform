@@ -62,6 +62,7 @@ export const Get_Courses = async (req, res) => {
         c.course_code,
         c.course_name,
         c.description,
+        c.teacher_id,
         c.credits,
         CONCAT(t.first_name, ' ', t.last_name) AS teacher_name,
         c.count,
