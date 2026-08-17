@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { FiBook, FiUsers, FiCalendar, FiBarChart2 } from "react-icons/fi";
+import { Get_Courses, Enrolled_Courses } from "../../services/courseService";
 
 const TeacherDashboard = () => {
   const { user } = useAuth();
@@ -15,21 +16,22 @@ const TeacherDashboard = () => {
     const fetchData = async () => {
       try {
         const user = JSON.parse(localStorage.getItem("user"));
-        console.log("User from localStorage:", user);
-        const coursesRes = await api.get("/courses");
-        const courses = coursesRes.data?.courses || [];
+        // console.log("User from localStorage:", user);
+        const coursesRes = await Get_Courses(user?.userId);
+        const courses = coursesRes.courses || [];
         // Filter courses assigned to this teacher (in real app, use teacher_id)
-        const assignedCourses = courses
-          .filter((c) => c.teacher_first || c.teacher_last)
-          .slice(0, 4);
+        const assignedCourses = courses.filter(
+          (c) => c.teacher_name === user.firstName + " " + user.lastName,
+        );
         setMyCourses(assignedCourses);
 
         // Count total students (simplified)
-        const enrollmentsRes = await api.get("/enrollments");
-        setTotalStudents(enrollmentsRes.data?.enrollments?.length || 0);
+        const enrollmentsRes = await Enrolled_Courses(user?.userId);
+        console.log(enrollmentsRes);
+        setTotalStudents(enrollmentsRes.enrollments?.length || 0);
 
         // Today's classes (placeholder)
-        setTodayClasses(assignedCourses.slice(0, 2));
+        setTodayClasses(assignedCourses.slice(0, 3));
       } catch (error) {
         console.error("Error:", error);
       } finally {
