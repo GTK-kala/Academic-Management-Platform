@@ -12,7 +12,7 @@ import {
 } from "react-icons/fi";
 import api from "../../services/api";
 import Button from "../../components/common/Button";
-import { Get_Course } from "../../services/courseService";
+import { Get_Course, Enrolled_Courses } from "../../services/courseService";
 import { useAuth } from "../../context/AuthContext";
 import { useParams, useNavigate, Link } from "react-router-dom";
 
@@ -30,13 +30,15 @@ const CourseDetail = () => {
     const fetchCourseDetails = async () => {
       try {
         // Fetch course details
+        const user = JSON.parse(localStorage.getItem("user"));
+        console.log(user);
         const courseRes = await Get_Course(id);
         const courseData = courseRes?.course || null;
         setCourse(courseData);
 
         // Fetch enrolled students
-        const enrollmentsRes = await api.get(`/enrollments?course_id=${id}`);
-        const enrollments = enrollmentsRes.data?.enrollments || [];
+        const enrollmentsRes = await Enrolled_Courses(user?.id, user?.role);
+        const enrollments = enrollmentsRes?.enrollments || [];
         setEnrolledStudents(enrollments);
 
         // Fetch attendance stats
@@ -234,9 +236,11 @@ const CourseDetail = () => {
                   Enrolled Students
                 </h3>
                 {user?.role === "admin" && (
-                  <Button className="flex items-center gap-2 text-sm">
-                    <FiUserPlus className="w-4 h-4" /> Add Student
-                  </Button>
+                  <Link to="/students/add">
+                    <Button className="flex items-center gap-2 text-sm">
+                      <FiUserPlus className="w-4 h-4" /> Add Student
+                    </Button>
+                  </Link>
                 )}
               </div>
               {enrolledStudents.length > 0 ? (

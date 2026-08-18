@@ -95,8 +95,22 @@ export const Get_Enrolled_Courses = async (req, res) => {
       });
     } else if (userRole === "teacher") {
       const Id = req.params.userId;
-      const sql_enrolled = `SELECT * from courses WHERE teacher_id = ?`;
+      const sql_enrolled = `SELECT * from enrollments WHERE teacher_id = ?`;
       db.query(sql_enrolled, [Id], (err, results) => {
+        if (err) {
+          console.error("Error fetching enrolled courses:", err);
+          return res.status(500).json({
+            error: "Internal server error",
+          });
+        } else {
+          res.status(200).json({
+            enrollments: results,
+          });
+        }
+      });
+    } else if (userRole === "admin") {
+      const sql_enrolled = `SELECT * from enrollments`;
+      db.query(sql_enrolled, (err, results) => {
         if (err) {
           console.error("Error fetching enrolled courses:", err);
           return res.status(500).json({

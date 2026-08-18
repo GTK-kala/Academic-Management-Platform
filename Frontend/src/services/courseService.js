@@ -103,6 +103,7 @@ export const Enrolled_Courses = async (userId, userRole) => {
       throw new Error("Failed to fetch enrolled courses");
     } else {
       const data = await res.json();
+      console.log(data);
       return data;
     }
   } catch (error) {
