@@ -87,10 +87,10 @@ export const Enroll_Course = async (courseId, studentId, teacherId) => {
   }
 };
 
-export const Enrolled_Courses = async (userId, userRole) => {
+export const Enrolled_Courses = async (userId, userRole, courseId) => {
   try {
     const res = await fetch(
-      `${BASE_URL}/enrollments/enrolled/${userId}?userRole=${userRole}`,
+      `${BASE_URL}/enrollments/enrolled/${userId}?userRole=${userRole}&courseId=${courseId}`,
       {
         method: "GET",
         headers: {
@@ -103,7 +103,6 @@ export const Enrolled_Courses = async (userId, userRole) => {
       throw new Error("Failed to fetch enrolled courses");
     } else {
       const data = await res.json();
-      console.log(data);
       return data;
     }
   } catch (error) {

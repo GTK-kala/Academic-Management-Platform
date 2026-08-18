@@ -31,30 +31,33 @@ const CourseDetail = () => {
       try {
         // Fetch course details
         const user = JSON.parse(localStorage.getItem("user"));
-        console.log(user);
         const courseRes = await Get_Course(id);
         const courseData = courseRes?.course || null;
         setCourse(courseData);
 
         // Fetch enrolled students
-        const enrollmentsRes = await Enrolled_Courses(user?.id, user?.role);
+        const enrollmentsRes = await Enrolled_Courses(
+          user?.userId,
+          user?.role,
+          id,
+        );
         const enrollments = enrollmentsRes?.enrollments || [];
         setEnrolledStudents(enrollments);
 
         // Fetch attendance stats
-        const attendanceRes = await api.get(`/attendance?course_id=${id}`);
-        const attendance = attendanceRes.data?.attendance || [];
-        setAttendanceStats({
-          totalClasses: new Set(attendance.map((a) => a.attendance_date)).size,
-          averageAttendance:
-            attendance.length > 0
-              ? Math.round(
-                  (attendance.filter((a) => a.status === "present").length /
-                    attendance.length) *
-                    100,
-                )
-              : 0,
-        });
+        // const attendanceRes = await api.get(`/attendance?course_id=${id}`);
+        // const attendance = attendanceRes.data?.attendance || [];
+        // setAttendanceStats({
+        //   totalClasses: new Set(attendance.map((a) => a.attendance_date)).size,
+        //   averageAttendance:
+        //     attendance.length > 0
+        //       ? Math.round(
+        //           (attendance.filter((a) => a.status === "present").length /
+        //             attendance.length) *
+        //             100,
+        //         )
+        //       : 0,
+        // });
       } catch (error) {
         console.error("Failed to load course:", error);
       } finally {
