@@ -89,21 +89,40 @@ export const Enroll_Course = async (courseId, studentId, teacherId) => {
 
 export const Enrolled_Courses = async (userId, userRole, courseId) => {
   try {
-    const res = await fetch(
-      `${BASE_URL}/enrollments/enrolled/${userId}?userRole=${userRole}&courseId=${courseId}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
+    if (userRole && courseId) {
+      const res = await fetch(
+        `${BASE_URL}/enrollments/enrolled/${userId}?userRole=${userRole}&courseId=${courseId}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
         },
-        credentials: "include",
-      },
-    );
-    if (!res.ok) {
-      throw new Error("Failed to fetch enrolled courses");
-    } else {
-      const data = await res.json();
-      return data;
+      );
+      if (!res.ok) {
+        throw new Error("Failed to fetch enrolled courses");
+      } else {
+        const data = await res.json();
+        return data;
+      }
+    } else if (userRole) {
+      const res = await fetch(
+        `${BASE_URL}/enrollments/enrolled/${userId}?userRole=${userRole}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        },
+      );
+      if (!res.ok) {
+        throw new Error("Failed to fetch enrolled courses");
+      } else {
+        const data = await res.json();
+        return data;
+      }
     }
   } catch (error) {
     console.error("Error fetching enrolled courses:", error);
