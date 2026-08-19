@@ -32,6 +32,7 @@ const CourseDetail = () => {
         // Fetch course details
         const user = JSON.parse(localStorage.getItem("user"));
         const courseRes = await Get_Course(id);
+        console.log(id);
         const courseData = courseRes?.course || null;
         setCourse(courseData);
 

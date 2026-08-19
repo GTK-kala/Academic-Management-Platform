@@ -93,10 +93,12 @@ export const Get_Enrolled_Courses = async (req, res) => {
           });
         }
       });
-    } else if (userRole === "teacher" && courseId) {
-      const teacherId = req.params.userId;
-      const sql_enrolled = `SELECT s.first_name, s.last_name, s.email, e.enrollment_date, e.status FROM enrollments e LEFT JOIN students s ON e.student_id = s.id LEFT JOIN courses c ON e.course_id = c.id WHERE e.course_id = ? AND e.teacher_id = ?`;
-      db.query(sql_enrolled, [courseId, teacherId], (err, results) => {
+    } else if (
+      (userRole === "admin" && courseId) ||
+      (userRole === "teacher" && courseId)
+    ) {
+      const sql_enrolled = `SELECT s.first_name, s.last_name, s.email, e.enrollment_date, e.status FROM enrollments e LEFT JOIN students s ON e.student_id = s.id LEFT JOIN courses c ON e.course_id = c.id WHERE e.course_id = ?`;
+      db.query(sql_enrolled, [courseId], (err, results) => {
         if (err) {
           console.error("Error fetching enrolled courses:", err);
           return res.status(500).json({
@@ -112,20 +114,6 @@ export const Get_Enrolled_Courses = async (req, res) => {
       const teacherId = req.params.userId;
       const sql_enrolled = `SELECT DISTINCT s.id, s.first_name, s.last_name, s.email FROM enrollments e LEFT JOIN students s ON e.student_id = s.id WHERE e.teacher_id = ?`;
       db.query(sql_enrolled, [teacherId], (err, results) => {
-        if (err) {
-          console.error("Error fetching enrolled courses:", err);
-          return res.status(500).json({
-            error: "Internal server error",
-          });
-        } else {
-          res.status(200).json({
-            enrollments: results,
-          });
-        }
-      });
-    } else if (userRole === "admin" && courseId) {
-      const sql_enrolled = `SELECT s.first_name, s.last_name, s.email, e.enrollment_date, e.status FROM enrollments e LEFT JOIN students s ON e.student_id = s.id LEFT JOIN courses c ON e.course_id = c.id WHERE e.course_id = ?`;
-      db.query(sql_enrolled, [courseId], (err, results) => {
         if (err) {
           console.error("Error fetching enrolled courses:", err);
           return res.status(500).json({
