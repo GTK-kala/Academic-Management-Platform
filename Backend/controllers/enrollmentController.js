@@ -110,7 +110,7 @@ export const Get_Enrolled_Courses = async (req, res) => {
       });
     } else if (userRole === "teacher") {
       const teacherId = req.params.userId;
-      const sql_enrolled = `SELECT s.first_name, s.last_name, s.email, e.enrollment_date, e.status FROM enrollments e LEFT JOIN students s ON e.student_id = s.id WHERE s.id = e.student_id AND e.teacher_id = ?`;
+      const sql_enrolled = `SELECT DISTINCT s.id, s.first_name, s.last_name, s.email FROM enrollments e LEFT JOIN students s ON e.student_id = s.id WHERE e.teacher_id = ?`;
       db.query(sql_enrolled, [teacherId], (err, results) => {
         if (err) {
           console.error("Error fetching enrolled courses:", err);
