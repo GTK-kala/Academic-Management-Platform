@@ -19,8 +19,9 @@ const AdminDashboard = () => {
 
   const fetchData = async () => {
     try {
-      const response = await fetchRecentStudents();
-      const courses = await Get_Courses();
+      const user = JSON.parse(localStorage.getItem("user"));
+      const courses = await Get_Courses(user?.role, user?.userId);
+      const response = await fetchRecentStudents(user?.userId, user?.role);
       setRecentStudents(response.students || []);
       setCourses(courses.courses);
     } catch (error) {

@@ -24,15 +24,18 @@ export const Add_Student = async (studentData) => {
   }
 };
 
-export const fetchRecentStudents = async () => {
+export const fetchRecentStudents = async (userId, userRole) => {
   try {
-    const res = await fetch(`${BASE_URL}/students/recent`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
+    const res = await fetch(
+      `${BASE_URL}/students/all/${userId}?userRole=${userRole}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
       },
-      credentials: "include",
-    });
+    );
     if (!res.ok) {
       const errorData = await res.json();
       throw new Error(errorData.message || "API request failed");

@@ -42,13 +42,17 @@ const Grades = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const user = JSON.parse(localStorage.getItem("user"));
         // Fetch courses
-        const coursesRes = await Get_Courses(user?.role, user?.id);
+        const coursesRes = await Get_Courses(user?.role, user?.userId);
         setCourses(coursesRes.courses || []);
 
         // Fetch students (if admin/teacher)
         if (user?.role !== "student") {
-          const studentsRes = await fetchRecentStudents();
+          const studentsRes = await fetchRecentStudents(
+            user?.userId,
+            user?.role,
+          );
           setStudents(studentsRes.students || []);
         }
 
