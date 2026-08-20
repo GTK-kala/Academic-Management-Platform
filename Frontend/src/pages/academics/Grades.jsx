@@ -12,6 +12,8 @@ import {
 import api from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
 import Button from "../../components/common/Button";
+import { Get_Courses } from "../../services/courseService";
+import { fetchRecentStudents } from "../../services/studentService";
 
 const Grades = () => {
   const { user } = useAuth();
@@ -41,13 +43,13 @@ const Grades = () => {
     const fetchData = async () => {
       try {
         // Fetch courses
-        const coursesRes = await api.get("/courses");
-        setCourses(coursesRes.data?.courses || []);
+        const coursesRes = await Get_Courses(user?.role, user?.id);
+        setCourses(coursesRes.courses || []);
 
         // Fetch students (if admin/teacher)
         if (user?.role !== "student") {
-          const studentsRes = await api.get("/students");
-          setStudents(studentsRes.data?.students || []);
+          const studentsRes = await fetchRecentStudents();
+          setStudents(studentsRes.students || []);
         }
 
         // Fetch grades

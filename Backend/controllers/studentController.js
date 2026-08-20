@@ -103,7 +103,7 @@ const getRecentStudents = (req, res) => {
       }
       res.status(200).json({
         message: "Recent students fetched successfully",
-        data: results,
+        students: results,
       });
     });
   } catch (error) {

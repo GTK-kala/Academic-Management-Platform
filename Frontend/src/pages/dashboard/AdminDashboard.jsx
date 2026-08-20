@@ -21,7 +21,7 @@ const AdminDashboard = () => {
     try {
       const response = await fetchRecentStudents();
       const courses = await Get_Courses();
-      setRecentStudents(response.data);
+      setRecentStudents(response.students || []);
       setCourses(courses.courses);
     } catch (error) {
       console.error("Error fetching recent students:", error);
