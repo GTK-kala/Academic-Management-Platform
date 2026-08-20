@@ -1,7 +1,7 @@
 import db from "../config/db.js";
 
 // Add a new grade
-export const Add_Grade = async (req, res) => {
+export const Add_Grade = (req, res) => {
   const {
     student_id,
     course_id,
@@ -10,18 +10,10 @@ export const Add_Grade = async (req, res) => {
     exam_type,
     semester,
     academic_year,
+    recorded_by,
   } = req.body;
-  console.log(
-    student_id,
-    course_id,
-    grade,
-    numeric_grade,
-    exam_type,
-    semester,
-    academic_year,
-  );
   try {
-    const add_query = `INSERT INTO grades (student_id, course_id, grade, numeric_grade, exam_type, semester, academic_year) VALUES (?, ?, ?, ?, ?, ?, ?)`;
+    const add_query = `INSERT INTO grades (student_id, course_id, grade, numeric_grade, exam_type, semester, academic_year, recorded_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
     db.query(
       add_query,
       [
@@ -32,6 +24,7 @@ export const Add_Grade = async (req, res) => {
         exam_type,
         semester,
         academic_year,
+        recorded_by,
       ],
       (err, result) => {
         if (err) {

@@ -15,6 +15,7 @@ import { useAuth } from "../../context/AuthContext";
 import Button from "../../components/common/Button";
 import { Get_Courses } from "../../services/courseService";
 import { fetchRecentStudents } from "../../services/studentService";
+import toast from "react-hot-toast";
 
 const Grades = () => {
   const { user } = useAuth();
@@ -35,6 +36,7 @@ const Grades = () => {
     exam_type: "midterm",
     semester: "2025-Spring",
     academic_year: "2025-2026",
+    recorded_by: "",
   });
 
   // Grade distribution for chart
@@ -128,10 +130,8 @@ const Grades = () => {
 
   const handleAddGrade = async (e) => {
     e.preventDefault();
+    const user = JSON.parse(localStorage.getItem("user"));
     try {
-      await Add_Grade(gradeForm);
-      alert("Grade added successfully!");
-      setShowAddGrade(false);
       setGradeForm({
         student_id: "",
         course_id: "",
@@ -140,10 +140,20 @@ const Grades = () => {
         exam_type: "midterm",
         semester: "2025-Spring",
         academic_year: "2025-2026",
+        recorded_by: user.userId,
+        recorded_by: user.userId,
       });
+      const GradeRes = await Add_Grade(gradeForm);
+      if (GradeRes.ok) {
+        toast.success("Grade added successfully");
+        console.log(GradeRes);
+      } else {
+        toast.error("Failed to add grade");
+      }
+      setShowAddGrade(false);
       fetchGrades();
     } catch (error) {
-      alert("Failed to add grade: " + error.message);
+      toast.error("Failed to add grade: " + error.message);
     }
   };
 
@@ -479,6 +489,7 @@ const Grades = () => {
                     max="100"
                     step="0.01"
                     value={gradeForm.numeric_grade}
+                    required
                     onChange={(e) =>
                       setGradeForm({
                         ...gradeForm,
