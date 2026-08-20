@@ -10,6 +10,7 @@ import {
   FiDownload,
 } from "react-icons/fi";
 import api from "../../services/api";
+import { Add_Grade } from "../../services/gradeService";
 import { useAuth } from "../../context/AuthContext";
 import Button from "../../components/common/Button";
 import { Get_Courses } from "../../services/courseService";
@@ -45,7 +46,15 @@ const Grades = () => {
         const user = JSON.parse(localStorage.getItem("user"));
         // Fetch courses
         const coursesRes = await Get_Courses(user?.role, user?.userId);
-        setCourses(coursesRes.courses || []);
+        if (user?.role === "teacher") {
+          // Filter courses to only those taught by the teacher
+          const teacherCourses = coursesRes.courses.filter(
+            (course) => course.teacher_id === user?.userId,
+          );
+          setCourses(teacherCourses);
+        } else {
+          setCourses(coursesRes.courses);
+        }
 
         // Fetch students (if admin/teacher)
         if (user?.role !== "student") {
@@ -120,7 +129,7 @@ const Grades = () => {
   const handleAddGrade = async (e) => {
     e.preventDefault();
     try {
-      await api.post("/grades", gradeForm);
+      await Add_Grade(gradeForm);
       alert("Grade added successfully!");
       setShowAddGrade(false);
       setGradeForm({
