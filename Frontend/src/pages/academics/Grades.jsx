@@ -10,7 +10,13 @@ import {
   FiDownload,
 } from "react-icons/fi";
 import api from "../../services/api";
-import { Add_Grade, Fetch_Grade } from "../../services/gradeService";
+import {
+  Add_Grade,
+  Fetch_ALL_Grades,
+  Fetch_Grade_By_Both,
+  Fetch_Grade_By_Course,
+  Fetch_Grade_By_Student,
+} from "../../services/gradeService";
 import { useAuth } from "../../context/AuthContext";
 import Button from "../../components/common/Button";
 import { Get_Courses } from "../../services/courseService";
@@ -80,23 +86,26 @@ const Grades = () => {
   const fetchGrades = async () => {
     setLoading(true);
     try {
-      let endpoint = "/grades";
-      const params = [];
-
-      if (selectedCourse !== "all") {
-        params.push(`course_id=${selectedCourse}`);
+      if (selectedCourse !== "all" && selectedStudent !== "all") {
+        const res = await Fetch_Grade_By_Both(selectedCourse, selectedStudent);
+        const gradeData = res?.grades || [];
+        setGrades(gradeData);
+        console.log(grades);
+      } else if (selectedCourse !== "all") {
+        const res = await Fetch_Grade_By_Course(selectedCourse);
+        const gradeData = res?.grades || [];
+        setGrades(gradeData);
+        console.log(grades);
+      } else if (selectedStudent !== "all") {
+        const res = await Fetch_Grade_By_Student(selectedStudent);
+        const gradeData = res?.grades || [];
+        setGrades(gradeData);
+        console.log(grades);
+      } else if (selectedCourse === "all" && selectedStudent === "all") {
+        const res = await Fetch_ALL_Grades();
+        const gradeData = res?.grades || [];
+        setGrades(gradeData);
       }
-      if (selectedStudent !== "all") {
-        params.push(`student_id=${selectedStudent}`);
-      }
-
-      if (params.length > 0) {
-        endpoint += `?${params.join("&")}`;
-      }
-
-      const res = await api.get(endpoint);
-      const gradeData = res.data?.grades || [];
-      setGrades(gradeData);
 
       // Calculate grade distribution
       const distribution = {

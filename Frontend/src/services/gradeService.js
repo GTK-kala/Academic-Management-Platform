@@ -21,7 +21,7 @@ export const Add_Grade = async (gradeData) => {
   }
 };
 
-export const Fetch_Grade = async () => {
+export const Fetch_ALL_Grades = async () => {
   try {
     const res = await fetch(`${BASE_URL}/grades/grade`, {
       method: "GET",
@@ -30,6 +30,72 @@ export const Fetch_Grade = async () => {
       },
       credentials: "include",
     });
+    if (!res.ok) {
+      throw new Error("Failed to add grade");
+    } else {
+      const data = await res.json();
+      return data;
+    }
+  } catch (error) {
+    console.error("Error adding grade:", error);
+    throw error;
+  }
+};
+
+export const Fetch_Grade_By_Student = async (studentId) => {
+  try {
+    const res = await fetch(`${BASE_URL}/grades/grade/${studentId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    });
+    if (!res.ok) {
+      throw new Error("Failed to add grade");
+    } else {
+      const data = await res.json();
+      return data;
+    }
+  } catch (error) {
+    console.error("Error adding grade:", error);
+    throw error;
+  }
+};
+
+export const Fetch_Grade_By_Course = async (courseId) => {
+  try {
+    const res = await fetch(`${BASE_URL}/grades/grade/${courseId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    });
+    if (!res.ok) {
+      throw new Error("Failed to add grade");
+    } else {
+      const data = await res.json();
+      return data;
+    }
+  } catch (error) {
+    console.error("Error adding grade:", error);
+    throw error;
+  }
+};
+
+export const Fetch_Grade_By_Both = async (courseId, studentId) => {
+  try {
+    const res = await fetch(
+      `${BASE_URL}/grades/grade/${courseId}/${studentId}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      },
+    );
     if (!res.ok) {
       throw new Error("Failed to add grade");
     } else {
