@@ -76,11 +76,19 @@ export const Fetch_Grade_All = (req, res) => {
       if (err) {
         console.error("Error adding grade:", err);
         return res.status(500).json({ error: "Failed to fetch grade" });
+      } else if (results.length > 0) {
+        console.log(results);
+        res.status(201).json({
+          message: "Grade fetched successfully",
+          grades: results,
+        });
+      } else {
+        console.log(results);
+        res.status(201).json({
+          message: "Grade fetched successfully",
+          grades: results,
+        });
       }
-      res.status(201).json({
-        message: "Grade fetched successfully",
-        grades: results,
-      });
     });
   } catch (error) {
     console.error("Error adding grade:", error);
@@ -91,7 +99,7 @@ export const Fetch_Grade_All = (req, res) => {
 // Fetch Grade by Course Id
 
 export const Fetch_Grade_By_Course = (req, res) => {
-  const courseId = req.params.courseId;
+  const { courseId } = req.params;
   try {
     const course_sql = `SELECT
         s.first_name,
@@ -113,12 +121,19 @@ export const Fetch_Grade_By_Course = (req, res) => {
       if (err) {
         console.error("Error adding grade:", err);
         return res.status(500).json({ error: "Failed to fetch grade" });
+      } else if (results.length > 0) {
+        console.log(results);
+        res.status(201).json({
+          message: "Grade fetched successfully",
+          grades: results,
+        });
+      } else {
+        console.log(results);
+        res.status(201).json({
+          message: "Grade fetched successfully",
+          grades: results,
+        });
       }
-      console.log(results);
-      res.status(201).json({
-        message: "Grade fetched successfully",
-        grades: results,
-      });
     });
   } catch (error) {
     console.error("Error adding grade:", error);
@@ -129,7 +144,7 @@ export const Fetch_Grade_By_Course = (req, res) => {
 // Fetch Grade by Student Id
 
 export const Fetch_Grade_By_Student = (req, res) => {
-  const studentId = req.params.studentId;
+  const { studentId } = req.params;
   try {
     const student_sql = `SELECT
         s.first_name,
@@ -151,8 +166,53 @@ export const Fetch_Grade_By_Student = (req, res) => {
       if (err) {
         console.error("Error adding grade:", err);
         return res.status(500).json({ error: "Failed to fetch grade" });
+      } else if (results.length > 0) {
+        console.log(results);
+        res.status(201).json({
+          message: "Grade fetched successfully",
+          grades: results,
+        });
+      } else {
+        console.log(results);
+        res.status(201).json({
+          message: "Grade fetched successfully",
+          grades: results,
+        });
       }
-      console.log(results);
+    });
+  } catch (error) {
+    console.error("Error fetching grade:", error);
+    res.status(500).json({ error: "Failed to fetch grade" });
+  }
+};
+
+// Fetch Grade By Both Student and Course Id
+
+export const Fetch_Grade_By_Both = (req, res) => {
+  const { courseId, studentId } = req.params;
+  try {
+    const grade_sql = `SELECT
+        s.first_name,
+        s.last_name,
+        c.course_name,
+        g.student_id,
+        g.course_id,
+        g.exam_type,
+        g.grade,
+        g.numeric_grade,
+        g.semester
+        FROM
+        grades g
+        LEFT JOIN students s ON g.student_id = s.id
+        LEFT JOIN teachers t ON g.recorded_by = t.id
+        LEFT JOIN courses c ON g.course_id = c.id
+        WHERE
+        g.course_id = ? and g.student_id = ?`;
+    db.query(grade_sql, [courseId, studentId], (err, results) => {
+      if (err) {
+        console.error("Error adding grade:", err);
+        return res.status(500).json({ error: "Failed to fetch grade" });
+      }
       res.status(201).json({
         message: "Grade fetched successfully",
         grades: results,

@@ -44,7 +44,7 @@ export const Fetch_ALL_Grades = async () => {
 
 export const Fetch_Grade_By_Student = async (studentId) => {
   try {
-    const res = await fetch(`${BASE_URL}/grades/grade/${studentId}`, {
+    const res = await fetch(`${BASE_URL}/grades/grade/student/${studentId}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -65,7 +65,7 @@ export const Fetch_Grade_By_Student = async (studentId) => {
 
 export const Fetch_Grade_By_Course = async (courseId) => {
   try {
-    const res = await fetch(`${BASE_URL}/grades/grade/${courseId}`, {
+    const res = await fetch(`${BASE_URL}/grades/grade/course/${courseId}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -87,7 +87,7 @@ export const Fetch_Grade_By_Course = async (courseId) => {
 export const Fetch_Grade_By_Both = async (courseId, studentId) => {
   try {
     const res = await fetch(
-      `${BASE_URL}/grades/grade/${courseId}/${studentId}`,
+      `$${BASE_URL}/grades/grade/course/${courseId}/student/${studentId}`,
       {
         method: "GET",
         headers: {

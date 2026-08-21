@@ -91,12 +91,12 @@ const Grades = () => {
         const gradeData = res?.grades || [];
         setGrades(gradeData);
         console.log(grades);
-      } else if (selectedCourse !== "all") {
+      } else if (selectedCourse !== "all" && selectedStudent === "all") {
         const res = await Fetch_Grade_By_Course(selectedCourse);
         const gradeData = res?.grades || [];
         setGrades(gradeData);
         console.log(grades);
-      } else if (selectedStudent !== "all") {
+      } else if (selectedStudent !== "all" && selectedCourse === "all") {
         const res = await Fetch_Grade_By_Student(selectedStudent);
         const gradeData = res?.grades || [];
         setGrades(gradeData);
