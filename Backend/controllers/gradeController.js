@@ -42,3 +42,24 @@ export const Add_Grade = (req, res) => {
     res.status(500).json({ error: "Failed to add grade" });
   }
 };
+
+// Fetch Grade
+
+export const Fetch_Grade = (req, res) => {
+  try {
+    const fetch_sql = `SELECT * FROM grades`;
+    db.query(fetch_sql, (err, results) => {
+      if (err) {
+        console.error("Error adding grade:", err);
+        return res.status(500).json({ error: "Failed to fetch grade" });
+      }
+      res.status(201).json({
+        message: "Grade fetched successfully",
+        gradeId: results.insertId,
+      });
+    });
+  } catch (error) {
+    console.error("Error adding grade:", error);
+    res.status(500).json({ error: "Failed to add grade" });
+  }
+};

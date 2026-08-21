@@ -10,7 +10,7 @@ import {
   FiDownload,
 } from "react-icons/fi";
 import api from "../../services/api";
-import { Add_Grade } from "../../services/gradeService";
+import { Add_Grade, Fetch_Grade } from "../../services/gradeService";
 import { useAuth } from "../../context/AuthContext";
 import Button from "../../components/common/Button";
 import { Get_Courses } from "../../services/courseService";
@@ -141,7 +141,7 @@ const Grades = () => {
         semester: "2025-Spring",
         academic_year: "2025-2026",
         recorded_by: user.userId,
-        recorded_by: user.userId,
+        recorded_by: "",
       });
       const GradeRes = await Add_Grade(gradeForm);
       if (GradeRes.ok) {
@@ -543,7 +543,14 @@ const Grades = () => {
                 >
                   Cancel
                 </Button>
-                <Button type="submit">Add Grade</Button>
+                <Button
+                  type="submit"
+                  onClick={() =>
+                    setGradeForm({ ...gradeForm, recorded_by: user.userId })
+                  }
+                >
+                  Add Grade
+                </Button>
               </div>
             </form>
           </div>
