@@ -4,7 +4,12 @@ import db from "../config/db.js";
 const AddStudent = (req, res) => {
   try {
     const { first_name, last_name, email, password } = req.body;
-    const sql = "SELECT * FROM users WHERE email = ?";
+    const sql = `SELECT
+        *
+        FROM
+        users
+        WHERE
+        email = ?`;
     db.query(sql, [email], (err, results) => {
       if (err) {
         return res.status(500).json({
@@ -20,8 +25,10 @@ const AddStudent = (req, res) => {
         // Hash the password
         const hashedPassword = bcrypt.hashSync(password, 10);
         const { date_of_birth, gender, phone, address } = req.body;
-        const sql_student_first =
-          "INSERT INTO users (first_name, last_name, email, password_hash, role) VALUES (?, ?, ?, ?, ?)";
+        const sql_student_first = `INSERT INTO
+            users (first_name, last_name, email, password_hash, role)
+            VALUES
+            (?, ?, ?, ?, ?)`;
         db.query(
           sql_student_first,
           [first_name, last_name, email, hashedPassword, "student"],
@@ -38,7 +45,12 @@ const AddStudent = (req, res) => {
                 (new Date().getMonth() + 1) +
                 "-" +
                 new Date().getDate();
-              const sql_user_id = "SELECT id FROM users WHERE email = ?";
+              const sql_user_id = `SELECT
+                  id
+                  FROM
+                  users
+                  WHERE
+                  email = ?`;
               db.query(sql_user_id, [email], (err, userResults) => {
                 if (err) {
                   res.status(500).json({
@@ -47,8 +59,21 @@ const AddStudent = (req, res) => {
                   });
                 } else {
                   const userId = userResults[0].id;
-                  const sql_student_second =
-                    "INSERT INTO students (user_id, first_name, last_name, email, password, date_of_birth, gender, phone, address, enrollment_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                  const sql_student_second = `INSERT INTO
+                      students (
+                      user_id,
+                      first_name,
+                      last_name,
+                      email,
+                      password,
+                      date_of_birth,
+                      gender,
+                      phone,
+                      address,
+                      enrollment_date
+                      )
+                      VALUES
+                      (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
                   db.query(
                     sql_student_second,
                     [
@@ -96,7 +121,12 @@ const Get_Students = (req, res) => {
     const userRole = req.query.userRole;
     const userId = req.params.userId;
     if (userRole === "admin") {
-      const sql = "SELECT * FROM students ORDER BY enrollment_date";
+      const sql = `SELECT
+          *
+          FROM
+          students
+          ORDER BY
+          enrollment_date`;
       db.query(sql, (err, results) => {
         if (err) {
           return res.status(500).json({
@@ -110,8 +140,15 @@ const Get_Students = (req, res) => {
         });
       });
     } else if (userRole === "teacher") {
-      const sql =
-        "SELECT DISTINCT s.* FROM enrollments e JOIN students s ON e.student_id = s.id WHERE e.teacher_id = ? ORDER BY s.enrollment_date";
+      const sql = `SELECT DISTINCT
+          s.*
+          FROM
+          enrollments e
+          JOIN students s ON e.student_id = s.id
+          WHERE
+          e.teacher_id = ?
+          ORDER BY
+          s.enrollment_date`;
       db.query(sql, [userId], (err, results) => {
         if (err) {
           return res.status(500).json({

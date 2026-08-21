@@ -13,7 +13,19 @@ export const Add_Grade = (req, res) => {
     recorded_by,
   } = req.body;
   try {
-    const add_query = `INSERT INTO grades (student_id, course_id, grade, numeric_grade, exam_type, semester, academic_year, recorded_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+    const add_query = `INSERT INTO
+        grades (
+        student_id,
+        course_id,
+        grade,
+        numeric_grade,
+        exam_type,
+        semester,
+        academic_year,
+        recorded_by
+        )
+        VALUES
+        (?, ?, ?, ?, ?, ?, ?, ?)`;
     db.query(
       add_query,
       [
@@ -47,7 +59,19 @@ export const Add_Grade = (req, res) => {
 
 export const Fetch_Grade = (req, res) => {
   try {
-    const fetch_sql = `SELECT * FROM grades`;
+    const fetch_sql = `SELECT
+        s.first_name,
+        s.last_name,
+        c.course_name,
+        g.exam_type,
+        g.grade,
+        g.numeric_grade,
+        g.semester
+        FROM
+        grades g
+        LEFT JOIN students s ON g.student_id = s.id
+        LEFT JOIN teachers t ON g.recorded_by = t.id
+        LEFT JOIN courses c ON g.course_id = c.id`;
     db.query(fetch_sql, (err, results) => {
       if (err) {
         console.error("Error adding grade:", err);
@@ -55,7 +79,7 @@ export const Fetch_Grade = (req, res) => {
       }
       res.status(201).json({
         message: "Grade fetched successfully",
-        gradeId: results.insertId,
+        student: results,
       });
     });
   } catch (error) {

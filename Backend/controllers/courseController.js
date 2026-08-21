@@ -10,7 +10,12 @@ export const Add_Course = async (req, res) => {
       teacher_id,
       max_capacity,
     } = req.body;
-    const sql1 = "SELECT * FROM courses Where course_code = ?";
+    const sql1 = `SELECT
+        *
+        FROM
+        courses
+        WHERE
+        course_code = ?`;
     db.query(sql1, [course_code], (err, result) => {
       if (err) {
         console.error("Error checking course code:", err);
@@ -22,7 +27,17 @@ export const Add_Course = async (req, res) => {
         });
       } else {
         const sql =
-          "INSERT INTO courses (course_code, course_name, description, credits, teacher_id, max_capacity) VALUES (?, ?, ?, ?, ?, ?)";
+          `INSERT INTO
+              courses (
+              course_code,
+              course_name,
+              description,
+              credits,
+              teacher_id,
+              max_capacity
+              )
+              VALUES
+              (?, ?, ?, ?, ?, ?)`;
         db.query(
           sql,
           [
@@ -56,23 +71,23 @@ export const Add_Course = async (req, res) => {
 export const Get_Courses = async (req, res) => {
   const userId = req.params.userId;
   try {
-    const sql = `
-      SELECT 
+    const sql = `SELECT
         c.id,
         c.course_code,
         c.course_name,
         c.description,
         c.teacher_id,
         c.credits,
-        CONCAT(t.first_name, ' ', t.last_name) AS teacher_name,
+        CONCAT (t.first_name, ' ', t.last_name) AS teacher_name,
         c.count,
         c.max_capacity,
         t.department,
-        e.course_id as enrollment_id
-      FROM courses c
-      LEFT JOIN teachers t ON c.teacher_id = t.id
-      LEFT JOIN enrollments e ON c.id = e.course_id AND e.student_id = ?
-    `;
+        e.course_id AS enrollment_id
+        FROM
+        courses c
+        LEFT JOIN teachers t ON c.teacher_id = t.id
+        LEFT JOIN enrollments e ON c.id = e.course_id
+        AND e.student_id = ?`;
     db.query(sql, [userId], (err, result) => {
       if (err) {
         console.error("Error fetching courses:", err);
@@ -94,21 +109,21 @@ export const Get_Courses = async (req, res) => {
 export const Get_Course = async (req, res) => {
   try {
     const courseId = req.params.courseId;
-    const sql = `
-      SELECT 
+    const sql = `SELECT
         c.id,
         c.course_code,
         c.course_name,
         c.description,
         c.credits,
         c.count,
-        CONCAT(t.first_name, ' ', t.last_name) AS teacher_name,
+        CONCAT (t.first_name, ' ', t.last_name) AS teacher_name,
         c.max_capacity,
         t.department
-      FROM courses c
-      LEFT JOIN teachers t ON c.teacher_id = t.id
-      WHERE c.id = ?
-    `;
+        FROM
+        courses c
+        LEFT JOIN teachers t ON c.teacher_id = t.id
+        WHERE
+        c.id = ?`;
     db.query(sql, [courseId], (err, result) => {
       if (err) {
         console.error("Error fetching course:", err);

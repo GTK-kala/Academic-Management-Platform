@@ -4,11 +4,13 @@ export const Enroll_Course = async (req, res) => {
   try {
     const { courseId, studentId, teacherId } = req.body;
 
-    const checkSql = `
-      SELECT id
-      FROM enrollments
-      WHERE student_id = ? AND course_id = ?
-    `;
+    const checkSql = `SELECT
+        id
+        FROM
+        enrollments
+        WHERE
+        student_id = ?
+        AND course_id = ?`;
 
     db.query(checkSql, [studentId, courseId], (err, rows) => {
       if (err) {
@@ -27,12 +29,15 @@ export const Enroll_Course = async (req, res) => {
       }
 
       // Insert enrollment
-      const sql_enroll = `
-        INSERT INTO enrollments (student_id, teacher_id, course_id)
-        VALUES (?, ?, ?)
-      `;
-      const sql_count = `UPDATE courses   SET count = count + 1
-       WHERE id = ?;`;
+      const sql_enroll = `INSERT INTO
+          enrollments (student_id, teacher_id, course_id)
+          VALUES
+          (?, ?, ?)`;
+      const sql_count = `UPDATE courses
+          SET
+          count = count + 1
+          WHERE
+          id = ?;`;
 
       db.query(sql_enroll, [studentId, teacherId, courseId], (err, result) => {
         if (err) {
@@ -77,10 +82,15 @@ export const Get_Enrolled_Courses = async (req, res) => {
     const { userRole, courseId } = req.query;
     if (userRole === "student") {
       const studentId = req.params.userId;
-      const sql_enrolled = `SELECT courses.id, courses.course_name, courses.course_code
-                 FROM enrollments 
-                 JOIN courses ON enrollments.course_id = courses.id
-                 WHERE enrollments.student_id = ?`;
+      const sql_enrolled = `SELECT
+          courses.id,
+          courses.course_name,
+          courses.course_code
+          FROM
+          enrollments
+          JOIN courses ON enrollments.course_id = courses.id
+          WHERE
+          enrollments.student_id = ?`;
       db.query(sql_enrolled, [studentId], (err, results) => {
         if (err) {
           console.error("Error fetching enrolled courses:", err);
@@ -97,7 +107,18 @@ export const Get_Enrolled_Courses = async (req, res) => {
       (userRole === "admin" && courseId) ||
       (userRole === "teacher" && courseId)
     ) {
-      const sql_enrolled = `SELECT s.first_name, s.last_name, s.email, e.enrollment_date, e.status FROM enrollments e LEFT JOIN students s ON e.student_id = s.id LEFT JOIN courses c ON e.course_id = c.id WHERE e.course_id = ?`;
+      const sql_enrolled = `SELECT
+          s.first_name,
+          s.last_name,
+          s.email,
+          e.enrollment_date,
+          e.status
+          FROM
+          enrollments e
+          LEFT JOIN students s ON e.student_id = s.id
+          LEFT JOIN courses c ON e.course_id = c.id
+          WHERE
+          e.course_id = ?`;
       db.query(sql_enrolled, [courseId], (err, results) => {
         if (err) {
           console.error("Error fetching enrolled courses:", err);
@@ -112,7 +133,16 @@ export const Get_Enrolled_Courses = async (req, res) => {
       });
     } else if (userRole === "teacher") {
       const teacherId = req.params.userId;
-      const sql_enrolled = `SELECT DISTINCT s.id, s.first_name, s.last_name, s.email FROM enrollments e LEFT JOIN students s ON e.student_id = s.id WHERE e.teacher_id = ?`;
+      const sql_enrolled = `SELECT DISTINCT
+          s.id,
+          s.first_name,
+          s.last_name,
+          s.email
+          FROM
+          enrollments e
+          LEFT JOIN students s ON e.student_id = s.id
+          WHERE
+          e.teacher_id = ?`;
       db.query(sql_enrolled, [teacherId], (err, results) => {
         if (err) {
           console.error("Error fetching enrolled courses:", err);
