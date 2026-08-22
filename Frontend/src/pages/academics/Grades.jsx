@@ -88,19 +88,23 @@ const Grades = () => {
     let gradeData = [];
     try {
       if (selectedCourse !== "all" && selectedStudent !== "all") {
-        const res = await Fetch_Grade_By_Both(selectedCourse, selectedStudent);
+        const res = await Fetch_Grade_By_Both(
+          selectedCourse,
+          selectedStudent,
+          user.role,
+        );
         gradeData = res?.grades || [];
         setGrades(gradeData);
       } else if (selectedCourse !== "all" && selectedStudent === "all") {
-        const res = await Fetch_Grade_By_Course(selectedCourse);
+        const res = await Fetch_Grade_By_Course(selectedCourse, user.role);
         gradeData = res?.grades || [];
         setGrades(gradeData);
       } else if (selectedStudent !== "all" && selectedCourse === "all") {
-        const res = await Fetch_Grade_By_Student(selectedStudent);
+        const res = await Fetch_Grade_By_Student(selectedStudent, user.role);
         gradeData = res?.grades || [];
         setGrades(gradeData);
       } else if (selectedCourse === "all" && selectedStudent === "all") {
-        const res = await Fetch_ALL_Grades();
+        const res = await Fetch_ALL_Grades(user.userId, user.role);
         gradeData = res?.grades || [];
         setGrades(gradeData);
       }
@@ -150,7 +154,7 @@ const Grades = () => {
         recorded_by: user.userId,
         recorded_by: "",
       });
-      const GradeRes = await Add_Grade(gradeForm);
+      const GradeRes = await Add_Grade(gradeForm, user.role);
       if (GradeRes.ok) {
         toast.success("Grade added successfully");
         console.log(GradeRes);

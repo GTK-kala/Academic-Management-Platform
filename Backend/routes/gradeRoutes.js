@@ -16,6 +16,6 @@ GradeRouters.get(
   "/grade/course/:courseId/student/:studentId",
   Fetch_Grade_By_Both,
 );
-GradeRouters.get("/grade", Fetch_Grade_All);
+GradeRouters.get("/grade/:userId", Fetch_Grade_All);
 
 export default GradeRouters;
