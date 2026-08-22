@@ -84,7 +84,7 @@ export const Fetch_Grade_All = (req, res) => {
       } else {
         res.status(201).json({
           message: "Grade fetched successfully",
-          grades: results,
+          grades: [],
         });
       }
     });
@@ -127,7 +127,7 @@ export const Fetch_Grade_By_Course = (req, res) => {
       } else {
         res.status(201).json({
           message: "Grade fetched successfully",
-          grades: results,
+          grades: [],
         });
       }
     });
@@ -170,7 +170,7 @@ export const Fetch_Grade_By_Student = (req, res) => {
       } else {
         res.status(201).json({
           message: "Grade fetched successfully",
-          grades: results,
+          grades: [],
         });
       }
     });
@@ -206,11 +206,17 @@ export const Fetch_Grade_By_Both = (req, res) => {
       if (err) {
         console.error("Error adding grade:", err);
         return res.status(500).json({ error: "Failed to fetch grade" });
+      } else if (results.length > 0) {
+        res.status(201).json({
+          message: "Grade fetched successfully",
+          grades: results,
+        });
+      } else {
+        res.status(201).json({
+          message: "Grade fetched successfully",
+          grades: [],
+        });
       }
-      res.status(201).json({
-        message: "Grade fetched successfully",
-        grades: results,
-      });
     });
   } catch (error) {
     console.error("Error fetching grade:", error);

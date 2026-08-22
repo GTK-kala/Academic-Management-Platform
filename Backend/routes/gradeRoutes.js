@@ -13,7 +13,7 @@ GradeRouters.post("/add", Add_Grade);
 GradeRouters.get("/grade/course/:courseId", Fetch_Grade_By_Course);
 GradeRouters.get("/grade/student/:studentId", Fetch_Grade_By_Student);
 GradeRouters.get(
-  "/grade/course:courseId/student/:studentId",
+  "/grade/course/:courseId/student/:studentId",
   Fetch_Grade_By_Both,
 );
 GradeRouters.get("/grade", Fetch_Grade_All);
