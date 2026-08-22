@@ -77,13 +77,11 @@ export const Fetch_Grade_All = (req, res) => {
         console.error("Error adding grade:", err);
         return res.status(500).json({ error: "Failed to fetch grade" });
       } else if (results.length > 0) {
-        console.log(results);
         res.status(201).json({
           message: "Grade fetched successfully",
           grades: results,
         });
       } else {
-        console.log(results);
         res.status(201).json({
           message: "Grade fetched successfully",
           grades: results,
@@ -122,13 +120,11 @@ export const Fetch_Grade_By_Course = (req, res) => {
         console.error("Error adding grade:", err);
         return res.status(500).json({ error: "Failed to fetch grade" });
       } else if (results.length > 0) {
-        console.log(results);
         res.status(201).json({
           message: "Grade fetched successfully",
           grades: results,
         });
       } else {
-        console.log(results);
         res.status(201).json({
           message: "Grade fetched successfully",
           grades: results,
@@ -167,13 +163,11 @@ export const Fetch_Grade_By_Student = (req, res) => {
         console.error("Error adding grade:", err);
         return res.status(500).json({ error: "Failed to fetch grade" });
       } else if (results.length > 0) {
-        console.log(results);
         res.status(201).json({
           message: "Grade fetched successfully",
           grades: results,
         });
       } else {
-        console.log(results);
         res.status(201).json({
           message: "Grade fetched successfully",
           grades: results,

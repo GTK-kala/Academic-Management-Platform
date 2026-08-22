@@ -85,25 +85,23 @@ const Grades = () => {
 
   const fetchGrades = async () => {
     setLoading(true);
+    let gradeData = [];
     try {
       if (selectedCourse !== "all" && selectedStudent !== "all") {
         const res = await Fetch_Grade_By_Both(selectedCourse, selectedStudent);
-        const gradeData = res?.grades || [];
+        gradeData = res?.grades || [];
         setGrades(gradeData);
-        console.log(grades);
       } else if (selectedCourse !== "all" && selectedStudent === "all") {
         const res = await Fetch_Grade_By_Course(selectedCourse);
-        const gradeData = res?.grades || [];
+        gradeData = res?.grades || [];
         setGrades(gradeData);
-        console.log(grades);
       } else if (selectedStudent !== "all" && selectedCourse === "all") {
         const res = await Fetch_Grade_By_Student(selectedStudent);
-        const gradeData = res?.grades || [];
+        gradeData = res?.grades || [];
         setGrades(gradeData);
-        console.log(grades);
       } else if (selectedCourse === "all" && selectedStudent === "all") {
         const res = await Fetch_ALL_Grades();
-        const gradeData = res?.grades || [];
+        gradeData = res?.grades || [];
         setGrades(gradeData);
       }
 

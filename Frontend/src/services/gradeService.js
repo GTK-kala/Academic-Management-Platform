@@ -22,6 +22,7 @@ export const Add_Grade = async (gradeData) => {
 };
 
 export const Fetch_ALL_Grades = async () => {
+  console.log("Hello1");
   try {
     const res = await fetch(`${BASE_URL}/grades/grade`, {
       method: "GET",
@@ -43,6 +44,7 @@ export const Fetch_ALL_Grades = async () => {
 };
 
 export const Fetch_Grade_By_Student = async (studentId) => {
+  console.log("Hello2");
   try {
     const res = await fetch(`${BASE_URL}/grades/grade/student/${studentId}`, {
       method: "GET",
@@ -64,6 +66,7 @@ export const Fetch_Grade_By_Student = async (studentId) => {
 };
 
 export const Fetch_Grade_By_Course = async (courseId) => {
+  console.log("Hello3");
   try {
     const res = await fetch(`${BASE_URL}/grades/grade/course/${courseId}`, {
       method: "GET",
@@ -85,6 +88,7 @@ export const Fetch_Grade_By_Course = async (courseId) => {
 };
 
 export const Fetch_Grade_By_Both = async (courseId, studentId) => {
+  console.log("Hello4");
   try {
     const res = await fetch(
       `$${BASE_URL}/grades/grade/course/${courseId}/student/${studentId}`,
