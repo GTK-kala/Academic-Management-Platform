@@ -52,7 +52,7 @@ const Grades = () => {
     const fetchData = async () => {
       try {
         const user = JSON.parse(localStorage.getItem("user"));
-        // Fetch courses
+        // Fetch courses by role
         const coursesRes = await Get_Courses(user?.role, user?.userId);
         if (user?.role === "teacher") {
           // Filter courses to only those taught by the teacher
@@ -60,8 +60,9 @@ const Grades = () => {
             (course) => course.teacher_id === user?.userId,
           );
           setCourses(teacherCourses);
-        } else {
+        } else if (user?.role === "admin") {
           setCourses(coursesRes.courses);
+        } else {
         }
 
         // Fetch students (if admin/teacher)
@@ -91,20 +92,24 @@ const Grades = () => {
         const res = await Fetch_Grade_By_Both(
           selectedCourse,
           selectedStudent,
-          user.role,
+          user?.role,
         );
         gradeData = res?.grades || [];
         setGrades(gradeData);
       } else if (selectedCourse !== "all" && selectedStudent === "all") {
-        const res = await Fetch_Grade_By_Course(selectedCourse, user.role);
+        const res = await Fetch_Grade_By_Course(selectedCourse, user?.role);
         gradeData = res?.grades || [];
         setGrades(gradeData);
       } else if (selectedStudent !== "all" && selectedCourse === "all") {
-        const res = await Fetch_Grade_By_Student(selectedStudent, user.role);
+        const res = await Fetch_Grade_By_Student(
+          selectedStudent,
+          user?.role,
+          user?.userId,
+        );
         gradeData = res?.grades || [];
         setGrades(gradeData);
       } else if (selectedCourse === "all" && selectedStudent === "all") {
-        const res = await Fetch_ALL_Grades(user.userId, user.role);
+        const res = await Fetch_ALL_Grades(user.userId, user?.role);
         gradeData = res?.grades || [];
         setGrades(gradeData);
       }
