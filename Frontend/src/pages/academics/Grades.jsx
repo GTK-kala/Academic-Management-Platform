@@ -19,7 +19,7 @@ import {
 } from "../../services/gradeService";
 import { useAuth } from "../../context/AuthContext";
 import Button from "../../components/common/Button";
-import { Get_Courses } from "../../services/courseService";
+import { Get_Courses, Enrolled_Courses } from "../../services/courseService";
 import { fetchRecentStudents } from "../../services/studentService";
 import toast from "react-hot-toast";
 
@@ -62,7 +62,11 @@ const Grades = () => {
           setCourses(teacherCourses);
         } else if (user?.role === "admin") {
           setCourses(coursesRes.courses);
-        } else {
+        } else if (user?.role === "student") {
+          const res = await Enrolled_Courses(user?.userId, user?.role);
+          const data = res.enrollments;
+          console.log(data);
+          setCourses(data);
         }
 
         // Fetch students (if admin/teacher)

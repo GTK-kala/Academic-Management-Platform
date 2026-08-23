@@ -124,6 +124,36 @@ export const Fetch_Grade_All = (req, res) => {
           });
         }
       });
+    } else {
+      const fetch_sql = `SELECT
+          s.first_name,
+          s.last_name,
+          c.course_name,
+          g.exam_type,
+          g.grade,
+          g.numeric_grade,
+          g.semester
+          FROM
+          grades g
+          LEFT JOIN students s ON g.student_id = s.id
+          LEFT JOIN teachers t ON g.recorded_by = t.id
+          LEFT JOIN courses c ON g.course_id = c.id`;
+      db.query(fetch_sql, (err, results) => {
+        if (err) {
+          console.error("Error fetching grade:", err);
+          return res.status(500).json({ error: "Failed to fetch grade" });
+        } else if (results.length > 0) {
+          res.status(201).json({
+            message: "Grade fetched successfully",
+            grades: results,
+          });
+        } else {
+          res.status(201).json({
+            message: "Error fetching grade",
+            grades: [],
+          });
+        }
+      });
     }
   } catch (error) {
     console.error("Error fetching grade:", error);
