@@ -88,10 +88,10 @@ export const Fetch_Grade_By_Student = async (studentId, userRole, userId) => {
   }
 };
 
-export const Fetch_Grade_By_Course = async (courseId, userRole) => {
+export const Fetch_Grade_By_Course = async (courseId, userRole, userId) => {
   try {
     const res = await fetch(
-      `${BASE_URL}/grades/grade/course/${courseId}?userRole=${userRole}`,
+      `${BASE_URL}/grades/grade/course/${courseId}?userRole=${userRole}&useId${userId}`,
       {
         method: "GET",
         headers: {

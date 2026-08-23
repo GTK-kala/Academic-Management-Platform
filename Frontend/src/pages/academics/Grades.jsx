@@ -65,7 +65,6 @@ const Grades = () => {
         } else if (user?.role === "student") {
           const res = await Enrolled_Courses(user?.userId, user?.role);
           const data = res.enrollments;
-          console.log(data);
           setCourses(data);
         }
 
@@ -101,7 +100,11 @@ const Grades = () => {
         gradeData = res?.grades || [];
         setGrades(gradeData);
       } else if (selectedCourse !== "all" && selectedStudent === "all") {
-        const res = await Fetch_Grade_By_Course(selectedCourse, user?.role);
+        const res = await Fetch_Grade_By_Course(
+          selectedCourse,
+          user?.role,
+          user?.userId,
+        );
         gradeData = res?.grades || [];
         setGrades(gradeData);
       } else if (selectedStudent !== "all" && selectedCourse === "all") {
