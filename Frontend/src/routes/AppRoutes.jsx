@@ -17,7 +17,7 @@ import StudentDashboard from "../pages/dashboard/StudentDashboard";
 // Student Pages
 import AddStudent from "../pages/students/AddStudent";
 import StudentList from "../pages/students/StudentList";
-// import StudentProfile from "../pages/students/StudentProfile";
+import StudentProfile from "../pages/students/StudentProfile";
 
 // Course Pages
 import AddCourse from "../pages/courses/AddCourse";
@@ -120,14 +120,14 @@ const AppRoutes = () => {
           }
         />
 
-        {/* <Route
+        <Route
           path="/students/:id"
           element={
             <ProtectedRoute roles={["admin", "teacher"]}>
               <StudentProfile />
             </ProtectedRoute>
           }
-        /> */}
+        />
 
         <Route
           path="/students/:id/edit"
