@@ -10,6 +10,7 @@ import {
   FiBarChart2,
   FiClock,
 } from "react-icons/fi";
+import { Fetch_ALL_Grades } from "../../services/gradeService";
 
 const StudentDashboard = () => {
   const { user } = useAuth();
@@ -31,14 +32,13 @@ const StudentDashboard = () => {
         const enrollmentsRes = await Enrolled_Courses(user.userId, user.role);
         const enrollments = enrollmentsRes.enrollments || [];
         // Fetch course details for enrolled courses
-        setEnrolledCourses(enrollments);
-        // const courseDetailsResponses = enrollments.map(
-        //   (enrollment) => setEnrolledCourses(enrollment),
-        //   // setEnrolledCourses(enrollment),
+        setEnrolledCourses(enrollments.slice(0, 3));
+        // const courseDetailsResponses = enrollments.map((enrollment) =>
+        //   console.log(enrollment),
         // );
         // Fetch recent grades (you'd filter by student in real app)
-        // const gradesRes = await api.get("/grades");
-        // setRecentGrades(gradesRes.data?.grades?.slice(0, 5) || []);
+        const gradesRes = await Fetch_ALL_Grades(user?.userId, user?.role);
+        setRecentGrades(gradesRes?.grades?.slice(0, 5) || []);
 
         // Fetch fee payments
         // const feesRes = await api.get("/fees/payments");

@@ -12,8 +12,9 @@ const StudentList = () => {
 
   const fetchStudents = async () => {
     try {
-      const response = await fetchRecentStudents();
-      setStudents(response.data || []);
+      const user = JSON.parse(localStorage.getItem("user"));
+      const response = await fetchRecentStudents(user?.userId, user?.role);
+      setStudents(response.students || []);
     } catch (err) {
       console.error(err);
     } finally {
