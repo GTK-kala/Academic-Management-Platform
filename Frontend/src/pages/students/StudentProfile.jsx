@@ -20,6 +20,7 @@ import {
 import api from "../../services/api";
 import Button from "../../components/common/Button";
 import { useAuth } from "../../context/AuthContext";
+import { Fetch_Student } from "../../services/studentService";
 
 const StudentProfile = () => {
   const { id } = useParams();
@@ -46,26 +47,27 @@ const StudentProfile = () => {
 
       try {
         // Fetch basic student info
-        const studentRes = await api.get(`/students/${id}`);
-        const studentData = studentRes.data?.student || studentRes.data;
+        const user = JSON.parse(localStorage.getItem("user"));
+        const studentRes = await Fetch_Student(id, user?.role);
+        const studentData = studentRes?.student || studentRes.data;
         setStudent(studentData);
 
         // Fetch enrolled courses
-        const enrollmentsRes = await api.get(`/enrollments?student_id=${id}`);
-        const enrollments = enrollmentsRes.data?.enrollments || [];
-        setEnrolledCourses(enrollments);
+        // const enrollmentsRes = await api.get(`/enrollments?student_id=${id}`);
+        // const enrollments = enrollmentsRes.data?.enrollments || [];
+        // setEnrolledCourses(enrollments);
 
-        // Fetch attendance records
-        const attendanceRes = await api.get(`/attendance?student_id=${id}`);
-        setAttendanceRecords(attendanceRes.data?.attendance || []);
+        // // Fetch attendance records
+        // const attendanceRes = await api.get(`/attendance?student_id=${id}`);
+        // setAttendanceRecords(attendanceRes.data?.attendance || []);
 
-        // Fetch grades
-        const gradesRes = await api.get(`/grades?student_id=${id}`);
-        setGradeRecords(gradesRes.data?.grades || []);
+        // // Fetch grades
+        // const gradesRes = await api.get(`/grades?student_id=${id}`);
+        // setGradeRecords(gradesRes.data?.grades || []);
 
-        // Fetch fee payments
-        const feesRes = await api.get(`/fees/payments?student_id=${id}`);
-        setFeeRecords(feesRes.data?.payments || []);
+        // // Fetch fee payments
+        // const feesRes = await api.get(`/fees/payments?student_id=${id}`);
+        // setFeeRecords(feesRes.data?.payments || []);
       } catch (err) {
         console.error("Failed to fetch student data:", err);
         setError(err.message || "Failed to load student data");

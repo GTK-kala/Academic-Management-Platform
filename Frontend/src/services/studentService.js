@@ -48,3 +48,28 @@ export const fetchRecentStudents = async (userId, userRole) => {
     throw error;
   }
 };
+
+export const Fetch_Student = async (studentId, userRole) => {
+  try {
+    const res = await fetch(
+      `${BASE_URL}/students/student/${studentId}?userRole=${userRole}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      },
+    );
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(errorData.message || "API request failed");
+    } else {
+      const Data = await res.json();
+      return Data;
+    }
+  } catch (error) {
+    console.error("API request failed:", error);
+    throw error;
+  }
+};

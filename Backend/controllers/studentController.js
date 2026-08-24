@@ -174,6 +174,37 @@ const Get_Students = (req, res) => {
   }
 };
 
+const Get_Student = (req, res) => {
+  try {
+    const { userRole } = req.query;
+    const { studentId } = req.params;
+    if (userRole === "admin" || userRole === "teacher") {
+      const student_sql = `SELECT * FROM students WHERE id = ?`;
+      db.query(student_sql, [studentId], (err, results) => {
+        if (err) {
+          return res.status(500).json({
+            message: "Failed to fetch recent students",
+            error: err.message,
+          });
+        }
+        res.status(200).json({
+          message: "Recent students fetched successfully",
+          student: results[0],
+        });
+      });
+    } else {
+      return res.status(403).json({
+        message: "Access denied",
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to fetch recent students",
+      error: error.message,
+    });
+  }
+};
+
 // const Get_Recent_Students = (req, res) => {
 //   try {
 //     const sql = "SELECT * FROM students ORDER BY enrollment_date DESC LIMIT 5";
@@ -197,4 +228,4 @@ const Get_Students = (req, res) => {
 //   }
 // };
 
-export { AddStudent, Get_Students };
+export { AddStudent, Get_Students, Get_Student };
