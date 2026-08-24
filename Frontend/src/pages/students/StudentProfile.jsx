@@ -21,6 +21,8 @@ import api from "../../services/api";
 import Button from "../../components/common/Button";
 import { useAuth } from "../../context/AuthContext";
 import { Fetch_Student } from "../../services/studentService";
+import { Enrolled_Courses } from "../../services/courseService";
+import { Fetch_Grade_By_Student } from "../../services/gradeService";
 
 const StudentProfile = () => {
   const { id } = useParams();
@@ -53,17 +55,21 @@ const StudentProfile = () => {
         setStudent(studentData);
 
         // Fetch enrolled courses
-        // const enrollmentsRes = await api.get(`/enrollments?student_id=${id}`);
-        // const enrollments = enrollmentsRes.data?.enrollments || [];
-        // setEnrolledCourses(enrollments);
+        const enrollmentsRes = await Enrolled_Courses(id, "student");
+        const enrollments = enrollmentsRes?.enrollments || [];
+        setEnrolledCourses(enrollments);
 
         // // Fetch attendance records
         // const attendanceRes = await api.get(`/attendance?student_id=${id}`);
         // setAttendanceRecords(attendanceRes.data?.attendance || []);
 
         // // Fetch grades
-        // const gradesRes = await api.get(`/grades?student_id=${id}`);
-        // setGradeRecords(gradesRes.data?.grades || []);
+        const gradesRes = await Fetch_Grade_By_Student(
+          id,
+          "student",
+          user?.userId,
+        );
+        setGradeRecords(gradesRes?.grades || []);
 
         // // Fetch fee payments
         // const feesRes = await api.get(`/fees/payments?student_id=${id}`);

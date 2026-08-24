@@ -67,6 +67,7 @@ export const Fetch_Grade_All = (req, res) => {
           s.first_name,
           s.last_name,
           c.course_name,
+           g.student_id,
           g.exam_type,
           g.grade,
           g.numeric_grade,
@@ -98,6 +99,7 @@ export const Fetch_Grade_All = (req, res) => {
           s.last_name,
           c.course_name,
           g.exam_type,
+           g.student_id,
           g.grade,
           g.numeric_grade,
           g.semester
@@ -130,6 +132,7 @@ export const Fetch_Grade_All = (req, res) => {
           s.last_name,
           c.course_name,
           g.exam_type,
+           g.student_id,
           g.grade,
           g.numeric_grade,
           g.semester
@@ -174,6 +177,7 @@ export const Fetch_Grade_By_Course = (req, res) => {
         c.course_name,
         g.course_id,
         g.exam_type,
+         g.student_id,
         g.grade,
         g.numeric_grade,
         g.semester
@@ -206,9 +210,11 @@ export const Fetch_Grade_By_Course = (req, res) => {
         s.last_name,
         c.course_name,
         g.course_id,
+         g.student_id,
         g.exam_type,
         g.grade,
         g.numeric_grade,
+        g.student_id,
         g.semester
         FROM
         grades g
@@ -254,6 +260,7 @@ export const Fetch_Grade_By_Student = (req, res) => {
           g.student_id,
           g.exam_type,
           g.grade,
+           g.student_id,
           g.numeric_grade,
           g.semester
           FROM
@@ -287,6 +294,7 @@ export const Fetch_Grade_By_Student = (req, res) => {
           g.student_id,
           g.course_id,
           g.exam_type,
+           g.student_id,
           g.grade,
           g.numeric_grade,
           g.semester
@@ -299,6 +307,40 @@ export const Fetch_Grade_By_Student = (req, res) => {
           g.student_id = ?
           AND t.id = ?`;
       db.query(student_sql, [studentId, userId], (err, results) => {
+        if (err) {
+          console.error("Error fetching grade:", err);
+          return res.status(500).json({ error: "Failed to fetch grade" });
+        } else if (results.length > 0) {
+          res.status(201).json({
+            message: "Grade fetched successfully",
+            grades: results,
+          });
+        } else {
+          res.status(201).json({
+            message: "Error fetching grade",
+            grades: [],
+          });
+        }
+      });
+    } else if (userRole === "student") {
+      const student_sql = `SELECT
+          s.first_name,
+          s.last_name,
+          c.course_name,
+          g.student_id,
+          g.course_id,
+          g.exam_type,
+          g.grade,
+          g.numeric_grade,
+          g.semester
+          FROM
+          grades g
+          JOIN teachers t ON g.recorded_by = t.id
+          JOIN courses c ON g.course_id = c.id
+          JOIN students s ON g.student_id = s.id
+          WHERE
+          g.student_id = ? `;
+      db.query(student_sql, [studentId], (err, results) => {
         if (err) {
           console.error("Error fetching grade:", err);
           return res.status(500).json({ error: "Failed to fetch grade" });

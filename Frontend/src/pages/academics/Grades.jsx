@@ -4,12 +4,12 @@ import {
   FiTrendingUp,
   FiAward,
   FiBook,
-  FiSearch,
   FiPlus,
   FiEdit2,
   FiDownload,
 } from "react-icons/fi";
 import api from "../../services/api";
+import { Link } from "react-router-dom";
 import {
   Add_Grade,
   Fetch_ALL_Grades,
@@ -658,9 +658,11 @@ const Grades = () => {
                     </td>
                     <td className="px-6 py-4">
                       {user?.role !== "student" && (
-                        <button className="text-primary hover:text-primary-dark">
-                          <FiEdit2 className="w-4 h-4" />
-                        </button>
+                        <Link to={`/students/${grade.student_id}`}>
+                          <button className="text-primary hover:text-primary-dark">
+                            <FiEdit2 className="w-4 h-4" />
+                          </button>
+                        </Link>
                       )}
                     </td>
                   </tr>
