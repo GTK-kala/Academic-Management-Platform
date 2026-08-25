@@ -26,8 +26,7 @@ export const Add_Course = async (req, res) => {
           error: "Course code already exists",
         });
       } else {
-        const sql =
-          `INSERT INTO
+        const sql = `INSERT INTO
               courses (
               course_code,
               course_name,
@@ -143,6 +142,60 @@ export const Get_Course = async (req, res) => {
     });
   } catch (error) {
     console.error("Error fetching course:", error);
+    throw error;
+  }
+};
+
+export const Edit_Course = (req, res) => {
+  const { courseId } = req.params;
+  const {
+    course_code,
+    course_name,
+    description,
+    credits,
+    teacher_id,
+    max_capacity,
+  } = req.body;
+  let fields = [];
+  let values = [];
+  try {
+    if (course_code) {
+      fields.push("course_code = ?");
+      values.push(course_code);
+    } else if (course_name) {
+      fields.push("course_name = ?");
+      values.push(course_name);
+    } else if (description) {
+      fields.push("description = ?");
+      values.push(description);
+    } else if (credits) {
+      fields.push("credits = ?");
+      values.push(credits);
+    } else if (teacher_id) {
+      fields.push("teacher_id = ?");
+      values.push(teacher_id);
+    } else {
+      fields.push("max_capacity = ?");
+      values.push(max_capacity);
+    }
+    values.push(courseId);
+
+    const edit_sql = `UPDATE courses set ${fields.join(", ")} WHERE id = ?`;
+
+    db.query(edit_sql, [values], (err, result) => {
+      if (err) {
+        return res.status(500).json({
+          message: err,
+        });
+      } else {
+        return res.status(200).json({
+          message: "course info updated !!!",
+          result: result[0],
+        });
+      }
+    });
+  } catch (error) {
+    console.error("Error editing course:", error);
     throw error;
   }
 };

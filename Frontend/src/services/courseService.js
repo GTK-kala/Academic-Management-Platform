@@ -56,11 +56,32 @@ export const Get_Course = async (courseId) => {
       throw new Error("Failed to fetch course details");
     } else {
       const data = await res.json();
-      // console.log("Data", data);
       return data;
     }
   } catch (error) {
     console.error("Error fetching course details:", error);
+    throw error;
+  }
+};
+
+export const Edit_Course = async (courseId, courseData) => {
+  try {
+    const res = await fetch(`${BASE_URL}/courses/edit/${courseId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(courseData),
+      credentials: "include",
+    });
+    if (!res.ok) {
+      throw new Error("Failed to edit course");
+    } else {
+      const data = await res.json();
+      return data;
+    }
+  } catch (error) {
+    console.error("Error editing course:", error);
     throw error;
   }
 };

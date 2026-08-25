@@ -4,6 +4,7 @@ import Button from "../../components/common/Button";
 import { FiArrowLeft, FiSave, FiX } from "react-icons/fi";
 import { Add_Course } from "../../services/courseService";
 import { Get_Teachers } from "../../services/teacherService";
+import { Get_Course, Edit_Course } from "../../services/courseService";
 import { useNavigate, useParams, Link } from "react-router-dom";
 
 const AddCourse = () => {
@@ -40,8 +41,8 @@ const AddCourse = () => {
 
         // If editing, fetch course data
         if (isEditMode) {
-          const courseRes = await api.get(`/courses/${id}`);
-          const courseData = courseRes.data?.course;
+          const courseRes = await Get_Course(id);
+          const courseData = courseRes?.course;
 
           if (courseData) {
             setForm({
@@ -143,7 +144,7 @@ const AddCourse = () => {
 
       if (isEditMode) {
         // Update existing course
-        await api.put(`/courses/${id}`, courseData);
+        await Edit_Course(id, courseData);
         setSuccess("Course updated successfully!");
       } else {
         // Create new course
