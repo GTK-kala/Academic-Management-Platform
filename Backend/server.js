@@ -8,6 +8,7 @@ import UserRoutes from "./routes/userRoutes.js";
 import GradeRouters from "./routes/gradeRoutes.js";
 import CourseRoutes from "./routes/courseRoutes.js";
 import StudentRoutes from "./routes/studentRoutes.js";
+import TeacherRoutes from "./routes/teacherRoutes.js";
 import EnrollmentRoutes from "./routes/enrollmentRoutes.js";
 
 dotenv.config();
@@ -31,6 +32,7 @@ app.use("/grades", GradeRouters);
 app.use("/api/auth", UserRoutes);
 app.use("/courses", CourseRoutes);
 app.use("/students", StudentRoutes);
+app.use("/teachers", TeacherRoutes);
 app.use("/enrollments", EnrollmentRoutes);
 
 app.listen(port, () => {
