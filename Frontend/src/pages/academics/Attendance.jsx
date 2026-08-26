@@ -10,7 +10,8 @@ import {
 import api from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
 import Button from "../../components/common/Button";
-import { Get_Courses } from "../../services/courseService";
+import { Get_Courses, Get_Course } from "../../services/courseService";
+import { Enrolled_Courses } from "../../services/courseService";
 import { Get_Attendances } from "../../services/attendanceService";
 
 const Attendance = () => {
@@ -52,24 +53,20 @@ const Attendance = () => {
   // Fetch attendance records
   useEffect(() => {
     const fetchAttendance = async () => {
+      const user = JSON.parse(localStorage.getItem("user"));
       setLoading(true);
       try {
-        let endpoint = "/attendance";
         const params = [];
-
         if (selectedCourse !== "all") {
-          params.push(`course_id=${selectedCourse}`);
+          const res = await Get_Attendances(selectedCourse, user?.role);
+          setAttendanceRecords(res?.attendance || []);
         }
+
         if (selectedDate) {
           params.push(`date=${selectedDate}`);
         }
-
-        if (params.length > 0) {
-          endpoint += `?${params.join("&")}`;
-        }
-
-        const res = await api.get(endpoint);
-        setAttendanceRecords(res.data?.attendance || []);
+        const res = await Get_Attendances(user?.role);
+        setAttendanceRecords(res?.attendance || []);
       } catch (error) {
         console.error("Failed to fetch attendance:", error);
       } finally {
@@ -82,11 +79,12 @@ const Attendance = () => {
 
   // Fetch students for marking attendance
   const startMarkingAttendance = async () => {
+    const user = JSON.parse(localStorage.getItem("user"));
     setMarkingAttendance(true);
     try {
       // Get enrolled students for selected course
-      const res = await api.get(`/enrollments?course_id=${selectedCourse}`);
-      const enrollments = res.data?.enrollments || [];
+      const res = await Enrolled_Courses(user?.userId, user?.role);
+      const enrollments = res.enrollments || [];
       setStudents(enrollments);
 
       // Initialize attendance form

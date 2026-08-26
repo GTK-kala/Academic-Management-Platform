@@ -1,19 +1,45 @@
 const BASE_URL = import.meta.env.VITE_API_URL;
 
-export const Get_Attendances = async () => {
+export const Get_Attendances = async (courseId, userRole) => {
   try {
-    const res = await fetch(`${BASE_URL}/attendance/all`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-    });
-    if (!res.ok) {
-      throw new Error("Failed to Attendance");
-    } else {
-      const data = await res.json();
-      return data;
+    if (userRole && courseId === undefined) {
+      console.log("1");
+      const res = await fetch(
+        `${BASE_URL}/attendances/all?userRole=${userRole}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        },
+      );
+      if (!res.ok) {
+        throw new Error("Failed to Attendance");
+      } else {
+        const data = await res.json();
+        console.log(data);
+        return data;
+      }
+    } else if (courseId && userRole) {
+      console.log(courseId, userRole);
+      const res = await fetch(
+        `${BASE_URL}/attendances/all?userRole=${userRole}&courseId=${courseId}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        },
+      );
+      if (!res.ok) {
+        throw new Error("Failed to Attendance");
+      } else {
+        const data = await res.json();
+        console.log(data);
+        return data;
+      }
     }
   } catch (error) {
     console.error("Error fetching Attendance:", error);

@@ -10,6 +10,7 @@ import CourseRoutes from "./routes/courseRoutes.js";
 import StudentRoutes from "./routes/studentRoutes.js";
 import TeacherRoutes from "./routes/teacherRoutes.js";
 import EnrollmentRoutes from "./routes/enrollmentRoutes.js";
+import AttendanceRouter from "./routes/attendanceRoutes.js";
 
 dotenv.config();
 const app = express();
@@ -34,6 +35,7 @@ app.use("/courses", CourseRoutes);
 app.use("/students", StudentRoutes);
 app.use("/teachers", TeacherRoutes);
 app.use("/enrollments", EnrollmentRoutes);
+app.use("/attendances", AttendanceRouter);
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
