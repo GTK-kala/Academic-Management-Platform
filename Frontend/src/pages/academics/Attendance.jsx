@@ -11,6 +11,7 @@ import {
 import api from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
 import Button from "../../components/common/Button";
+import { Get_Courses } from "../../services/courseService";
 
 const Attendance = () => {
   const { user } = useAuth();
@@ -28,9 +29,19 @@ const Attendance = () => {
   // Fetch courses for filter
   useEffect(() => {
     const fetchCourses = async () => {
+      const user = JSON.parse(localStorage.getItem("user"));
       try {
-        const res = await api.get("/courses");
-        setCourses(res.data?.courses || []);
+        const res = await Get_Courses(user?.role, user?.userId);
+        const CourseData = res?.courses || [];
+        if (user?.role === "admin") {
+          setCourses(CourseData);
+        } else if (user.role === "teacher") {
+          const teacherCourses = CourseData.filter(
+            (course) =>
+              course.teacher_name === `${user.firstName} ${user.lastName}`,
+          );
+          setCourses(teacherCourses);
+        }
       } catch (error) {
         console.error("Failed to fetch courses:", error);
       }
