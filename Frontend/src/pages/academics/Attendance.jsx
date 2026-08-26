@@ -5,13 +5,13 @@ import {
   FiX,
   FiClock,
   FiAlertCircle,
-  FiSearch,
   FiDownload,
 } from "react-icons/fi";
 import api from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
 import Button from "../../components/common/Button";
 import { Get_Courses } from "../../services/courseService";
+import { Get_Attendances } from "../../services/attendanceService";
 
 const Attendance = () => {
   const { user } = useAuth();
