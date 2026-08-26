@@ -1,7 +1,7 @@
-import bcrypt from "bcryptjs";
+import bcrypt, { truncates } from "bcryptjs";
 import db from "../config/db.js";
 
-const AddStudent = (req, res) => {
+const Add_Student = (req, res) => {
   try {
     const { first_name, last_name, email, password } = req.body;
     const sql = `SELECT
@@ -205,6 +205,80 @@ const Get_Student = (req, res) => {
   }
 };
 
+const Edit_Student = (req, res) => {
+  const { studentId } = req.params;
+  const {
+    first_name,
+    last_name,
+    email,
+    password,
+    date_of_birth,
+    gender,
+    phone,
+    address,
+  } = req.body;
+  let fields = [];
+  let values = [];
+  try {
+    if (first_name !== undefined) {
+      fields.push("first_name = ?");
+      values.push(first_name);
+    }
+    if (last_name !== undefined) {
+      fields.push("last_name = ?");
+      values.push(last_name);
+    }
+    if (email !== undefined) {
+      fields.push("email = ?");
+      values.push(email);
+    }
+    if (password !== undefined) {
+      fields.push("password = ?");
+      values.push(password);
+    }
+    if (date_of_birth !== undefined) {
+      fields.push("date_of_birth = ?");
+      values.push(date_of_birth);
+    }
+    if (gender !== undefined) {
+      fields.push("gender = ?");
+      values.push(gender);
+    }
+    if (phone !== undefined) {
+      fields.push("phone = ?");
+      values.push(phone);
+    }
+    if (address !== undefined) {
+      fields.push("address = ?");
+      values.push(address);
+    }
+    values.push(studentId);
+
+    const edit_sql = `
+       UPDATE student
+       SET ${fields.join(", ")}
+       WHERE id = ?
+     `;
+    db.query(edit_sql, values, (err, result) => {
+      if (err) {
+        return res.status(500).json({
+          message: err,
+        });
+      } else {
+        return res.status(200).json({
+          message: "student info updated !!!",
+          result: result[0],
+        });
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to edit student",
+      error: error.message,
+    });
+  }
+};
+
 // const Get_Recent_Students = (req, res) => {
 //   try {
 //     const sql = "SELECT * FROM students ORDER BY enrollment_date DESC LIMIT 5";
@@ -228,4 +302,4 @@ const Get_Student = (req, res) => {
 //   }
 // };
 
-export { AddStudent, Get_Students, Get_Student };
+export { Add_Student, Get_Students, Get_Student, Edit_Student };

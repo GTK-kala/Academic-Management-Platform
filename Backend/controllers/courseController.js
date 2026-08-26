@@ -159,30 +159,39 @@ export const Edit_Course = (req, res) => {
   let fields = [];
   let values = [];
   try {
-    if (course_code) {
+    if (course_code !== undefined) {
       fields.push("course_code = ?");
       values.push(course_code);
-    } else if (course_name) {
+    }
+    if (course_name !== undefined) {
       fields.push("course_name = ?");
       values.push(course_name);
-    } else if (description) {
+    }
+    if (description !== undefined) {
       fields.push("description = ?");
       values.push(description);
-    } else if (credits) {
+    }
+    if (credits !== undefined) {
       fields.push("credits = ?");
       values.push(credits);
-    } else if (teacher_id) {
+    }
+    if (teacher_id !== undefined) {
       fields.push("teacher_id = ?");
       values.push(teacher_id);
-    } else {
+    }
+    if (max_capacity !== undefined) {
       fields.push("max_capacity = ?");
       values.push(max_capacity);
     }
     values.push(courseId);
 
-    const edit_sql = `UPDATE courses set ${fields.join(", ")} WHERE id = ?`;
+    const edit_sql = `
+       UPDATE courses
+       SET ${fields.join(", ")}
+       WHERE id = ?
+     `;
 
-    db.query(edit_sql, [values], (err, result) => {
+    db.query(edit_sql, values, (err, result) => {
       if (err) {
         return res.status(500).json({
           message: err,
