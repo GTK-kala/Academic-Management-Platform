@@ -28,9 +28,14 @@ const Get_Attendances = (req, res) => {
         if (err) {
           console.error("Error fetching attendance:", err);
           return res.status(500).json({ error: "Failed to fetch attendance" });
-        } else {
+        } else if (results.length === 0) {
           res.status(201).json({
-            message: "Student Attendance record for this course admin",
+            message: "No Student Attendance record for this course admin",
+            attendance: results,
+          });
+        } else if (results.length > 0) {
+          res.status(201).json({
+            message: "Student Attendance recorded for this course admin",
             attendance: results,
           });
         }
@@ -61,7 +66,12 @@ const Get_Attendances = (req, res) => {
           return res
             .status(500)
             .json({ error: "Failed to fetch attendance teacher " });
-        } else {
+        } else if (results.length === 0) {
+          res.status(201).json({
+            message: "No Student Attendance record for this course teacher",
+            attendance: results,
+          });
+        } else if (results.length > 0) {
           res.status(201).json({
             message: "Student Attendance record for this course teacher",
             attendance: results,

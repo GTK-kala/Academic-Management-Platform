@@ -65,7 +65,7 @@ const Attendance = () => {
         if (selectedDate) {
           params.push(`date=${selectedDate}`);
         }
-        const res = await Get_Attendances(user?.role);
+        const res = await Get_Attendances(selectedCourse, user?.role);
         setAttendanceRecords(res?.attendance || []);
       } catch (error) {
         console.error("Failed to fetch attendance:", error);
