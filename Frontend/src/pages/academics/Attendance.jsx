@@ -7,68 +7,96 @@ import {
   FiAlertCircle,
   FiDownload,
 } from "react-icons/fi";
-import api from "../../services/api";
+
 import { useAuth } from "../../context/AuthContext";
 import Button from "../../components/common/Button";
-import { Get_Courses, Get_Course } from "../../services/courseService";
-import { Enrolled_Courses } from "../../services/courseService";
-import { Get_Attendances } from "../../services/attendanceService";
+
+import { Get_Courses, Enrolled_Courses } from "../../services/courseService";
+
+import {
+  Add_Attendance,
+  Get_Attendances,
+} from "../../services/attendanceService";
 
 const Attendance = () => {
   const { user } = useAuth();
+
+  // =========================
+  // STATE
+  // =========================
+
   const [attendanceRecords, setAttendanceRecords] = useState([]);
   const [courses, setCourses] = useState([]);
+
   const [selectedCourse, setSelectedCourse] = useState("all");
+
   const [selectedDate, setSelectedDate] = useState(
     new Date().toISOString().split("T")[0],
   );
+
   const [loading, setLoading] = useState(true);
   const [markingAttendance, setMarkingAttendance] = useState(false);
+
   const [students, setStudents] = useState([]);
   const [attendanceForm, setAttendanceForm] = useState({});
 
-  // Fetch courses for filter
+  // =========================
+  // FETCH COURSES
+  // =========================
+
   useEffect(() => {
     const fetchCourses = async () => {
-      const user = JSON.parse(localStorage.getItem("user"));
+      const storedUser = JSON.parse(localStorage.getItem("user"));
+
       try {
-        const res = await Get_Courses(user?.role, user?.userId);
-        const CourseData = res?.courses || [];
-        if (user?.role === "admin") {
-          setCourses(CourseData);
-        } else if (user.role === "teacher") {
-          const teacherCourses = CourseData.filter(
+        const res = await Get_Courses(storedUser?.role, storedUser?.userId);
+
+        const courseData = res?.courses || [];
+
+        if (storedUser?.role === "admin") {
+          setCourses(courseData);
+        } else if (storedUser?.role === "teacher") {
+          const teacherCourses = courseData.filter(
             (course) =>
-              course.teacher_name === `${user.firstName} ${user.lastName}`,
+              course.teacher_name ===
+              `${storedUser.firstName} ${storedUser.lastName}`,
           );
+
           setCourses(teacherCourses);
+        } else {
+          setCourses(courseData);
         }
       } catch (error) {
         console.error("Failed to fetch courses:", error);
+        setCourses([]);
       }
     };
+
     fetchCourses();
   }, []);
 
-  // Fetch attendance records
+  // =========================
+  // FETCH ATTENDANCE
+  // =========================
+
   useEffect(() => {
     const fetchAttendance = async () => {
-      const user = JSON.parse(localStorage.getItem("user"));
-      setLoading(true);
-      try {
-        const params = [];
-        if (selectedCourse !== "all") {
-          const res = await Get_Attendances(selectedCourse, user?.role);
-          setAttendanceRecords(res?.attendance || []);
-        }
+      const storedUser = JSON.parse(localStorage.getItem("user"));
 
-        if (selectedDate) {
-          params.push(`date=${selectedDate}`);
-        }
-        const res = await Get_Attendances(selectedCourse, user?.role);
+      setLoading(true);
+
+      try {
+        const res = await Get_Attendances(
+          selectedCourse,
+          selectedDate,
+          storedUser?.role,
+        );
+
         setAttendanceRecords(res?.attendance || []);
       } catch (error) {
         console.error("Failed to fetch attendance:", error);
+
+        setAttendanceRecords([]);
       } finally {
         setLoading(false);
       }
@@ -77,104 +105,218 @@ const Attendance = () => {
     fetchAttendance();
   }, [selectedCourse, selectedDate]);
 
-  // Fetch students for marking attendance
-  const startMarkingAttendance = async () => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    setMarkingAttendance(true);
-    try {
-      // Get enrolled students for selected course
-      const res = await Enrolled_Courses(user?.userId, user?.role);
-      const enrollments = res.enrollments || [];
-      setStudents(enrollments);
+  // =========================
+  // START MARKING ATTENDANCE
+  // =========================
 
-      // Initialize attendance form
+  const startMarkingAttendance = async () => {
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+
+    if (selectedCourse === "all") {
+      alert("Please select a course first.");
+      return;
+    }
+
+    setMarkingAttendance(true);
+
+    try {
+      const res = await Enrolled_Courses(storedUser?.userId, storedUser?.role);
+
+      const enrollments = res?.enrollments || [];
+
+      console.log(enrollments);
+
+      // Only get students enrolled in the selected course
+      const courseStudents = enrollments.filter(
+        (student) => Number(student.course_id) === Number(selectedCourse),
+      );
+
+      setStudents(courseStudents);
+
+      // Create initial attendance form
       const form = {};
-      enrollments.forEach((enrollment) => {
-        form[enrollment.student_id] = "present";
+
+      courseStudents.forEach((student) => {
+        form[student.id] = "present";
       });
+
       setAttendanceForm(form);
     } catch (error) {
       console.error("Failed to fetch students:", error);
+
+      setStudents([]);
+      setAttendanceForm({});
+
+      alert("Failed to fetch students.");
     }
   };
 
-  // Submit attendance
+  // =========================
+  // CHANGE ATTENDANCE STATUS
+  // =========================
+
+  const handleAttendanceChange = (studentId, status) => {
+    setAttendanceForm((prev) => ({
+      ...prev,
+      [studentId]: status,
+    }));
+  };
+
+  // =========================
+  // SUBMIT ATTENDANCE
+  // =========================
+
   const submitAttendance = async () => {
     try {
-      const promises = Object.entries(attendanceForm).map(
-        ([studentId, status]) => {
-          return api.post("/attendance", {
-            student_id: parseInt(studentId),
-            course_id: parseInt(selectedCourse),
-            attendance_date: selectedDate,
-            status: status,
-          });
-        },
-      );
+      if (selectedCourse === "all") {
+        alert("Please select a course first.");
+        return;
+      }
 
+      if (!selectedDate) {
+        alert("Please select a date.");
+        return;
+      }
+
+      if (students.length === 0) {
+        alert("No students are enrolled in this course.");
+        return;
+      }
+
+      // Create one request for each student
+      const promises = students.map((student) => {
+        const attendanceData = {
+          student_id: Number(student.id),
+
+          course_id: Number(selectedCourse),
+
+          attendance_date: selectedDate,
+
+          recorded_by: Number(user?.userId),
+
+          status: attendanceForm[student.id] || "present",
+        };
+
+        console.log("Sending attendance:", attendanceData);
+
+        return Add_Attendance(attendanceData);
+      });
+
+      // Wait for all students
       await Promise.all(promises);
+
       alert("Attendance recorded successfully!");
+
+      // Close marking form
       setMarkingAttendance(false);
 
+      // Clear form
+      setAttendanceForm({});
+
       // Refresh attendance records
-      const res = await api.get(
-        `/attendance?course_id=${selectedCourse}&date=${selectedDate}`,
+      const res = await Get_Attendances(
+        selectedCourse,
+        selectedDate,
+        user?.role,
       );
-      setAttendanceRecords(res.data?.attendance || []);
+
+      setAttendanceRecords(res?.attendance || []);
     } catch (error) {
-      alert("Failed to record attendance: " + error.message);
+      console.error("Failed to record attendance:", error);
+
+      alert(
+        "Failed to record attendance: " +
+          (error?.response?.data?.message || error?.message || "Unknown error"),
+      );
     }
   };
 
-  // Calculate attendance statistics
+  // =========================
+  // CANCEL MARKING
+  // =========================
+
+  const cancelMarkingAttendance = () => {
+    setMarkingAttendance(false);
+    setStudents([]);
+    setAttendanceForm({});
+  };
+
+  // =========================
+  // STATISTICS
+  // =========================
+
   const stats = {
     total: attendanceRecords.length,
-    present: attendanceRecords.filter((r) => r.status === "present").length,
-    absent: attendanceRecords.filter((r) => r.status === "absent").length,
-    late: attendanceRecords.filter((r) => r.status === "late").length,
-    excused: attendanceRecords.filter((r) => r.status === "excused").length,
+
+    present: attendanceRecords.filter((record) => record.status === "present")
+      .length,
+
+    absent: attendanceRecords.filter((record) => record.status === "absent")
+      .length,
+
+    late: attendanceRecords.filter((record) => record.status === "late").length,
+
+    excused: attendanceRecords.filter((record) => record.status === "excused")
+      .length,
   };
 
   const attendancePercentage =
     stats.total > 0 ? Math.round((stats.present / stats.total) * 100) : 0;
 
+  // =========================
+  // JSX
+  // =========================
+
   return (
     <div>
-      {/* Header */}
+      {/* =========================
+          HEADER
+      ========================= */}
+
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
         <div>
           <h1 className="text-3xl font-bold text-primary dark:text-white">
             Attendance
           </h1>
+
           <p className="text-gray-500 dark:text-gray-400 mt-1">
             {user?.role === "teacher"
               ? "Mark and view attendance for your courses"
               : "View your attendance records"}
           </p>
         </div>
+
         {user?.role === "teacher" && !markingAttendance && (
           <Button
             onClick={startMarkingAttendance}
             className="flex items-center gap-2"
           >
-            <FiCheck /> Mark Attendance
+            <FiCheck />
+            Mark Attendance
           </Button>
         )}
       </div>
 
-      {/* Filters */}
+      {/* =========================
+          FILTERS
+      ========================= */}
+
       <div className="bg-white dark:bg-dark-card p-4 rounded-xl shadow-sm border border-gray-100 dark:border-dark-border mb-6">
         <div className="flex flex-col sm:flex-row gap-4">
+          {/* COURSE */}
+
           <div className="flex-1">
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Course
             </label>
+
             <select
               value={selectedCourse}
               onChange={(e) => setSelectedCourse(e.target.value)}
               className="w-full px-4 py-2.5 border border-gray-300 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary"
             >
               <option value="all">All Courses</option>
+
               {courses.map((course) => (
                 <option key={course.id} value={course.id}>
                   {course.course_name} ({course.course_code})
@@ -182,10 +324,14 @@ const Attendance = () => {
               ))}
             </select>
           </div>
+
+          {/* DATE */}
+
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Date
             </label>
+
             <input
               type="date"
               value={selectedDate}
@@ -196,17 +342,24 @@ const Attendance = () => {
         </div>
       </div>
 
-      {/* Attendance Statistics Cards */}
+      {/* =========================
+          STATISTICS
+      ========================= */}
+
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+        {/* PRESENT */}
+
         <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-xl">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-green-100 dark:bg-green-800 flex items-center justify-center">
               <FiCheck className="w-5 h-5 text-green-600 dark:text-green-400" />
             </div>
+
             <div>
               <p className="text-sm text-green-600 dark:text-green-400">
                 Present
               </p>
+
               <p className="text-xl font-bold text-green-700 dark:text-green-300">
                 {stats.present}
               </p>
@@ -214,13 +367,17 @@ const Attendance = () => {
           </div>
         </div>
 
+        {/* ABSENT */}
+
         <div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-xl">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-red-100 dark:bg-red-800 flex items-center justify-center">
               <FiX className="w-5 h-5 text-red-600 dark:text-red-400" />
             </div>
+
             <div>
               <p className="text-sm text-red-600 dark:text-red-400">Absent</p>
+
               <p className="text-xl font-bold text-red-700 dark:text-red-300">
                 {stats.absent}
               </p>
@@ -228,15 +385,19 @@ const Attendance = () => {
           </div>
         </div>
 
+        {/* LATE */}
+
         <div className="bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-xl">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-yellow-100 dark:bg-yellow-800 flex items-center justify-center">
               <FiClock className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
             </div>
+
             <div>
               <p className="text-sm text-yellow-600 dark:text-yellow-400">
                 Late
               </p>
+
               <p className="text-xl font-bold text-yellow-700 dark:text-yellow-300">
                 {stats.late}
               </p>
@@ -244,15 +405,19 @@ const Attendance = () => {
           </div>
         </div>
 
+        {/* EXCUSED */}
+
         <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-xl">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-800 flex items-center justify-center">
               <FiAlertCircle className="w-5 h-5 text-blue-600 dark:text-blue-400" />
             </div>
+
             <div>
               <p className="text-sm text-blue-600 dark:text-blue-400">
                 Excused
               </p>
+
               <p className="text-xl font-bold text-blue-700 dark:text-blue-300">
                 {stats.excused}
               </p>
@@ -261,61 +426,75 @@ const Attendance = () => {
         </div>
       </div>
 
-      {/* Attendance Progress Bar */}
+      {/* =========================
+          PROGRESS
+      ========================= */}
+
       <div className="bg-white dark:bg-dark-card p-6 rounded-xl shadow-sm border border-gray-100 dark:border-dark-border mb-6">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
             Overall Attendance
           </h3>
+
           <span className="text-2xl font-bold text-primary">
             {attendancePercentage}%
           </span>
         </div>
+
         <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
           <div
             className="bg-primary h-3 rounded-full transition-all duration-500"
-            style={{ width: `${attendancePercentage}%` }}
+            style={{
+              width: `${attendancePercentage}%`,
+            }}
           ></div>
         </div>
       </div>
 
-      {/* Mark Attendance Form (Teacher Only) */}
+      {/* =========================
+          MARK ATTENDANCE
+      ========================= */}
+
       {markingAttendance && (
         <div className="bg-white dark:bg-dark-card p-6 rounded-xl shadow-sm border border-gray-100 dark:border-dark-border mb-6">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
             Mark Attendance - {selectedDate}
           </h3>
+
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <thead>
                 <tr className="text-sm text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-dark-border">
                   <th className="pb-3 pr-4">Student</th>
+
                   <th className="pb-3 pr-4">Status</th>
                 </tr>
               </thead>
+
               <tbody>
                 {students.map((student) => (
                   <tr
-                    key={student.student_id}
+                    key={student.id}
                     className="border-b border-gray-100 dark:border-dark-border"
                   >
                     <td className="py-3 pr-4 text-gray-900 dark:text-white font-medium">
                       {student.first_name} {student.last_name}
                     </td>
+
                     <td className="py-3 pr-4">
                       <select
-                        value={attendanceForm[student.student_id] || "present"}
+                        value={attendanceForm[student.id] || "present"}
                         onChange={(e) =>
-                          setAttendanceForm({
-                            ...attendanceForm,
-                            [student.student_id]: e.target.value,
-                          })
+                          handleAttendanceChange(student.id, e.target.value)
                         }
                         className="px-3 py-1.5 border border-gray-300 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-primary"
                       >
                         <option value="present">Present</option>
+
                         <option value="absent">Absent</option>
+
                         <option value="late">Late</option>
+
                         <option value="excused">Excused</option>
                       </select>
                     </td>
@@ -324,44 +503,56 @@ const Attendance = () => {
               </tbody>
             </table>
           </div>
+
+          {/* BUTTONS */}
+
           <div className="flex gap-3 justify-end mt-4">
-            <Button
-              variant="secondary"
-              onClick={() => setMarkingAttendance(false)}
-            >
+            <Button variant="secondary" onClick={cancelMarkingAttendance}>
               Cancel
             </Button>
+
             <Button onClick={submitAttendance}>Save Attendance</Button>
           </div>
         </div>
       )}
 
-      {/* Attendance Records Table */}
+      {/* =========================
+          ATTENDANCE RECORDS
+      ========================= */}
+
       <div className="bg-white dark:bg-dark-card rounded-xl shadow-sm border border-gray-100 dark:border-dark-border overflow-hidden">
         <div className="p-6 border-b border-gray-200 dark:border-dark-border">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
               Attendance Records
             </h3>
+
             <Button
               variant="outline"
               className="flex items-center gap-2 text-sm"
             >
-              <FiDownload className="w-4 h-4" /> Export
+              <FiDownload className="w-4 h-4" />
+              Export
             </Button>
           </div>
         </div>
+
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead className="bg-gray-50 dark:bg-dark-bg">
               <tr className="text-sm font-medium text-gray-500 dark:text-gray-400">
                 <th className="px-6 py-4">Student</th>
+
                 <th className="px-6 py-4">Course</th>
+
                 <th className="px-6 py-4">Date</th>
+
                 <th className="px-6 py-4">Status</th>
+
                 <th className="px-6 py-4">Recorded By</th>
               </tr>
             </thead>
+
             <tbody className="text-sm divide-y divide-gray-100 dark:divide-dark-border">
               {loading ? (
                 <tr>
@@ -385,18 +576,31 @@ const Attendance = () => {
               ) : (
                 attendanceRecords.map((record, idx) => (
                   <tr
-                    key={idx}
+                    key={record.id || idx}
                     className="hover:bg-gray-50 dark:hover:bg-dark-card/50"
                   >
+                    {/* STUDENT */}
+
                     <td className="px-6 py-4 text-gray-900 dark:text-white font-medium">
                       {record.first_name} {record.last_name}
                     </td>
+
+                    {/* COURSE */}
+
                     <td className="px-6 py-4 text-gray-600 dark:text-gray-300">
                       {record.course_name || `Course #${record.course_id}`}
                     </td>
+
+                    {/* DATE */}
+
                     <td className="px-6 py-4 text-gray-600 dark:text-gray-300">
-                      {new Date(record.attendance_date).toLocaleDateString()}
+                      {record.attendance_date
+                        ? new Date(record.attendance_date).toLocaleDateString()
+                        : "-"}
                     </td>
+
+                    {/* STATUS */}
+
                     <td className="px-6 py-4">
                       <span
                         className={`px-2 py-1 rounded-full text-xs font-medium ${
@@ -409,12 +613,17 @@ const Attendance = () => {
                                 : "bg-blue-100 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400"
                         }`}
                       >
-                        {record.status.charAt(0).toUpperCase() +
-                          record.status.slice(1)}
+                        {record.status
+                          ? record.status.charAt(0).toUpperCase() +
+                            record.status.slice(1)
+                          : "-"}
                       </span>
                     </td>
+
+                    {/* RECORDED BY */}
+
                     <td className="px-6 py-4 text-gray-600 dark:text-gray-300">
-                      Teacher ID: {record.recorded_by}
+                      Teacher ID: {record.recorded_by || "-"}
                     </td>
                   </tr>
                 ))

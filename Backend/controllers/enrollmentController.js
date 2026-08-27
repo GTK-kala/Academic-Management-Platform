@@ -138,7 +138,8 @@ export const Get_Enrolled_Courses = async (req, res) => {
           s.id,
           s.first_name,
           s.last_name,
-          s.email
+          s.email,
+          e.course_id
           FROM
           enrollments e
           LEFT JOIN students s ON e.student_id = s.id

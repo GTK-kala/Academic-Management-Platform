@@ -46,3 +46,12 @@ export const Get_Attendances = async (courseId, userRole) => {
     throw error;
   }
 };
+
+export const Add_Attendance = async (attendanceData) => {
+  try {
+    console.log(attendanceData);
+  } catch (error) {
+    console.error("Error fetching Attendance:", error);
+    throw error;
+  }
+};
