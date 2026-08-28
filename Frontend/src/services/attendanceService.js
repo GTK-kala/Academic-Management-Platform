@@ -1,11 +1,13 @@
 const BASE_URL = import.meta.env.VITE_API_URL;
 
-export const Get_Attendances = async (courseId, userRole) => {
+export const Get_Attendances = async (courseId, userRole, userId) => {
   try {
-    if (userRole && courseId === "all") {
-      console.log("1");
+    if (
+      (userRole === "admin" && courseId === "all") ||
+      (userRole === "teacher" && courseId === "all")
+    ) {
       const res = await fetch(
-        `${BASE_URL}/attendances/all?userRole=${userRole}`,
+        `${BASE_URL}/attendances/all?userRole=${userRole}&courseId=${courseId}&userId=${userId}`,
         {
           method: "GET",
           headers: {
@@ -21,10 +23,12 @@ export const Get_Attendances = async (courseId, userRole) => {
         console.log(data);
         return data;
       }
-    } else if (courseId && userRole) {
-      console.log(courseId, userRole);
+    } else if (
+      (userRole === "admin" && courseId !== "all") ||
+      (userRole === "teacher" && courseId !== "all")
+    ) {
       const res = await fetch(
-        `${BASE_URL}/attendances/all?userRole=${userRole}&courseId=${courseId}`,
+        `${BASE_URL}/attendances/all?userRole=${userRole}&courseId=${courseId}&userId=${userId}`,
         {
           method: "GET",
           headers: {

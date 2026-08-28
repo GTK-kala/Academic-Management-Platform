@@ -96,13 +96,23 @@ const Attendance = () => {
       setLoading(true);
 
       try {
-        const res = await Get_Attendances(
-          selectedCourse,
-          selectedDate,
-          storedUser?.role,
-        );
+        if (selectedCourse === "all" && storedUser.role) {
+          const res = await Get_Attendances(
+            selectedCourse,
+            storedUser?.role,
+            storedUser?.userId,
+          );
 
-        setAttendanceRecords(res?.attendance || []);
+          setAttendanceRecords(res?.attendance || []);
+        } else if (selectedCourse !== "all" && storedUser?.role) {
+          const res = await Get_Attendances(
+            selectedCourse,
+            storedUser?.role,
+            storedUser?.userId,
+          );
+
+          setAttendanceRecords(res?.attendance || []);
+        }
       } catch (error) {
         console.error("Failed to fetch attendance:", error);
 

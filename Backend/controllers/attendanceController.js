@@ -1,14 +1,19 @@
 import db from "../config/db.js";
 
 const Get_Attendances = (req, res) => {
-  const { userId } = req.params;
-  const { userRole, courseId } = req.query;
+  // const { userId } = req.params;
+  const { userRole, courseId, userId } = req.query;
   try {
-    if (userRole === "admin" && courseId === undefined) {
+    if (userRole === "admin" && courseId === "all") {
       const attendance_sql = `SELECT
-          *
+          a.*,
+          s.first_name,
+          s.last_name,
+          c.course_name
           FROM
-          attendance`;
+          attendance a
+          LEFT JOIN students s ON a.student_id = s.id
+          LEFT JOIN courses c ON a.course_id = c.id`;
       db.query(attendance_sql, (err, results) => {
         if (err) {
           console.error("Error fetching attendance:", err);
@@ -24,14 +29,19 @@ const Get_Attendances = (req, res) => {
           });
         }
       });
-    } else if (userRole === "admin" && courseId) {
+    } else if (userRole === "admin" && courseId !== "all") {
       const attendance_sql = `SELECT
-          *
+          a.*,
+          s.first_name,
+          s.last_name,
+          c.course_name
           FROM
           attendance a
+          LEFT JOIN students s ON a.student_id = s.id
+          LEFT JOIN courses c ON a.course_id = c.id
           WHERE
           a.course_id = ?`;
-      db.query(attendance_sql, [attendance_sql], (err, results) => {
+      db.query(attendance_sql, [courseId], (err, results) => {
         if (err) {
           console.error("Error fetching attendance:", err);
           return res.status(500).json({ error: "Failed to fetch attendance" });
@@ -47,12 +57,19 @@ const Get_Attendances = (req, res) => {
           });
         }
       });
-    } else if (userRole === "teacher" && courseId === undefined) {
+    } else if (userRole === "teacher" && courseId === "all") {
       const attendance_sql = `SELECT
-          *
+          a.*,
+          s.first_name,
+          s.last_name,
+          c.course_name
           FROM
-          attendance`;
-      db.query(attendance_sql, (err, results) => {
+          attendance a
+          LEFT JOIN students s ON a.student_id = s.id
+          LEFT JOIN courses c ON a.course_id = c.id
+          WHERE
+          a.recorded_by = ?`;
+      db.query(attendance_sql, [userId], (err, results) => {
         if (err) {
           console.error("Error fetching attendance:", err);
           return res.status(500).json({ error: "Failed to add grade" });
@@ -68,14 +85,20 @@ const Get_Attendances = (req, res) => {
           });
         }
       });
-    } else if (userRole === "teacher" && courseId) {
+    } else if (userRole === "teacher" && courseId !== "all") {
       const attendance_sql = `SELECT
-          *
+          a.*,
+          s.first_name,
+          s.last_name,
+          c.course_name
           FROM
           attendance a
+          LEFT JOIN students s ON a.student_id = s.id
+          LEFT JOIN courses c ON a.course_id = c.id
           WHERE
-          a.course_id = ?`;
-      db.query(attendance_sql, [attendance_sql], (err, results) => {
+          a.course_id = ?
+          AND a.recorded_by = ?`;
+      db.query(attendance_sql, [courseId, userId], (err, results) => {
         if (err) {
           console.error("Error fetching attendance:", err);
           return res
