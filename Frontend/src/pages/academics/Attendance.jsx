@@ -246,8 +246,6 @@ const Attendance = () => {
         return;
       }
 
-      console.log("Changed students:", changedStudents);
-
       // ========================================
       // SEND ONLY CHANGED STUDENTS
       // ========================================
@@ -266,8 +264,6 @@ const Attendance = () => {
 
           status: attendanceForm[studentId],
         };
-
-        console.log("Sending ONE attendance:", attendanceData);
 
         // ONE request for this student
         await Add_Attendance(attendanceData);

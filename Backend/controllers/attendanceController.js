@@ -5,7 +5,10 @@ const Get_Attendances = (req, res) => {
   const { userRole, courseId } = req.query;
   try {
     if (userRole === "admin" && courseId === undefined) {
-      const attendance_sql = `SELECT * FROM attendance`;
+      const attendance_sql = `SELECT
+          *
+          FROM
+          attendance`;
       db.query(attendance_sql, (err, results) => {
         if (err) {
           console.error("Error fetching attendance:", err);
@@ -22,7 +25,12 @@ const Get_Attendances = (req, res) => {
         }
       });
     } else if (userRole === "admin" && courseId) {
-      const attendance_sql = `SELECT * FROM attendance a WHERE a.course_id = ?`;
+      const attendance_sql = `SELECT
+          *
+          FROM
+          attendance a
+          WHERE
+          a.course_id = ?`;
       db.query(attendance_sql, [attendance_sql], (err, results) => {
         if (err) {
           console.error("Error fetching attendance:", err);
@@ -40,7 +48,10 @@ const Get_Attendances = (req, res) => {
         }
       });
     } else if (userRole === "teacher" && courseId === undefined) {
-      const attendance_sql = `SELECT * FROM attendance`;
+      const attendance_sql = `SELECT
+          *
+          FROM
+          attendance`;
       db.query(attendance_sql, (err, results) => {
         if (err) {
           console.error("Error fetching attendance:", err);
@@ -58,7 +69,12 @@ const Get_Attendances = (req, res) => {
         }
       });
     } else if (userRole === "teacher" && courseId) {
-      const attendance_sql = `SELECT * FROM attendance a WHERE a.course_id = ?`;
+      const attendance_sql = `SELECT
+          *
+          FROM
+          attendance a
+          WHERE
+          a.course_id = ?`;
       db.query(attendance_sql, [attendance_sql], (err, results) => {
         if (err) {
           console.error("Error fetching attendance:", err);
@@ -88,10 +104,44 @@ const Get_Attendances = (req, res) => {
 };
 
 const Add_Attendances = (req, res) => {
-  const { attendanceData } = req.body;
-  console.log(attendanceData);
   try {
-  } catch (error) {}
+    const { student_id, course_id, recorded_by, status, attendance_date } =
+      req.body;
+
+    const attendance_sql = `INSERT INTO
+        attendance (
+        student_id,
+        course_id,
+        attendance_date,
+        status,
+        recorded_by
+        )
+        VALUES
+        (?, ?, ?, ?, ?)`;
+    db.query(
+      attendance_sql,
+      [student_id, course_id, attendance_date, status, recorded_by],
+      (err, results) => {
+        if (err) {
+          return res.status(500).json({
+            message: "Failed to add attendance",
+            error: err.message,
+          });
+        } else {
+          res.status(201).json({
+            message: "User attendance added",
+            userId: results.insertId,
+          });
+        }
+      },
+    );
+  } catch (error) {
+    console.error("Error fetching attendance:", error);
+
+    return res.status(500).json({
+      error: "Internal server error",
+    });
+  }
 };
 
 export { Get_Attendances, Add_Attendances };

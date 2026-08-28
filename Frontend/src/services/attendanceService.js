@@ -57,6 +57,13 @@ export const Add_Attendance = async (attendanceData) => {
       body: JSON.stringify(attendanceData),
       credentials: "include",
     });
+    if (!res.ok) {
+      throw new Error("Failed to Attendance");
+    } else {
+      const data = await res.json();
+      console.log(data);
+      return data;
+    }
   } catch (error) {
     console.error("Error fetching Attendance:", error);
     throw error;
