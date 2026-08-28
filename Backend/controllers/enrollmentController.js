@@ -109,10 +109,12 @@ export const Get_Enrolled_Courses = async (req, res) => {
       (userRole === "teacher" && courseId)
     ) {
       const sql_enrolled = `SELECT
+          s.id,
           s.first_name,
           s.last_name,
           s.email,
           e.enrollment_date,
+          e.course_id,
           e.status
           FROM
           enrollments e

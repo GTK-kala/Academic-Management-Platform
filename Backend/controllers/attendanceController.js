@@ -3,7 +3,6 @@ import db from "../config/db.js";
 const Get_Attendances = (req, res) => {
   const { userId } = req.params;
   const { userRole, courseId } = req.query;
-  console.log(courseId, userRole);
   try {
     if (userRole === "admin" && courseId === undefined) {
       const attendance_sql = `SELECT * FROM attendance`;
@@ -88,4 +87,11 @@ const Get_Attendances = (req, res) => {
   }
 };
 
-export { Get_Attendances };
+const Add_Attendances = (req, res) => {
+  const { attendanceData } = req.body;
+  console.log(attendanceData);
+  try {
+  } catch (error) {}
+};
+
+export { Get_Attendances, Add_Attendances };

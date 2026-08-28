@@ -49,7 +49,14 @@ export const Get_Attendances = async (courseId, userRole) => {
 
 export const Add_Attendance = async (attendanceData) => {
   try {
-    console.log(attendanceData);
+    const res = fetch(`${BASE_URL}/attendances/add`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(attendanceData),
+      credentials: "include",
+    });
   } catch (error) {
     console.error("Error fetching Attendance:", error);
     throw error;

@@ -1,4 +1,6 @@
+import toast from "react-hot-toast";
 import { useState, useEffect } from "react";
+
 import {
   FiCalendar,
   FiCheck,
@@ -21,11 +23,12 @@ import {
 const Attendance = () => {
   const { user } = useAuth();
 
-  // =========================
+  // ========================================
   // STATE
-  // =========================
+  // ========================================
 
   const [attendanceRecords, setAttendanceRecords] = useState([]);
+
   const [courses, setCourses] = useState([]);
 
   const [selectedCourse, setSelectedCourse] = useState("all");
@@ -35,14 +38,20 @@ const Attendance = () => {
   );
 
   const [loading, setLoading] = useState(true);
+
   const [markingAttendance, setMarkingAttendance] = useState(false);
 
   const [students, setStudents] = useState([]);
+
+  // Current attendance status
   const [attendanceForm, setAttendanceForm] = useState({});
 
-  // =========================
+  // Original attendance status
+  const [originalAttendance, setOriginalAttendance] = useState({});
+
+  // ========================================
   // FETCH COURSES
-  // =========================
+  // ========================================
 
   useEffect(() => {
     const fetchCourses = async () => {
@@ -68,6 +77,7 @@ const Attendance = () => {
         }
       } catch (error) {
         console.error("Failed to fetch courses:", error);
+
         setCourses([]);
       }
     };
@@ -75,9 +85,9 @@ const Attendance = () => {
     fetchCourses();
   }, []);
 
-  // =========================
-  // FETCH ATTENDANCE
-  // =========================
+  // ========================================
+  // FETCH ATTENDANCE RECORDS
+  // ========================================
 
   useEffect(() => {
     const fetchAttendance = async () => {
@@ -105,55 +115,81 @@ const Attendance = () => {
     fetchAttendance();
   }, [selectedCourse, selectedDate]);
 
-  // =========================
+  // ========================================
   // START MARKING ATTENDANCE
-  // =========================
+  // ========================================
 
   const startMarkingAttendance = async () => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
 
     if (selectedCourse === "all") {
-      alert("Please select a course first.");
+      toast.error("Please select a course first.");
+
       return;
     }
 
     setMarkingAttendance(true);
 
     try {
-      const res = await Enrolled_Courses(storedUser?.userId, storedUser?.role);
+      const res = await Enrolled_Courses(
+        storedUser?.userId,
+        storedUser?.role,
+        selectedCourse,
+      );
 
       const enrollments = res?.enrollments || [];
 
-      console.log(enrollments);
-
-      // Only get students enrolled in the selected course
+      // Only students from selected course
       const courseStudents = enrollments.filter(
         (student) => Number(student.course_id) === Number(selectedCourse),
       );
 
       setStudents(courseStudents);
 
-      // Create initial attendance form
+      // ========================================
+      // INITIALIZE ATTENDANCE
+      // ========================================
+
       const form = {};
+      const original = {};
 
       courseStudents.forEach((student) => {
-        form[student.id] = "present";
+        const studentId = student.id;
+
+        // Find existing attendance
+        const existingAttendance = attendanceRecords.find(
+          (record) =>
+            Number(record.student_id) === Number(studentId) &&
+            Number(record.course_id) === Number(selectedCourse) &&
+            record.attendance_date?.split("T")[0] === selectedDate,
+        );
+
+        const status = existingAttendance?.status || "present";
+
+        form[studentId] = status;
+
+        original[studentId] = status;
       });
 
+      // Current values
       setAttendanceForm(form);
+
+      // Original values
+      setOriginalAttendance(original);
     } catch (error) {
       console.error("Failed to fetch students:", error);
 
       setStudents([]);
       setAttendanceForm({});
+      setOriginalAttendance({});
 
-      alert("Failed to fetch students.");
+      toast.error("Failed to fetch students.");
     }
   };
 
-  // =========================
-  // CHANGE ATTENDANCE STATUS
-  // =========================
+  // ========================================
+  // CHANGE STUDENT STATUS
+  // ========================================
 
   const handleAttendanceChange = (studentId, status) => {
     setAttendanceForm((prev) => ({
@@ -162,31 +198,65 @@ const Attendance = () => {
     }));
   };
 
-  // =========================
-  // SUBMIT ATTENDANCE
-  // =========================
+  // ========================================
+  // SUBMIT ONLY CHANGED STUDENTS
+  // ========================================
 
   const submitAttendance = async () => {
     try {
       if (selectedCourse === "all") {
-        alert("Please select a course first.");
+        toast.error("Please select a course first.");
+
         return;
       }
 
       if (!selectedDate) {
-        alert("Please select a date.");
+        toast.error("Please select a date.");
+
         return;
       }
 
       if (students.length === 0) {
-        alert("No students are enrolled in this course.");
+        toast.error("No students are enrolled in this course.");
+
         return;
       }
 
-      // Create one request for each student
-      const promises = students.map((student) => {
+      // ========================================
+      // FIND ONLY CHANGED STUDENTS
+      // ========================================
+
+      const changedStudents = students.filter((student) => {
+        const studentId = student.id;
+
+        const oldStatus = originalAttendance[studentId];
+
+        const newStatus = attendanceForm[studentId];
+
+        return oldStatus !== newStatus;
+      });
+
+      // ========================================
+      // NOTHING CHANGED
+      // ========================================
+
+      if (changedStudents.length === 0) {
+        toast.error("No attendance changes were made.");
+
+        return;
+      }
+
+      console.log("Changed students:", changedStudents);
+
+      // ========================================
+      // SEND ONLY CHANGED STUDENTS
+      // ========================================
+
+      for (const student of changedStudents) {
+        const studentId = student.id;
+
         const attendanceData = {
-          student_id: Number(student.id),
+          student_id: Number(studentId),
 
           course_id: Number(selectedCourse),
 
@@ -194,26 +264,50 @@ const Attendance = () => {
 
           recorded_by: Number(user?.userId),
 
-          status: attendanceForm[student.id] || "present",
+          status: attendanceForm[studentId],
         };
 
-        console.log("Sending attendance:", attendanceData);
+        console.log("Sending ONE attendance:", attendanceData);
 
-        return Add_Attendance(attendanceData);
+        // ONE request for this student
+        await Add_Attendance(attendanceData);
+      }
+
+      // ========================================
+      // SUCCESS
+      // ========================================
+
+      toast.success(
+        `${changedStudents.length} attendance record${
+          changedStudents.length > 1 ? "s" : ""
+        } updated successfully!`,
+      );
+
+      // ========================================
+      // UPDATE ORIGINAL VALUES
+      // ========================================
+
+      setOriginalAttendance((prev) => {
+        const updated = {
+          ...prev,
+        };
+
+        changedStudents.forEach((student) => {
+          updated[student.id] = attendanceForm[student.id];
+        });
+
+        return updated;
       });
 
-      // Wait for all students
-      await Promise.all(promises);
-
-      alert("Attendance recorded successfully!");
-
-      // Close marking form
+      // Close form
       setMarkingAttendance(false);
 
-      // Clear form
       setAttendanceForm({});
 
-      // Refresh attendance records
+      // ========================================
+      // REFRESH ATTENDANCE
+      // ========================================
+
       const res = await Get_Attendances(
         selectedCourse,
         selectedDate,
@@ -224,26 +318,30 @@ const Attendance = () => {
     } catch (error) {
       console.error("Failed to record attendance:", error);
 
-      alert(
+      toast.error(
         "Failed to record attendance: " +
           (error?.response?.data?.message || error?.message || "Unknown error"),
       );
     }
   };
 
-  // =========================
-  // CANCEL MARKING
-  // =========================
+  // ========================================
+  // CANCEL
+  // ========================================
 
   const cancelMarkingAttendance = () => {
     setMarkingAttendance(false);
+
     setStudents([]);
+
     setAttendanceForm({});
+
+    setOriginalAttendance({});
   };
 
-  // =========================
+  // ========================================
   // STATISTICS
-  // =========================
+  // ========================================
 
   const stats = {
     total: attendanceRecords.length,
@@ -263,15 +361,15 @@ const Attendance = () => {
   const attendancePercentage =
     stats.total > 0 ? Math.round((stats.present / stats.total) * 100) : 0;
 
-  // =========================
+  // ========================================
   // JSX
-  // =========================
+  // ========================================
 
   return (
     <div>
-      {/* =========================
+      {/* ========================================
           HEADER
-      ========================= */}
+      ======================================== */}
 
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
         <div>
@@ -297,9 +395,9 @@ const Attendance = () => {
         )}
       </div>
 
-      {/* =========================
+      {/* ========================================
           FILTERS
-      ========================= */}
+      ======================================== */}
 
       <div className="bg-white dark:bg-dark-card p-4 rounded-xl shadow-sm border border-gray-100 dark:border-dark-border mb-6">
         <div className="flex flex-col sm:flex-row gap-4">
@@ -342,9 +440,9 @@ const Attendance = () => {
         </div>
       </div>
 
-      {/* =========================
+      {/* ========================================
           STATISTICS
-      ========================= */}
+      ======================================== */}
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
         {/* PRESENT */}
@@ -426,9 +524,9 @@ const Attendance = () => {
         </div>
       </div>
 
-      {/* =========================
+      {/* ========================================
           PROGRESS
-      ========================= */}
+      ======================================== */}
 
       <div className="bg-white dark:bg-dark-card p-6 rounded-xl shadow-sm border border-gray-100 dark:border-dark-border mb-6">
         <div className="flex items-center justify-between mb-3">
@@ -447,13 +545,13 @@ const Attendance = () => {
             style={{
               width: `${attendancePercentage}%`,
             }}
-          ></div>
+          />
         </div>
       </div>
 
-      {/* =========================
+      {/* ========================================
           MARK ATTENDANCE
-      ========================= */}
+      ======================================== */}
 
       {markingAttendance && (
         <div className="bg-white dark:bg-dark-card p-6 rounded-xl shadow-sm border border-gray-100 dark:border-dark-border mb-6">
@@ -516,9 +614,9 @@ const Attendance = () => {
         </div>
       )}
 
-      {/* =========================
+      {/* ========================================
           ATTENDANCE RECORDS
-      ========================= */}
+      ======================================== */}
 
       <div className="bg-white dark:bg-dark-card rounded-xl shadow-sm border border-gray-100 dark:border-dark-border overflow-hidden">
         <div className="p-6 border-b border-gray-200 dark:border-dark-border">
@@ -560,7 +658,7 @@ const Attendance = () => {
                     colSpan={5}
                     className="px-6 py-8 text-center text-gray-500"
                   >
-                    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary mx-auto"></div>
+                    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary mx-auto" />
                   </td>
                 </tr>
               ) : attendanceRecords.length === 0 ? (
@@ -579,27 +677,19 @@ const Attendance = () => {
                     key={record.id || idx}
                     className="hover:bg-gray-50 dark:hover:bg-dark-card/50"
                   >
-                    {/* STUDENT */}
-
                     <td className="px-6 py-4 text-gray-900 dark:text-white font-medium">
                       {record.first_name} {record.last_name}
                     </td>
 
-                    {/* COURSE */}
-
                     <td className="px-6 py-4 text-gray-600 dark:text-gray-300">
                       {record.course_name || `Course #${record.course_id}`}
                     </td>
-
-                    {/* DATE */}
 
                     <td className="px-6 py-4 text-gray-600 dark:text-gray-300">
                       {record.attendance_date
                         ? new Date(record.attendance_date).toLocaleDateString()
                         : "-"}
                     </td>
-
-                    {/* STATUS */}
 
                     <td className="px-6 py-4">
                       <span
@@ -619,8 +709,6 @@ const Attendance = () => {
                           : "-"}
                       </span>
                     </td>
-
-                    {/* RECORDED BY */}
 
                     <td className="px-6 py-4 text-gray-600 dark:text-gray-300">
                       Teacher ID: {record.recorded_by || "-"}
