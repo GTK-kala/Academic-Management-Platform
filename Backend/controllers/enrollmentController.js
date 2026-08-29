@@ -78,8 +78,8 @@ export const Enroll_Course = async (req, res) => {
   }
 };
 export const Get_Enrolled_Courses = async (req, res) => {
+  const { userRole, courseId } = req.query;
   try {
-    const { userRole, courseId } = req.query;
     if (userRole === "student") {
       const studentId = req.params.userId;
       const sql_enrolled = `SELECT
@@ -140,8 +140,7 @@ export const Get_Enrolled_Courses = async (req, res) => {
           s.id,
           s.first_name,
           s.last_name,
-          s.email,
-          e.course_id
+          s.email
           FROM
           enrollments e
           LEFT JOIN students s ON e.student_id = s.id

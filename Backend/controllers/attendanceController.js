@@ -116,6 +116,33 @@ const Get_Attendances = (req, res) => {
           });
         }
       });
+    } else if (userRole === "student" && courseId === "all") {
+      const attendance_sql = `SELECT
+          a.*,
+          s.first_name,
+          s.last_name,
+          c.course_name
+          FROM
+          attendance a
+          LEFT JOIN students s ON a.student_id = s.id
+          LEFT JOIN courses c ON a.course_id = c.id
+          WHERE
+          a.student_id = ?`;
+      db.query(attendance_sql, [userId], (err, results) => {
+        if (err) {
+          console.error("Error fetching attendance:", err);
+          return res.status(500).json({ error: "Failed to fetch attendance" });
+        } else if (results.length === 0) {
+          res.status(201).json({
+            message: "No Students Attendance recorded admin",
+          });
+        } else if (results.length > 0) {
+          res.status(201).json({
+            message: "All Student Attendance recorded admin",
+            attendance: results,
+          });
+        }
+      });
     }
   } catch (error) {
     console.error("Error fetching attendance:", error);

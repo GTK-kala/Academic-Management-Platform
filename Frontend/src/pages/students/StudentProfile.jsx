@@ -22,6 +22,7 @@ import Button from "../../components/common/Button";
 import { useAuth } from "../../context/AuthContext";
 import { Fetch_Student } from "../../services/studentService";
 import { Enrolled_Courses } from "../../services/courseService";
+import { Get_Attendances } from "../../services/attendanceService";
 import { Fetch_Grade_By_Student } from "../../services/gradeService";
 
 const StudentProfile = () => {
@@ -60,8 +61,8 @@ const StudentProfile = () => {
         setEnrolledCourses(enrollments);
 
         // // Fetch attendance records
-        // const attendanceRes = await api.get(`/attendance?student_id=${id}`);
-        // setAttendanceRecords(attendanceRes.data?.attendance || []);
+        const attendanceRes = await Get_Attendances("all", "student", id);
+        setAttendanceRecords(attendanceRes?.attendance || []);
 
         // // Fetch grades
         const gradesRes = await Fetch_Grade_By_Student(

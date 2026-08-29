@@ -110,7 +110,7 @@ export const Enroll_Course = async (courseId, studentId, teacherId) => {
 
 export const Enrolled_Courses = async (userId, userRole, courseId) => {
   try {
-    if (userRole && courseId) {
+    if ((userRole === "admin" || userRole === "teacher") && courseId) {
       const res = await fetch(
         `${BASE_URL}/enrollments/enrolled/${userId}?userRole=${userRole}&courseId=${courseId}`,
         {
