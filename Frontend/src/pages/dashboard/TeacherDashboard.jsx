@@ -27,7 +27,6 @@ const TeacherDashboard = () => {
         // Count total students (simplified)
         const enrollmentsRes = await Enrolled_Courses(user?.userId, user?.role);
         setTotalStudents(enrollmentsRes.enrollments?.length || 0);
-        console.log(enrollmentsRes);
         // Today's classes (placeholder)
         setTodayClasses(assignedCourses.slice(0, 3));
       } catch (error) {

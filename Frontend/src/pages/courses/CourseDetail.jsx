@@ -14,6 +14,7 @@ import api from "../../services/api";
 import Button from "../../components/common/Button";
 import { Get_Course, Enrolled_Courses } from "../../services/courseService";
 import { useAuth } from "../../context/AuthContext";
+import { Get_Attendances } from "../../services/attendanceService";
 import { useParams, useNavigate, Link } from "react-router-dom";
 
 const CourseDetail = () => {
@@ -32,7 +33,6 @@ const CourseDetail = () => {
         // Fetch course details
         const user = JSON.parse(localStorage.getItem("user"));
         const courseRes = await Get_Course(id);
-        console.log(id);
         const courseData = courseRes?.course || null;
         setCourse(courseData);
 
@@ -46,19 +46,23 @@ const CourseDetail = () => {
         setEnrolledStudents(enrollments);
 
         // Fetch attendance stats
-        // const attendanceRes = await api.get(`/attendance?course_id=${id}`);
-        // const attendance = attendanceRes.data?.attendance || [];
-        // setAttendanceStats({
-        //   totalClasses: new Set(attendance.map((a) => a.attendance_date)).size,
-        //   averageAttendance:
-        //     attendance.length > 0
-        //       ? Math.round(
-        //           (attendance.filter((a) => a.status === "present").length /
-        //             attendance.length) *
-        //             100,
-        //         )
-        //       : 0,
-        // });
+        const attendanceRes = await Get_Attendances(
+          courseData?.id,
+          user?.role,
+          user?.userId,
+        );
+        const attendance = attendanceRes?.attendance || [];
+        setAttendanceStats({
+          totalClasses: new Set(attendance.map((a) => a.attendance_date)).size,
+          averageAttendance:
+            attendance.length > 0
+              ? Math.round(
+                  (attendance.filter((a) => a.status === "Excused").length /
+                    attendance.length) *
+                    100,
+                )
+              : 0,
+        });
       } catch (error) {
         console.error("Failed to load course:", error);
       } finally {
@@ -177,7 +181,7 @@ const CourseDetail = () => {
                   Attendance
                 </p>
                 <p className="text-xl font-bold text-gray-900 dark:text-white">
-                  {attendanceStats?.averageAttendance || 0}%
+                  {attendanceStats?.status || 0}%
                 </p>
               </div>
               <div className="p-4 bg-gray-50 dark:bg-dark-bg rounded-xl">

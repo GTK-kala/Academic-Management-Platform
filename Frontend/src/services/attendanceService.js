@@ -1,7 +1,6 @@
 const BASE_URL = import.meta.env.VITE_API_URL;
 
 export const Get_Attendances = async (courseId, userRole, userId) => {
-  console.log(courseId, userRole, userId);
   try {
     if (
       (userRole === "admin" && courseId === "all") ||
@@ -22,7 +21,6 @@ export const Get_Attendances = async (courseId, userRole, userId) => {
         throw new Error("Failed to Attendance");
       } else {
         const data = await res.json();
-        console.log(data);
         return data;
       }
     } else if (
@@ -43,7 +41,6 @@ export const Get_Attendances = async (courseId, userRole, userId) => {
         throw new Error("Failed to Attendance");
       } else {
         const data = await res.json();
-        console.log(data);
         return data;
       }
     }
@@ -67,7 +64,6 @@ export const Add_Attendance = async (attendanceData) => {
       throw new Error("Failed to Attendance");
     } else {
       const data = await res.json();
-      console.log(data);
       return data;
     }
   } catch (error) {
