@@ -51,7 +51,7 @@ const Grades = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const user = JSON.parse(localStorage.getItem("user"));
+        let user = JSON.parse(localStorage.getItem("user"));
         // Fetch courses by role
         const coursesRes = await Get_Courses(user?.role, user?.userId);
         if (user?.role === "teacher") {

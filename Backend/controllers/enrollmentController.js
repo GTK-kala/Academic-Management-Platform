@@ -106,7 +106,8 @@ export const Get_Enrolled_Courses = async (req, res) => {
       });
     } else if (
       (userRole === "admin" && courseId) ||
-      (userRole === "teacher" && courseId)
+      (userRole === "teacher" && courseId) ||
+      (userRole === "student" && courseId)
     ) {
       const sql_enrolled = `SELECT
           s.id,

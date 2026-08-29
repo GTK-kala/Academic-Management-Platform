@@ -34,7 +34,7 @@ import Schedule from "../pages/academics/Schedule";
 import Attendance from "../pages/academics/Attendance";
 
 // Settings Pages
-// import ProfileSettings from "../pages/settings/ProfileSettings";
+import ProfileSettings from "../pages/settings/ProfileSettings";
 
 // Error Pages
 import NotFound from "../pages/NotFound";
@@ -247,25 +247,25 @@ const AppRoutes = () => {
 
         {/* Profile Settings - accessible by all authenticated users */}
 
-        {/* <Route
+        <Route
           path="/settings"
           element={
             <ProtectedRoute roles={["admin", "teacher", "student"]}>
               <ProfileSettings />
             </ProtectedRoute>
           }
-        /> */}
+        />
 
         {/* Change Password */}
 
-        {/* <Route
+        <Route
           path="/settings/password"
           element={
             <ProtectedRoute roles={["admin", "teacher", "student"]}>
               <ProfileSettings />
             </ProtectedRoute>
           }
-        /> */}
+        />
       </Route>
 
       {/* ==================== ERROR ROUTES ==================== */}

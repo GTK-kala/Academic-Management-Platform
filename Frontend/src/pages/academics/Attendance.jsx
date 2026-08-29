@@ -72,7 +72,13 @@ const Attendance = () => {
           );
 
           setCourses(teacherCourses);
-        } else {
+        } else if (storedUser?.role === "student") {
+          const studentCourses = await Enrolled_Courses(
+            storedUser?.userId,
+            storedUser?.role,
+            selectedCourse,
+          );
+          const courseData = studentCourses?.enrollments || [];
           setCourses(courseData);
         }
       } catch (error) {
@@ -83,7 +89,7 @@ const Attendance = () => {
     };
 
     fetchCourses();
-  }, []);
+  }, [selectedCourse]);
 
   // ========================================
   // FETCH ATTENDANCE RECORDS
