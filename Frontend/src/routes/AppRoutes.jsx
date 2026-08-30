@@ -16,12 +16,14 @@ import StudentDashboard from "../pages/dashboard/StudentDashboard";
 
 // Student Pages
 import AddStudent from "../pages/students/AddStudent";
+import EditStudent from "../pages/students/EditStudent";
 import StudentList from "../pages/students/StudentList";
 import StudentProfile from "../pages/students/StudentProfile";
 
 // Course Pages
 import AddCourse from "../pages/courses/AddCourse";
 import CourseList from "../pages/courses/CourseList";
+import EditCourse from "../pages/courses/EditCourse";
 import CourseDetail from "../pages/courses/CourseDetail";
 
 // Fee Pages
@@ -133,7 +135,7 @@ const AppRoutes = () => {
           path="/students/:id/edit"
           element={
             <ProtectedRoute roles={["admin"]}>
-              <AddStudent />
+              <EditStudent />
             </ProtectedRoute>
           }
         />
@@ -168,7 +170,7 @@ const AppRoutes = () => {
           path="/courses/:id/edit"
           element={
             <ProtectedRoute roles={["admin"]}>
-              <AddCourse />
+              <EditCourse />
             </ProtectedRoute>
           }
         />
