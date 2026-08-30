@@ -109,6 +109,7 @@ export const Enroll_Course = async (courseId, studentId, teacherId) => {
 };
 
 export const Enrolled_Courses = async (userId, userRole, courseId) => {
+  console.log(userId, userRole, courseId);
   try {
     if (
       (userRole === "admin" && courseId === "all") ||

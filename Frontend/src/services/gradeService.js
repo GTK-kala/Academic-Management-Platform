@@ -43,7 +43,6 @@ export const Fetch_ALL_Grades = async (userId, userRole) => {
       throw new Error("Failed to add grade");
     } else {
       const data = await res.json();
-      console.log(data);
       return data;
     }
   } catch (error) {

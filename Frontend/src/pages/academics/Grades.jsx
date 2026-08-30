@@ -33,10 +33,6 @@ import toast from "react-hot-toast";
 const Grades = () => {
   const { user } = useAuth();
 
-  // ==========================================================
-  // STATE
-  // ==========================================================
-
   const [grades, setGrades] = useState([]);
 
   const [courses, setCourses] = useState([]);
@@ -62,15 +58,7 @@ const Grades = () => {
 
   const [gradeDistribution, setGradeDistribution] = useState({});
 
-  // ==========================================================
-  // EXAM TYPES
-  // ==========================================================
-
   const examTypes = ["assignment", "quiz", "project", "midterm", "final"];
-
-  // ==========================================================
-  // LETTER GRADE
-  // ==========================================================
 
   const calculateLetterGrade = (score) => {
     const value = Number(score);
@@ -90,10 +78,6 @@ const Grades = () => {
     return "F";
   };
 
-  // ==========================================================
-  // LOAD COURSES + STUDENTS
-  // ==========================================================
-
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -103,10 +87,6 @@ const Grades = () => {
           return;
         }
 
-        // ----------------------------------------------------
-        // COURSES
-        // ----------------------------------------------------
-
         if (storedUser.role === "student") {
           const response = await Enrolled_Courses(
             storedUser.userId,
@@ -114,18 +94,23 @@ const Grades = () => {
           );
 
           setCourses(response?.enrollments || []);
-        } else {
+        } else if (storedUser?.role === "admin") {
           const response = await Get_Courses(
             storedUser.role,
             storedUser.userId,
           );
 
           setCourses(response?.courses || []);
+        } else if (storedUser?.role === "teacher") {
+          const response = await Get_Courses(
+            storedUser.role,
+            storedUser.userId,
+          );
+          const teacherCourses = response?.courses.filter(
+            (c) => c.teacher_id === storedUser?.userId,
+          );
+          setCourses(teacherCourses || []);
         }
-
-        // ----------------------------------------------------
-        // STUDENTS
-        // ----------------------------------------------------
 
         if (storedUser.role !== "student") {
           const response = await fetchRecentStudents(
@@ -145,10 +130,6 @@ const Grades = () => {
     loadData();
   }, [user]);
 
-  // ==========================================================
-  // FETCH GRADES
-  // ==========================================================
-
   const fetchGrades = async () => {
     try {
       setLoading(true);
@@ -161,54 +142,31 @@ const Grades = () => {
 
       let response;
 
-      // ----------------------------------------------------
-      // COURSE + STUDENT
-      // ----------------------------------------------------
-
       if (selectedCourse !== "all" && selectedStudent !== "all") {
         response = await Fetch_Grade_By_Both(
           selectedCourse,
           selectedStudent,
           storedUser.role,
         );
-      }
-
-      // ----------------------------------------------------
-      // COURSE
-      // ----------------------------------------------------
-      else if (selectedCourse !== "all") {
+      } else if (selectedCourse !== "all") {
         response = await Fetch_Grade_By_Course(
           selectedCourse,
           storedUser.role,
           storedUser.userId,
         );
-      }
-
-      // ----------------------------------------------------
-      // STUDENT
-      // ----------------------------------------------------
-      else if (selectedStudent !== "all") {
+      } else if (selectedStudent !== "all") {
         response = await Fetch_Grade_By_Student(
           selectedStudent,
           storedUser.role,
           storedUser.userId,
         );
-      }
-
-      // ----------------------------------------------------
-      // ALL
-      // ----------------------------------------------------
-      else {
+      } else {
         response = await Fetch_ALL_Grades(storedUser.userId, storedUser.role);
       }
 
       const data = response?.grades || [];
 
       setGrades(data);
-
-      // ----------------------------------------------------
-      // DISTRIBUTION
-      // ----------------------------------------------------
 
       const distribution = {};
 
@@ -228,17 +186,9 @@ const Grades = () => {
     }
   };
 
-  // ==========================================================
-  // FETCH WHEN FILTER CHANGES
-  // ==========================================================
-
   useEffect(() => {
     fetchGrades();
   }, [selectedCourse, selectedStudent, user]);
-
-  // ==========================================================
-  // GPA
-  // ==========================================================
 
   const calculateGPA = () => {
     const gradePoints = {
@@ -270,10 +220,6 @@ const Grades = () => {
     return (total / completed.length).toFixed(2);
   };
 
-  // ==========================================================
-  // PASSING RATE
-  // ==========================================================
-
   const completedGrades = grades.filter((item) => item.grade);
 
   const passedGrades = completedGrades.filter((item) => item.grade !== "F");
@@ -281,10 +227,6 @@ const Grades = () => {
   const passingRate = completedGrades.length
     ? Math.round((passedGrades.length / completedGrades.length) * 100)
     : 0;
-
-  // ==========================================================
-  // GRADE COLOR
-  // ==========================================================
 
   const getGradeColor = (grade) => {
     if (!grade) {
@@ -334,10 +276,6 @@ const Grades = () => {
     return "bg-red-100 dark:bg-red-900/20";
   };
 
-  // ==========================================================
-  // ADD / UPDATE GRADE
-  // ==========================================================
-
   const handleAddGrade = async (e) => {
     e.preventDefault();
 
@@ -369,17 +307,6 @@ const Grades = () => {
 
         return;
       }
-
-      // ------------------------------------------------------
-      // IMPORTANT:
-      // We send ONLY the current assessment.
-      //
-      // Example:
-      // exam_type = "assignment"
-      // numeric_grade = 80
-      //
-      // The backend updates the correct column.
-      // ------------------------------------------------------
 
       const data = {
         student_id: Number(gradeForm.student_id),
@@ -415,10 +342,6 @@ const Grades = () => {
           toast.success(`${gradeForm.exam_type} score saved successfully`);
         }
 
-        // ----------------------------------------------------
-        // RESET FORM
-        // ----------------------------------------------------
-
         setGradeForm({
           student_id: "",
           course_id: "",
@@ -430,10 +353,6 @@ const Grades = () => {
 
         setShowAddGrade(false);
 
-        // ----------------------------------------------------
-        // REFRESH TABLE
-        // ----------------------------------------------------
-
         await fetchGrades();
       } else {
         toast.error(response?.message || "Failed to save grade");
@@ -444,10 +363,6 @@ const Grades = () => {
       toast.error(error.message || "Failed to save grade");
     }
   };
-
-  // ==========================================================
-  // OPEN ADD MODAL
-  // ==========================================================
 
   const openAddGrade = () => {
     setGradeForm({
@@ -467,16 +382,8 @@ const Grades = () => {
     setShowAddGrade(true);
   };
 
-  // ==========================================================
-  // RENDER
-  // ==========================================================
-
   return (
     <div className="space-y-6">
-      {/* ====================================================
-          HEADER
-      ==================================================== */}
-
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold text-primary dark:text-white">
@@ -495,10 +402,6 @@ const Grades = () => {
           </Button>
         )}
       </div>
-
-      {/* ====================================================
-          STAT CARDS
-      ==================================================== */}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* GPA */}
@@ -574,10 +477,6 @@ const Grades = () => {
         </div>
       </div>
 
-      {/* ====================================================
-          FILTERS
-      ==================================================== */}
-
       <div className="bg-white dark:bg-dark-card p-4 rounded-xl shadow-sm border border-gray-100 dark:border-dark-border">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* COURSE */}
@@ -628,10 +527,6 @@ const Grades = () => {
         </div>
       </div>
 
-      {/* ====================================================
-          GRADE DISTRIBUTION
-      ==================================================== */}
-
       <div className="bg-white dark:bg-dark-card p-6 rounded-xl shadow-sm border border-gray-100 dark:border-dark-border">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
           Grade Distribution
@@ -660,10 +555,6 @@ const Grades = () => {
           </div>
         )}
       </div>
-
-      {/* ====================================================
-          ADD GRADE MODAL
-      ==================================================== */}
 
       {showAddGrade && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
@@ -863,10 +754,6 @@ const Grades = () => {
           </div>
         </div>
       )}
-
-      {/* ====================================================
-          GRADE TABLE
-      ==================================================== */}
 
       <div className="bg-white dark:bg-dark-card rounded-xl shadow-sm border border-gray-100 dark:border-dark-border overflow-hidden">
         <div className="p-6 border-b border-gray-200 dark:border-dark-border">
