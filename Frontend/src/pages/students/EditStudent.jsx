@@ -1,23 +1,47 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import api from "../../services/api";
 import { FiArrowLeft } from "react-icons/fi";
 import Button from "../../components/common/Button";
-import { useNavigate, Link } from "react-router-dom";
-import { Add_Student } from "../../services/studentService";
+import { useNavigate, Link, useParams } from "react-router-dom";
+import { Fetch_Student, Edit_Student } from "../../services/studentService";
 
 const EditStudent = () => {
   const navigate = useNavigate();
+  const { id } = useParams();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [password, setPassword] = useState("");
-  const [email, setEmail] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState("");
   const [gender, setGender] = useState("male");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const FetchInitialData = async () => {
+      const user = JSON.parse(localStorage.getItem("user"));
+      try {
+        const studentRes = await Fetch_Student(id, user?.role);
+        const studentData = studentRes?.student;
+        if (studentData) {
+          setFirstName(studentData.first_name);
+          setLastName(studentData.last_name);
+          setDateOfBirth(studentData.date_of_birth);
+          setGender(studentData.gender);
+          setPhone(studentData.phone);
+          setAddress(studentData.address);
+        } else {
+          console.log("No student Data");
+        }
+      } catch (error) {
+        console.error("Failed to fetch data:", error);
+        setError("Failed to load required data. Please try again.");
+      }
+    };
+    FetchInitialData();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -27,7 +51,6 @@ const EditStudent = () => {
       !lastName ||
       !dateOfBirth ||
       !password ||
-      !email ||
       !gender ||
       !address ||
       !phone
@@ -43,13 +66,12 @@ const EditStudent = () => {
         first_name: firstName,
         last_name: lastName,
         password,
-        email,
         date_of_birth: dateOfBirth,
         gender,
         address,
         phone,
       };
-      await Add_Student(formData);
+      const res = await Edit_Student(formData);
     } catch (err) {
       setError(err.message || "Failed to create student.");
     } finally {
@@ -58,7 +80,6 @@ const EditStudent = () => {
       setFirstName("");
       setLastName("");
       setDateOfBirth("");
-      setEmail("");
       setPassword("");
       setPhone("");
       setAddress("");
@@ -75,7 +96,7 @@ const EditStudent = () => {
       </Link>
 
       <h1 className="mb-8 text-3xl font-bold text-primary dark:text-white">
-        Add New Student
+        Edit Student
       </h1>
 
       <div className="max-w-2xl p-6 bg-white border border-gray-100 shadow-sm dark:bg-dark-card rounded-xl dark:border-dark-border">
@@ -108,18 +129,6 @@ const EditStudent = () => {
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
                 required
-                className="w-full px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
-              />
-            </div>
-            <div>
-              <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                Email
-              </label>
-              <input
-                name="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
                 className="w-full px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
               />
             </div>
@@ -193,7 +202,7 @@ const EditStudent = () => {
               Cancel
             </Button>
             <Button type="submit" disabled={loading}>
-              {loading ? "Creating..." : "Add Student"}
+              {loading ? "Editing..." : "Edit Student"}
             </Button>
           </div>
         </form>

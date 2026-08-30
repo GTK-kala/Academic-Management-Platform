@@ -1,4 +1,5 @@
 import toast from "react-hot-toast";
+import { data } from "react-router-dom";
 const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
 
 export const Add_Student = async (studentData) => {
@@ -67,6 +68,29 @@ export const Fetch_Student = async (studentId, userRole) => {
     } else {
       const Data = await res.json();
       return Data;
+    }
+  } catch (error) {
+    console.error("API request failed:", error);
+    throw error;
+  }
+};
+
+export const Edit_Student = async (studentId, studentData) => {
+  try {
+    const res = await fetch(`${BASE_URL}/students/edit/${studentId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(studentData),
+      credentials: "include",
+    });
+    if (!res.ok) {
+      const errorData = await res.json();
+      toast.error(errorData.message || "Failed to edit student");
+    } else {
+      const data = await res.json();
+      toast.success(data.message || "Student edited successfully");
     }
   } catch (error) {
     console.error("API request failed:", error);

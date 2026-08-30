@@ -227,7 +227,7 @@ const StudentProfile = () => {
         <div className="flex gap-2">
           {user?.role === "admin" && (
             <>
-              <Link to={`/students/${id}/edit`}>
+              <Link to={`/students/edit/${id}`}>
                 <Button variant="outline" className="flex items-center gap-2">
                   <FiEdit2 className="w-4 h-4" /> Edit
                 </Button>
