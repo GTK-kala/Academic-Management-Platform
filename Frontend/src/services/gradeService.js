@@ -4,19 +4,57 @@ export const Add_Grade = async (gradeData, userRole) => {
   try {
     const res = await fetch(`${BASE_URL}/grades/add?userRole=${userRole}`, {
       method: "POST",
+
       headers: {
         "Content-Type": "application/json",
       },
+
+      credentials: "include",
+
       body: JSON.stringify(gradeData),
     });
+
+    const data = await res.json();
+
     if (!res.ok) {
-      throw new Error("Failed to fetch grade");
-    } else {
-      const data = await res.json();
-      return data;
+      throw new Error(data.message || "Failed to add grade");
     }
+
+    return data;
   } catch (error) {
-    console.error("Error fetching grade:", error);
+    console.error("Error adding grade:", error);
+    throw error;
+  }
+};
+
+// ================================
+// GET OVERALL GRADE
+// ================================
+export const Fetch_Overall_Grade = async (studentId, courseId) => {
+  try {
+    const res = await fetch(
+      `${BASE_URL}/grades/overall/${studentId}/${courseId}`,
+      {
+        method: "GET",
+
+        headers: {
+          "Content-Type": "application/json",
+        },
+
+        credentials: "include",
+      },
+    );
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.message || "Failed to fetch overall grade");
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Error fetching overall grade:", error);
+
     throw error;
   }
 };
