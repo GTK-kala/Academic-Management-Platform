@@ -1,4 +1,4 @@
-import bcrypt, { truncates } from "bcryptjs";
+import bcrypt from "bcryptjs";
 import db from "../config/db.js";
 
 const Add_Student = (req, res) => {
@@ -210,7 +210,6 @@ const Edit_Student = (req, res) => {
   const {
     first_name,
     last_name,
-    email,
     password,
     date_of_birth,
     gender,
@@ -228,13 +227,10 @@ const Edit_Student = (req, res) => {
       fields.push("last_name = ?");
       values.push(last_name);
     }
-    if (email !== undefined) {
-      fields.push("email = ?");
-      values.push(email);
-    }
     if (password !== undefined) {
+      const hashedPassword = bcrypt.hashSync(password, 10);
       fields.push("password = ?");
-      values.push(password);
+      values.push(hashedPassword);
     }
     if (date_of_birth !== undefined) {
       fields.push("date_of_birth = ?");
@@ -255,7 +251,7 @@ const Edit_Student = (req, res) => {
     values.push(studentId);
 
     const edit_sql = `
-       UPDATE student
+       UPDATE students
        SET ${fields.join(", ")}
        WHERE id = ?
      `;

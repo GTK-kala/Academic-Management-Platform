@@ -120,7 +120,7 @@ const CourseDetail = () => {
         </button>
         {user?.role === "admin" && (
           <div className="flex gap-2">
-            <Link to={`/courses/${id}/edit`}>
+            <Link to={`/courses/edit/${id}`}>
               <Button variant="outline" className="flex items-center gap-2">
                 <FiEdit className="w-4 h-4" /> Edit
               </Button>

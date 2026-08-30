@@ -164,17 +164,6 @@ const AppRoutes = () => {
           }
         />
 
-        {/* Edit course - Admin only */}
-
-        <Route
-          path="/courses/:id/edit"
-          element={
-            <ProtectedRoute roles={["admin"]}>
-              <EditCourse />
-            </ProtectedRoute>
-          }
-        />
-
         {/* View course details - accessible by all authenticated users */}
 
         <Route
@@ -182,6 +171,17 @@ const AppRoutes = () => {
           element={
             <ProtectedRoute roles={["admin", "teacher", "student"]}>
               <CourseDetail />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Edit course - Admin only */}
+
+        <Route
+          path="/courses/edit/:id"
+          element={
+            <ProtectedRoute roles={["admin"]}>
+              <EditCourse />
             </ProtectedRoute>
           }
         />

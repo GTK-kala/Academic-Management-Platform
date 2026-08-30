@@ -3,7 +3,6 @@ import db from "../config/db.js";
 export const Enroll_Course = async (req, res) => {
   try {
     const { courseId, studentId, teacherId } = req.body;
-
     const checkSql = `SELECT
         id
         FROM

@@ -71,7 +71,7 @@ const EditStudent = () => {
         address,
         phone,
       };
-      const res = await Edit_Student(formData);
+      const res = await Edit_Student(id, formData);
     } catch (err) {
       setError(err.message || "Failed to create student.");
     } finally {

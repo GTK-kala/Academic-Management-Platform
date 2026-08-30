@@ -1,6 +1,5 @@
 import toast from "react-hot-toast";
-import { data } from "react-router-dom";
-const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
+const BASE_URL = import.meta.env.VITE_API_URL;
 
 export const Add_Student = async (studentData) => {
   try {
@@ -78,7 +77,7 @@ export const Fetch_Student = async (studentId, userRole) => {
 export const Edit_Student = async (studentId, studentData) => {
   try {
     const res = await fetch(`${BASE_URL}/students/edit/${studentId}`, {
-      method: "POST",
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },

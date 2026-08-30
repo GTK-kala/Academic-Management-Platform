@@ -109,15 +109,12 @@ export const Enroll_Course = async (courseId, studentId, teacherId) => {
 };
 
 export const Enrolled_Courses = async (userId, userRole, courseId) => {
-  console.log(userId, userRole, courseId);
   try {
     if (
-      (userRole === "admin" ||
-        userRole === "teacher" ||
-        userRole === "student") &&
-      courseId === "all"
+      (userRole === "admin" && courseId === "all") ||
+      (userRole === "teacher" && courseId === "all") ||
+      (userRole === "student" && courseId === "all")
     ) {
-      console.log("1");
       const res = await fetch(
         `${BASE_URL}/enrollments/enrolled/${userId}?userRole=${userRole}&courseId=${courseId}`,
         {
@@ -132,7 +129,6 @@ export const Enrolled_Courses = async (userId, userRole, courseId) => {
         throw new Error("Failed to fetch enrolled courses");
       } else {
         const data = await res.json();
-        console.log(data);
         return data;
       }
     } else if (
@@ -140,9 +136,8 @@ export const Enrolled_Courses = async (userId, userRole, courseId) => {
       (userRole === "teacher" && courseId !== "all") ||
       (userRole === "student" && courseId !== "all")
     ) {
-      console.log("2");
       const res = await fetch(
-        `${BASE_URL}/enrollments/enrolled/${userId}?userRole=${userRole}`,
+        `${BASE_URL}/enrollments/enrolled/${userId}?userRole=${userRole}&courseId=${courseId}`,
         {
           method: "GET",
           headers: {
