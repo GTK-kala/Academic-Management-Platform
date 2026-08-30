@@ -1,46 +1,79 @@
 import db from "../config/db.js";
 
-// ======================================================
+// ============================================================
 // CALCULATE LETTER GRADE
-// ======================================================
+// ============================================================
 
 const calculateLetterGrade = (score) => {
-  const numericScore = Number(score);
+  const value = Number(score);
 
-  if (numericScore >= 90) return "A+";
-  if (numericScore >= 85) return "A";
-  if (numericScore >= 80) return "A-";
-  if (numericScore >= 75) return "B+";
-  if (numericScore >= 70) return "B";
-  if (numericScore >= 65) return "B-";
-  if (numericScore >= 60) return "C+";
-  if (numericScore >= 55) return "C";
-  if (numericScore >= 50) return "C-";
-  if (numericScore >= 45) return "D+";
-  if (numericScore >= 40) return "D";
+  if (value >= 90) return "A+";
+  if (value >= 85) return "A";
+  if (value >= 80) return "A-";
+  if (value >= 75) return "B+";
+  if (value >= 70) return "B";
+  if (value >= 65) return "B-";
+  if (value >= 60) return "C+";
+  if (value >= 55) return "C";
+  if (value >= 50) return "C-";
+  if (value >= 45) return "D+";
+  if (value >= 40) return "D";
 
   return "F";
 };
 
-// ======================================================
-// ADD GRADE
-// ======================================================
+// ============================================================
+// CALCULATE OVERALL SCORE
+// ============================================================
+
+const calculateOverall = ({ assignment, quiz, project, midterm, final }) => {
+  // We only calculate the overall grade
+  // when all five scores exist.
+
+  if (
+    assignment === null ||
+    assignment === undefined ||
+    quiz === null ||
+    quiz === undefined ||
+    project === null ||
+    project === undefined ||
+    midterm === null ||
+    midterm === undefined ||
+    final === null ||
+    final === undefined
+  ) {
+    return null;
+  }
+
+  const overall =
+    Number(assignment) * 0.1 +
+    Number(quiz) * 0.1 +
+    Number(project) * 0.1 +
+    Number(midterm) * 0.3 +
+    Number(final) * 0.4;
+
+  return Number(overall.toFixed(2));
+};
+
+// ============================================================
+// ADD / UPDATE GRADE
+// ============================================================
 
 export const Add_Grade = async (req, res) => {
-  const {
-    student_id,
-    course_id,
-    numeric_grade,
-    exam_type,
-    semester,
-    academic_year,
-    recorded_by,
-  } = req.body;
-
   try {
-    // ----------------------------------------------
-    // VALIDATE REQUIRED FIELDS
-    // ----------------------------------------------
+    const {
+      student_id,
+      course_id,
+      numeric_grade,
+      exam_type,
+      semester,
+      academic_year,
+      recorded_by,
+    } = req.body;
+
+    // --------------------------------------------------------
+    // VALIDATION
+    // --------------------------------------------------------
 
     if (
       !student_id ||
@@ -53,26 +86,13 @@ export const Add_Grade = async (req, res) => {
     ) {
       return res.status(400).json({
         success: false,
-        message: "All required fields must be provided",
+        message: "All required fields are required",
       });
     }
 
-    // ----------------------------------------------
-    // VALIDATE NUMERIC GRADE
-    // ----------------------------------------------
-
-    const score = Number(numeric_grade);
-
-    if (Number.isNaN(score) || score < 0 || score > 100) {
-      return res.status(400).json({
-        success: false,
-        message: "Numeric grade must be between 0 and 100",
-      });
-    }
-
-    // ----------------------------------------------
-    // VALIDATE EXAM TYPE
-    // ----------------------------------------------
+    // --------------------------------------------------------
+    // VALID EXAM TYPES
+    // --------------------------------------------------------
 
     const validExamTypes = [
       "assignment",
@@ -89,80 +109,238 @@ export const Add_Grade = async (req, res) => {
       });
     }
 
-    // ----------------------------------------------
-    // CALCULATE LETTER GRADE
-    // ----------------------------------------------
+    // --------------------------------------------------------
+    // SCORE
+    // --------------------------------------------------------
 
-    const grade = calculateLetterGrade(score);
+    const score = Number(numeric_grade);
 
-    // ----------------------------------------------
-    // INSERT GRADE
-    // ----------------------------------------------
+    if (Number.isNaN(score)) {
+      return res.status(400).json({
+        success: false,
+        message: "Numeric grade must be a valid number",
+      });
+    }
 
-    const add_query = `
-      INSERT INTO grades (
-        student_id,
-        course_id,
-        grade,
-        numeric_grade,
-        exam_type,
-        semester,
-        academic_year,
-        recorded_by
-      )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    if (score < 0 || score > 100) {
+      return res.status(400).json({
+        success: false,
+        message: "Numeric grade must be between 0 and 100",
+      });
+    }
+
+    // --------------------------------------------------------
+    // CHECK IF STUDENT + COURSE ROW EXISTS
+    // --------------------------------------------------------
+
+    const checkSql = `
+      SELECT *
+      FROM grades
+      WHERE student_id = ?
+        AND course_id = ?
+        AND semester = ?
+        AND academic_year = ?
+      LIMIT 1
     `;
 
     db.query(
-      add_query,
-      [
-        student_id,
-        course_id,
-        grade,
-        score,
-        exam_type,
-        semester,
-        academic_year,
-        recorded_by || null,
-      ],
-      (err, result) => {
-        if (err) {
-          console.error("Error adding grade:", err);
-
-          // ------------------------------------------
-          // DUPLICATE GRADE
-          // ------------------------------------------
-
-          if (err.code === "ER_DUP_ENTRY") {
-            return res.status(409).json({
-              success: false,
-              message: `A ${exam_type} grade already exists for this student and course.`,
-            });
-          }
+      checkSql,
+      [Number(student_id), Number(course_id), semester, academic_year],
+      (checkErr, rows) => {
+        if (checkErr) {
+          console.error("Error checking existing grade:", checkErr);
 
           return res.status(500).json({
             success: false,
-            message: "Failed to add grade",
-            error: err.message,
+            message: "Failed to check existing grade",
+            error: checkErr.message,
           });
         }
 
-        // ------------------------------------------
-        // SUCCESS
-        // ------------------------------------------
+        // ====================================================
+        // ROW DOES NOT EXIST
+        // ====================================================
 
-        return res.status(201).json({
-          success: true,
-          message: "Grade added successfully",
+        if (rows.length === 0) {
+          const column = exam_type;
 
-          gradeId: result.insertId,
+          const insertSql = `
+            INSERT INTO grades (
+              student_id,
+              course_id,
+              ${column},
+              semester,
+              academic_year,
+              recorded_by
+            )
+            VALUES (?, ?, ?, ?, ?, ?)
+          `;
 
-          grade: grade,
+          db.query(
+            insertSql,
+            [
+              Number(student_id),
+              Number(course_id),
+              score,
+              semester,
+              academic_year,
+              recorded_by ? Number(recorded_by) : null,
+            ],
+            (insertErr, result) => {
+              if (insertErr) {
+                console.error("Error inserting grade:", insertErr);
 
-          numeric_grade: score,
+                return res.status(500).json({
+                  success: false,
+                  message: "Failed to add grade",
+                  error: insertErr.message,
+                });
+              }
 
-          exam_type: exam_type,
-        });
+              // New row only has one assessment,
+              // therefore overall is still NULL.
+
+              return res.status(201).json({
+                success: true,
+                message: `${exam_type} grade added successfully`,
+                gradeId: result.insertId,
+              });
+            },
+          );
+
+          return;
+        }
+
+        // ====================================================
+        // ROW ALREADY EXISTS
+        // ====================================================
+
+        const existingGrade = rows[0];
+
+        const gradeId = existingGrade.id;
+
+        const updateSql = `
+          UPDATE grades
+          SET ${exam_type} = ?,
+              recorded_by = ?
+          WHERE id = ?
+        `;
+
+        db.query(
+          updateSql,
+          [score, recorded_by ? Number(recorded_by) : null, gradeId],
+          (updateErr) => {
+            if (updateErr) {
+              console.error("Error updating grade:", updateErr);
+
+              return res.status(500).json({
+                success: false,
+                message: "Failed to update grade",
+                error: updateErr.message,
+              });
+            }
+
+            // ------------------------------------------------
+            // GET UPDATED ROW
+            // ------------------------------------------------
+
+            const selectSql = `
+              SELECT *
+              FROM grades
+              WHERE id = ?
+            `;
+
+            db.query(selectSql, [gradeId], (selectErr, updatedRows) => {
+              if (selectErr) {
+                console.error("Error fetching updated grade:", selectErr);
+
+                return res.status(500).json({
+                  success: false,
+                  message: "Grade saved but failed to calculate overall",
+                  error: selectErr.message,
+                });
+              }
+
+              const updatedGrade = updatedRows[0];
+
+              // ------------------------------------------------
+              // CALCULATE OVERALL
+              // ------------------------------------------------
+
+              const overall = calculateOverall({
+                assignment: updatedGrade.assignment,
+
+                quiz: updatedGrade.quiz,
+
+                project: updatedGrade.project,
+
+                midterm: updatedGrade.midterm,
+
+                final: updatedGrade.final,
+              });
+
+              // ------------------------------------------------
+              // NOT COMPLETE YET
+              // ------------------------------------------------
+
+              if (overall === null) {
+                return res.status(200).json({
+                  success: true,
+                  message: `${exam_type} grade saved successfully`,
+                  gradeId,
+                  overall_score: null,
+                  grade: null,
+                });
+              }
+
+              // ------------------------------------------------
+              // CALCULATE LETTER GRADE
+              // ------------------------------------------------
+
+              const letterGrade = calculateLetterGrade(overall);
+
+              // ------------------------------------------------
+              // SAVE OVERALL + LETTER GRADE
+              // ------------------------------------------------
+
+              const overallSql = `
+                  UPDATE grades
+                  SET
+                    overall_score = ?,
+                    grade = ?
+                  WHERE id = ?
+                `;
+
+              db.query(
+                overallSql,
+                [overall, letterGrade, gradeId],
+                (overallErr) => {
+                  if (overallErr) {
+                    console.error("Error saving overall grade:", overallErr);
+
+                    return res.status(500).json({
+                      success: false,
+                      message: "Scores saved but failed to save overall grade",
+                      error: overallErr.message,
+                    });
+                  }
+
+                  return res.status(200).json({
+                    success: true,
+
+                    message: `${exam_type} grade saved successfully`,
+
+                    gradeId,
+
+                    overall_score: overall,
+
+                    grade: letterGrade,
+                  });
+                },
+              );
+            });
+          },
+        );
       },
     );
   } catch (error) {
@@ -171,277 +349,6 @@ export const Add_Grade = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Failed to add grade",
-      error: error.message,
-    });
-  }
-};
-
-// ======================================================
-// GET OVERALL GRADE
-// ======================================================
-
-export const Get_Overall_Grade = async (req, res) => {
-  const { student_id, course_id } = req.params;
-
-  try {
-    // ==================================================
-    // GET ALL FIVE ASSESSMENTS
-    // ==================================================
-
-    const sql = `
-      SELECT
-
-        student_id,
-
-        course_id,
-
-
-        MAX(
-          CASE
-            WHEN exam_type = 'assignment'
-            THEN numeric_grade
-          END
-        ) AS assignment_score,
-
-
-        MAX(
-          CASE
-            WHEN exam_type = 'quiz'
-            THEN numeric_grade
-          END
-        ) AS quiz_score,
-
-
-        MAX(
-          CASE
-            WHEN exam_type = 'project'
-            THEN numeric_grade
-          END
-        ) AS project_score,
-
-
-        MAX(
-          CASE
-            WHEN exam_type = 'midterm'
-            THEN numeric_grade
-          END
-        ) AS midterm_score,
-
-
-        MAX(
-          CASE
-            WHEN exam_type = 'final'
-            THEN numeric_grade
-          END
-        ) AS final_score
-
-
-      FROM grades
-
-
-      WHERE student_id = ?
-
-      AND course_id = ?
-
-
-      GROUP BY
-        student_id,
-        course_id
-    `;
-
-    db.query(sql, [student_id, course_id], (err, results) => {
-      if (err) {
-        console.error("Error getting overall grade:", err);
-
-        return res.status(500).json({
-          success: false,
-          message: "Failed to calculate overall grade",
-          error: err.message,
-        });
-      }
-
-      // ==================================================
-      // NO GRADES
-      // ==================================================
-
-      if (results.length === 0) {
-        return res.status(404).json({
-          success: false,
-          message: "No grades found for this student and course",
-        });
-      }
-
-      const data = results[0];
-
-      // ==================================================
-      // KEEP NULL WHEN ASSESSMENT DOES NOT EXIST
-      // ==================================================
-
-      const assignment =
-        data.assignment_score !== null ? Number(data.assignment_score) : null;
-
-      const quiz = data.quiz_score !== null ? Number(data.quiz_score) : null;
-
-      const project =
-        data.project_score !== null ? Number(data.project_score) : null;
-
-      const midterm =
-        data.midterm_score !== null ? Number(data.midterm_score) : null;
-
-      const finalExam =
-        data.final_score !== null ? Number(data.final_score) : null;
-
-      // ==================================================
-      // CHECK ALL ASSESSMENTS
-      // ==================================================
-
-      const allAssessmentsAvailable =
-        assignment !== null &&
-        quiz !== null &&
-        project !== null &&
-        midterm !== null &&
-        finalExam !== null;
-
-      // ==================================================
-      // IF NOT ALL ASSESSMENTS EXIST
-      // ==================================================
-
-      if (!allAssessmentsAvailable) {
-        return res.status(200).json({
-          success: true,
-
-          student_id: student_id,
-
-          course_id: course_id,
-
-          assessments: {
-            assignment: assignment,
-
-            quiz: quiz,
-
-            project: project,
-
-            midterm: midterm,
-
-            final: finalExam,
-          },
-
-          weights: {
-            assignment: "10%",
-
-            quiz: "10%",
-
-            project: "10%",
-
-            midterm: "30%",
-
-            final: "40%",
-          },
-
-          overall_score: null,
-
-          overall_grade: null,
-
-          status: "Pending",
-
-          message:
-            "Overall grade will be calculated after all five assessments are entered.",
-        });
-      }
-
-      // ==================================================
-      // CALCULATE WEIGHTED SCORES
-      // ==================================================
-
-      const assignmentWeighted = assignment * 0.1;
-
-      const quizWeighted = quiz * 0.1;
-
-      const projectWeighted = project * 0.1;
-
-      const midtermWeighted = midterm * 0.3;
-
-      const finalWeighted = finalExam * 0.4;
-
-      // ==================================================
-      // CALCULATE OVERALL SCORE
-      // ==================================================
-
-      const overallScore =
-        assignmentWeighted +
-        quizWeighted +
-        projectWeighted +
-        midtermWeighted +
-        finalWeighted;
-
-      // ==================================================
-      // CALCULATE FINAL LETTER GRADE
-      // ==================================================
-
-      const overallGrade = calculateLetterGrade(overallScore);
-
-      // ==================================================
-      // RETURN RESULT
-      // ==================================================
-
-      return res.status(200).json({
-        success: true,
-
-        student_id: student_id,
-
-        course_id: course_id,
-
-        assessments: {
-          assignment: assignment,
-
-          quiz: quiz,
-
-          project: project,
-
-          midterm: midterm,
-
-          final: finalExam,
-        },
-
-        weights: {
-          assignment: "10%",
-
-          quiz: "10%",
-
-          project: "10%",
-
-          midterm: "30%",
-
-          final: "40%",
-        },
-
-        weighted_scores: {
-          assignment: Number(assignmentWeighted.toFixed(2)),
-
-          quiz: Number(quizWeighted.toFixed(2)),
-
-          project: Number(projectWeighted.toFixed(2)),
-
-          midterm: Number(midtermWeighted.toFixed(2)),
-
-          final: Number(finalWeighted.toFixed(2)),
-        },
-
-        overall_score: Number(overallScore.toFixed(2)),
-
-        overall_grade: overallGrade,
-
-        status: "Completed",
-      });
-    });
-  } catch (error) {
-    console.error("Error calculating overall grade:", error);
-
-    return res.status(500).json({
-      success: false,
-
-      message: "Failed to calculate overall grade",
-
       error: error.message,
     });
   }
@@ -459,9 +366,13 @@ export const Fetch_Grade_All = (req, res) => {
           s.last_name,
           c.course_name,
           g.student_id,
-          g.exam_type,
+          g.assignment,
+          g.quiz,
+          g.project,
+          g.midterm,
+          g.final,
           g.grade,
-          g.numeric_grade,
+          g.overall_score,
           g.semester
           FROM
           grades g
@@ -486,13 +397,17 @@ export const Fetch_Grade_All = (req, res) => {
       });
     } else if (userRole === "teacher") {
       const fetch_sql = `SELECT
-          s.first_name,
+            s.first_name,
           s.last_name,
           c.course_name,
-          g.exam_type,
           g.student_id,
+          g.assignment,
+          g.quiz,
+          g.project,
+          g.midterm,
+          g.final,
           g.grade,
-          g.numeric_grade,
+          g.overall_score,
           g.semester
           FROM
           grades g
@@ -519,13 +434,17 @@ export const Fetch_Grade_All = (req, res) => {
       });
     } else {
       const fetch_sql = `SELECT
-          s.first_name,
+         s.first_name,
           s.last_name,
           c.course_name,
-          g.exam_type,
           g.student_id,
+          g.assignment,
+          g.quiz,
+          g.project,
+          g.midterm,
+          g.final,
           g.grade,
-          g.numeric_grade,
+          g.overall_score,
           g.semester
           FROM
           grades g
@@ -565,14 +484,17 @@ export const Fetch_Grade_By_Course = (req, res) => {
   try {
     if (userRole === "admin" || userRole === "teacher") {
       const course_sql = `SELECT
-          s.first_name,
+            s.first_name,
           s.last_name,
           c.course_name,
-          g.course_id,
-          g.exam_type,
           g.student_id,
+          g.assignment,
+          g.quiz,
+          g.project,
+          g.midterm,
+          g.final,
           g.grade,
-          g.numeric_grade,
+          g.overall_score,
           g.semester
           FROM
           grades g
@@ -602,12 +524,14 @@ export const Fetch_Grade_By_Course = (req, res) => {
           s.first_name,
           s.last_name,
           c.course_name,
-          g.course_id,
           g.student_id,
-          g.exam_type,
+          g.assignment,
+          g.quiz,
+          g.project,
+          g.midterm,
+          g.final,
           g.grade,
-          g.numeric_grade,
-          g.student_id,
+          g.overall_score,
           g.semester
           FROM
           grades g
@@ -652,10 +576,13 @@ export const Fetch_Grade_By_Student = (req, res) => {
           s.last_name,
           c.course_name,
           g.student_id,
-          g.exam_type,
+          g.assignment,
+          g.quiz,
+          g.project,
+          g.midterm,
+          g.final,
           g.grade,
-          g.student_id,
-          g.numeric_grade,
+          g.overall_score,
           g.semester
           FROM
           grades g
@@ -682,15 +609,17 @@ export const Fetch_Grade_By_Student = (req, res) => {
       });
     } else if (userRole === "teacher") {
       const student_sql = `SELECT
-          s.first_name,
+        s.first_name,
           s.last_name,
           c.course_name,
           g.student_id,
-          g.course_id,
-          g.exam_type,
-          g.student_id,
+          g.assignment,
+          g.quiz,
+          g.project,
+          g.midterm,
+          g.final,
           g.grade,
-          g.numeric_grade,
+          g.overall_score,
           g.semester
           FROM
           grades g
@@ -722,10 +651,13 @@ export const Fetch_Grade_By_Student = (req, res) => {
           s.last_name,
           c.course_name,
           g.student_id,
-          g.course_id,
-          g.exam_type,
+          g.assignment,
+          g.quiz,
+          g.project,
+          g.midterm,
+          g.final,
           g.grade,
-          g.numeric_grade,
+          g.overall_score,
           g.semester
           FROM
           grades g
@@ -763,15 +695,18 @@ export const Fetch_Grade_By_Both = (req, res) => {
   const { courseId, studentId } = req.params;
   try {
     const grade_sql = `SELECT
-        s.first_name,
-        s.last_name,
-        c.course_name,
-        g.student_id,
-        g.course_id,
-        g.exam_type,
-        g.grade,
-        g.numeric_grade,
-        g.semester
+         s.first_name,
+          s.last_name,
+          c.course_name,
+          g.student_id,
+          g.assignment,
+          g.quiz,
+          g.project,
+          g.midterm,
+          g.final,
+          g.grade,
+          g.overall_score,
+          g.semester
         FROM
         grades g
         LEFT JOIN students s ON g.student_id = s.id

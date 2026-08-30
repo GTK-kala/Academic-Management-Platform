@@ -2,7 +2,6 @@ import express from "express";
 import {
   Add_Grade,
   Fetch_Grade_All,
-  Get_Overall_Grade,
   Fetch_Grade_By_Both,
   Fetch_Grade_By_Course,
   Fetch_Grade_By_Student,
@@ -17,7 +16,6 @@ GradeRouters.get(
   "/grade/course/:courseId/student/:studentId",
   Fetch_Grade_By_Both,
 );
-GradeRouters.get("/overall/:student_id/:course_id", Get_Overall_Grade);
 GradeRouters.get("/grade/:userId", Fetch_Grade_All);
 
 export default GradeRouters;
