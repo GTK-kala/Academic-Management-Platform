@@ -16,13 +16,24 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT;
 
+const allowedOrigins = ["http://localhost:3000", process.env.VITE_FRONTEND_URL];
+
 app.use(
   cors({
-    origin: "http://localhost:3000",
-    methods: ["GET", "POST", "DELETE", "PUT", "PATCH"],
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true);
+
+      // allow any vercel.app domain
+      if (origin.endsWith(".vercel.app")) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) return callback(null, true);
+
+      return callback(new Error("Not allowed by CORS"));
+    },
     credentials: true,
   }),
 );
+
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
