@@ -22,7 +22,7 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const BASE_URL = "http://localhost:3001";
+    const BASE_URL = import.meta.env.VITE_API_URL;
 
     toast.dismiss(); // Dismiss any existing toasts
 
