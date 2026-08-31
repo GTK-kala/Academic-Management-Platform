@@ -30,7 +30,6 @@ const TeacherDashboard = () => {
           user?.role,
           "all",
         );
-        console.log(enrollmentsRes);
         setTotalStudents(enrollmentsRes.enrollments?.length || 0);
         // Today's classes (placeholder)
         setTodayClasses(assignedCourses.slice(0, 3));

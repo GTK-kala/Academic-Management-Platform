@@ -636,7 +636,7 @@ const StudentProfile = () => {
                     <thead>
                       <tr className="text-sm font-medium text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-dark-border">
                         <th className="pb-3 pr-4">Course</th>
-                        <th className="pb-3 pr-4">Exam Type</th>
+                        <th className="pb-3 pr-4">Over All</th>
                         <th className="pb-3 pr-4">Grade</th>
                         <th className="pb-3 pr-4">Score</th>
                         <th className="pb-3">Semester</th>
@@ -652,7 +652,7 @@ const StudentProfile = () => {
                             {grade.course_name || `Course #${grade.course_id}`}
                           </td>
                           <td className="py-3 pr-4 text-gray-600 dark:text-gray-300 capitalize">
-                            {grade.exam_type}
+                            {grade.overall_score}
                           </td>
                           <td className="py-3 pr-4">
                             <span
@@ -670,8 +670,8 @@ const StudentProfile = () => {
                             </span>
                           </td>
                           <td className="py-3 pr-4 text-gray-600 dark:text-gray-300">
-                            {grade.numeric_grade
-                              ? `${grade.numeric_grade}%`
+                            {grade.overall_score
+                              ? `${grade.overall_score} %`
                               : "N/A"}
                           </td>
                           <td className="py-3 text-gray-600 dark:text-gray-300">

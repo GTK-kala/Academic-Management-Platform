@@ -104,9 +104,9 @@ export const Get_Enrolled_Courses = async (req, res) => {
         }
       });
     } else if (
-      (userRole === "admin" && courseId) ||
-      (userRole === "teacher" && courseId) ||
-      (userRole === "student" && courseId)
+      (userRole === "admin" && courseId !== "all") ||
+      (userRole === "teacher" && courseId !== "all") ||
+      (userRole === "student" && courseId !== "all")
     ) {
       const sql_enrolled = `SELECT
           s.id,
@@ -134,7 +134,7 @@ export const Get_Enrolled_Courses = async (req, res) => {
           });
         }
       });
-    } else if (userRole === "teacher") {
+    } else if (userRole === "teacher" && courseId === "all") {
       const teacherId = req.params.userId;
       const sql_enrolled = `SELECT DISTINCT
           s.id,
