@@ -378,18 +378,17 @@ const Attendance = () => {
   // ========================================
 
   return (
-    <div>
+    <div className="w-full min-w-0">
       {/* ========================================
-          HEADER
-      ======================================== */}
-
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
-        <div>
+        HEADER
+    ======================================== */}
+      <div className="flex flex-col gap-4 mb-6 sm:flex-row sm:items-center sm:justify-between">
+        <div className="min-w-0">
           <h1 className="text-3xl font-bold text-primary dark:text-white">
             Attendance
           </h1>
 
-          <p className="text-gray-500 dark:text-gray-400 mt-1">
+          <p className="mt-1 text-gray-500 dark:text-gray-400">
             {user?.role === "teacher"
               ? "Mark and view attendance for your courses"
               : "View your attendance records"}
@@ -399,7 +398,7 @@ const Attendance = () => {
         {user?.role === "teacher" && !markingAttendance && (
           <Button
             onClick={startMarkingAttendance}
-            className="flex items-center gap-2"
+            className="flex items-center justify-center flex-shrink-0 gap-2"
           >
             <FiCheck />
             Mark Attendance
@@ -408,22 +407,20 @@ const Attendance = () => {
       </div>
 
       {/* ========================================
-          FILTERS
-      ======================================== */}
-
-      <div className="bg-white dark:bg-dark-card p-4 rounded-xl shadow-sm border border-gray-100 dark:border-dark-border mb-6">
-        <div className="flex flex-col sm:flex-row gap-4">
+        FILTERS
+    ======================================== */}
+      <div className="p-4 mb-6 bg-white border border-gray-100 shadow-sm dark:bg-dark-card rounded-xl dark:border-dark-border">
+        <div className="flex flex-col min-w-0 gap-4 sm:flex-row">
           {/* COURSE */}
-
-          <div className="flex-1">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <div className="flex-1 w-full min-w-0">
+            <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
               Course
             </label>
 
             <select
               value={selectedCourse}
               onChange={(e) => setSelectedCourse(e.target.value)}
-              className="w-full px-4 py-2.5 border border-gray-300 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary"
+              className="block w-full min-w-0 max-w-full px-4 py-2.5 border border-gray-300 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary box-border"
             >
               <option value="all">All Courses</option>
 
@@ -436,9 +433,8 @@ const Attendance = () => {
           </div>
 
           {/* DATE */}
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <div className="w-full min-w-0 sm:w-auto sm:flex-1">
+            <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
               Date
             </label>
 
@@ -446,26 +442,30 @@ const Attendance = () => {
               type="date"
               value={selectedDate}
               onChange={(e) => setSelectedDate(e.target.value)}
-              className="w-full px-4 py-2.5 border border-gray-300 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary"
+              className="block w-full min-w-0 max-w-full px-4 py-2.5 border border-gray-300 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary box-border"
+              style={{
+                width: "100%",
+                minWidth: 0,
+                maxWidth: "100%",
+                boxSizing: "border-box",
+              }}
             />
           </div>
         </div>
       </div>
 
       {/* ========================================
-          STATISTICS
-      ======================================== */}
-
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+        STATISTICS
+    ======================================== */}
+      <div className="grid grid-cols-2 gap-4 mb-6 sm:grid-cols-4">
         {/* PRESENT */}
-
-        <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-xl">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-green-100 dark:bg-green-800 flex items-center justify-center">
+        <div className="min-w-0 p-4 bg-green-50 dark:bg-green-900/20 rounded-xl">
+          <div className="flex items-center min-w-0 gap-3">
+            <div className="flex items-center justify-center flex-shrink-0 w-10 h-10 bg-green-100 rounded-full dark:bg-green-800">
               <FiCheck className="w-5 h-5 text-green-600 dark:text-green-400" />
             </div>
 
-            <div>
+            <div className="min-w-0">
               <p className="text-sm text-green-600 dark:text-green-400">
                 Present
               </p>
@@ -478,14 +478,13 @@ const Attendance = () => {
         </div>
 
         {/* ABSENT */}
-
-        <div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-xl">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-red-100 dark:bg-red-800 flex items-center justify-center">
+        <div className="min-w-0 p-4 bg-red-50 dark:bg-red-900/20 rounded-xl">
+          <div className="flex items-center min-w-0 gap-3">
+            <div className="flex items-center justify-center flex-shrink-0 w-10 h-10 bg-red-100 rounded-full dark:bg-red-800">
               <FiX className="w-5 h-5 text-red-600 dark:text-red-400" />
             </div>
 
-            <div>
+            <div className="min-w-0">
               <p className="text-sm text-red-600 dark:text-red-400">Absent</p>
 
               <p className="text-xl font-bold text-red-700 dark:text-red-300">
@@ -496,14 +495,13 @@ const Attendance = () => {
         </div>
 
         {/* LATE */}
-
-        <div className="bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-xl">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-yellow-100 dark:bg-yellow-800 flex items-center justify-center">
+        <div className="min-w-0 p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-xl">
+          <div className="flex items-center min-w-0 gap-3">
+            <div className="flex items-center justify-center flex-shrink-0 w-10 h-10 bg-yellow-100 rounded-full dark:bg-yellow-800">
               <FiClock className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
             </div>
 
-            <div>
+            <div className="min-w-0">
               <p className="text-sm text-yellow-600 dark:text-yellow-400">
                 Late
               </p>
@@ -516,14 +514,13 @@ const Attendance = () => {
         </div>
 
         {/* EXCUSED */}
-
-        <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-xl">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-800 flex items-center justify-center">
+        <div className="min-w-0 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
+          <div className="flex items-center min-w-0 gap-3">
+            <div className="flex items-center justify-center flex-shrink-0 w-10 h-10 bg-blue-100 rounded-full dark:bg-blue-800">
               <FiAlertCircle className="w-5 h-5 text-blue-600 dark:text-blue-400" />
             </div>
 
-            <div>
+            <div className="min-w-0">
               <p className="text-sm text-blue-600 dark:text-blue-400">
                 Excused
               </p>
@@ -537,23 +534,22 @@ const Attendance = () => {
       </div>
 
       {/* ========================================
-          PROGRESS
-      ======================================== */}
-
-      <div className="bg-white dark:bg-dark-card p-6 rounded-xl shadow-sm border border-gray-100 dark:border-dark-border mb-6">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+        PROGRESS
+    ======================================== */}
+      <div className="p-6 mb-6 bg-white border border-gray-100 shadow-sm dark:bg-dark-card rounded-xl dark:border-dark-border">
+        <div className="flex items-center justify-between gap-4 mb-3">
+          <h3 className="min-w-0 text-lg font-semibold text-gray-900 dark:text-white">
             Overall Attendance
           </h3>
 
-          <span className="text-2xl font-bold text-primary">
+          <span className="flex-shrink-0 text-2xl font-bold text-primary">
             {attendancePercentage}%
           </span>
         </div>
 
-        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
+        <div className="w-full h-3 overflow-hidden bg-gray-200 rounded-full dark:bg-gray-700">
           <div
-            className="bg-primary h-3 rounded-full transition-all duration-500"
+            className="h-3 transition-all duration-500 rounded-full bg-primary"
             style={{
               width: `${attendancePercentage}%`,
             }}
@@ -562,22 +558,21 @@ const Attendance = () => {
       </div>
 
       {/* ========================================
-          MARK ATTENDANCE
-      ======================================== */}
-
+        MARK ATTENDANCE
+    ======================================== */}
       {markingAttendance && (
-        <div className="bg-white dark:bg-dark-card p-6 rounded-xl shadow-sm border border-gray-100 dark:border-dark-border mb-6">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+        <div className="p-6 mb-6 bg-white border border-gray-100 shadow-sm dark:bg-dark-card rounded-xl dark:border-dark-border">
+          <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
             Mark Attendance - {selectedDate}
           </h3>
 
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <thead>
-                <tr className="text-sm text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-dark-border">
-                  <th className="pb-3 pr-4">Student</th>
+                <tr className="text-sm text-gray-500 border-b border-gray-200 dark:text-gray-400 dark:border-dark-border">
+                  <th className="pb-3 pr-4 whitespace-nowrap">Student</th>
 
-                  <th className="pb-3 pr-4">Status</th>
+                  <th className="pb-3 pr-4 whitespace-nowrap">Status</th>
                 </tr>
               </thead>
 
@@ -587,7 +582,7 @@ const Attendance = () => {
                     key={student.id}
                     className="border-b border-gray-100 dark:border-dark-border"
                   >
-                    <td className="py-3 pr-4 text-gray-900 dark:text-white font-medium">
+                    <td className="py-3 pr-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                       {student.first_name} {student.last_name}
                     </td>
 
@@ -600,11 +595,8 @@ const Attendance = () => {
                         className="px-3 py-1.5 border border-gray-300 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-primary"
                       >
                         <option value="present">Present</option>
-
                         <option value="absent">Absent</option>
-
                         <option value="late">Late</option>
-
                         <option value="excused">Excused</option>
                       </select>
                     </td>
@@ -615,8 +607,7 @@ const Attendance = () => {
           </div>
 
           {/* BUTTONS */}
-
-          <div className="flex gap-3 justify-end mt-4">
+          <div className="flex flex-col justify-end gap-3 mt-4 sm:flex-row">
             <Button variant="secondary" onClick={cancelMarkingAttendance}>
               Cancel
             </Button>
@@ -627,19 +618,18 @@ const Attendance = () => {
       )}
 
       {/* ========================================
-          ATTENDANCE RECORDS
-      ======================================== */}
-
-      <div className="bg-white dark:bg-dark-card rounded-xl shadow-sm border border-gray-100 dark:border-dark-border overflow-hidden">
-        <div className="p-6 border-b border-gray-200 dark:border-dark-border">
-          <div className="flex items-center justify-between">
+        ATTENDANCE RECORDS
+    ======================================== */}
+      <div className="overflow-hidden bg-white border border-gray-100 shadow-sm dark:bg-dark-card rounded-xl dark:border-dark-border">
+        <div className="p-4 border-b border-gray-200 sm:p-6 dark:border-dark-border">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
               Attendance Records
             </h3>
 
             <Button
               variant="outline"
-              className="flex items-center gap-2 text-sm"
+              className="flex items-center justify-center w-full gap-2 text-sm sm:w-auto"
             >
               <FiDownload className="w-4 h-4" />
               Export
@@ -651,15 +641,15 @@ const Attendance = () => {
           <table className="w-full text-left">
             <thead className="bg-gray-50 dark:bg-dark-bg">
               <tr className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                <th className="px-6 py-4">Student</th>
+                <th className="px-6 py-4 whitespace-nowrap">Student</th>
 
-                <th className="px-6 py-4">Course</th>
+                <th className="px-6 py-4 whitespace-nowrap">Course</th>
 
-                <th className="px-6 py-4">Date</th>
+                <th className="px-6 py-4 whitespace-nowrap">Date</th>
 
-                <th className="px-6 py-4">Status</th>
+                <th className="px-6 py-4 whitespace-nowrap">Status</th>
 
-                <th className="px-6 py-4">Recorded By</th>
+                <th className="px-6 py-4 whitespace-nowrap">Recorded By</th>
               </tr>
             </thead>
 
@@ -670,7 +660,7 @@ const Attendance = () => {
                     colSpan={5}
                     className="px-6 py-8 text-center text-gray-500"
                   >
-                    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary mx-auto" />
+                    <div className="w-8 h-8 mx-auto border-t-2 border-b-2 rounded-full animate-spin border-primary" />
                   </td>
                 </tr>
               ) : attendanceRecords.length === 0 ? (
@@ -689,21 +679,21 @@ const Attendance = () => {
                     key={record.id || idx}
                     className="hover:bg-gray-50 dark:hover:bg-dark-card/50"
                   >
-                    <td className="px-6 py-4 text-gray-900 dark:text-white font-medium">
+                    <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                       {record.first_name} {record.last_name}
                     </td>
 
-                    <td className="px-6 py-4 text-gray-600 dark:text-gray-300">
+                    <td className="px-6 py-4 text-gray-600 whitespace-nowrap dark:text-gray-300">
                       {record.course_name || `Course #${record.course_id}`}
                     </td>
 
-                    <td className="px-6 py-4 text-gray-600 dark:text-gray-300">
+                    <td className="px-6 py-4 text-gray-600 whitespace-nowrap dark:text-gray-300">
                       {record.attendance_date
                         ? new Date(record.attendance_date).toLocaleDateString()
                         : "-"}
                     </td>
 
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-4 whitespace-nowrap">
                       <span
                         className={`px-2 py-1 rounded-full text-xs font-medium ${
                           record.status === "present"
@@ -722,7 +712,7 @@ const Attendance = () => {
                       </span>
                     </td>
 
-                    <td className="px-6 py-4 text-gray-600 dark:text-gray-300">
+                    <td className="px-6 py-4 text-gray-600 whitespace-nowrap dark:text-gray-300">
                       Teacher ID: {record.recorded_by || "-"}
                     </td>
                   </tr>
