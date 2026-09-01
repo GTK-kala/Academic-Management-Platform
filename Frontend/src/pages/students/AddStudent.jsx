@@ -81,7 +81,7 @@ const AddStudent = () => {
   };
 
   return (
-    <div className="w-full min-w-0">
+    <div>
       <Link
         to="/students"
         className="inline-flex items-center gap-2 mb-6 text-primary dark:text-primary-300"
@@ -94,17 +94,17 @@ const AddStudent = () => {
         Add New Student
       </h1>
 
-      <div className="w-full max-w-2xl min-w-0 p-6 bg-white border border-gray-100 shadow-sm dark:bg-dark-card rounded-xl dark:border-dark-border">
+      <div className="max-w-2xl p-6 bg-white border border-gray-100 shadow-sm dark:bg-dark-card rounded-xl dark:border-dark-border">
         {error && (
           <div className="p-4 mb-6 text-sm text-red-600 border border-red-200 rounded-lg bg-red-50 dark:bg-red-900/20 dark:border-red-800 dark:text-red-400">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="w-full min-w-0 space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
             {/* FIRST NAME */}
-            <div className="min-w-0">
+            <div>
               <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                 First Name *
               </label>
@@ -114,12 +114,12 @@ const AddStudent = () => {
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
                 required
-                className="block w-full max-w-full min-w-0 px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
+                className="w-full px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
               />
             </div>
 
             {/* LAST NAME */}
-            <div className="min-w-0">
+            <div>
               <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                 Last Name *
               </label>
@@ -129,12 +129,12 @@ const AddStudent = () => {
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
                 required
-                className="block w-full max-w-full min-w-0 px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
+                className="w-full px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
               />
             </div>
 
             {/* EMAIL */}
-            <div className="min-w-0">
+            <div>
               <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                 Email
               </label>
@@ -144,12 +144,12 @@ const AddStudent = () => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="block w-full max-w-full min-w-0 px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
+                className="w-full px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
               />
             </div>
 
             {/* PASSWORD */}
-            <div className="min-w-0">
+            <div>
               <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                 Password
               </label>
@@ -159,12 +159,12 @@ const AddStudent = () => {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="block w-full max-w-full min-w-0 px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
+                className="w-full px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
               />
             </div>
 
             {/* DATE OF BIRTH */}
-            <div className="w-full min-w-0">
+            <div className="min-w-0">
               <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                 Date of Birth
               </label>
@@ -175,21 +175,23 @@ const AddStudent = () => {
                 value={dateOfBirth}
                 onChange={(e) => setDateOfBirth(e.target.value)}
                 required
-                className="box-border block w-full max-w-full min-w-0 px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
+                className={`px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary ${
+                  dateOfBirth ? "w-full" : "w-auto"
+                }`}
               />
             </div>
 
             {/* GENDER */}
-            <div className="min-w-0">
+            <div>
               <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
-                Gender
+                gender
               </label>
 
               <select
                 name="gender"
                 value={gender}
                 onChange={(e) => setGender(e.target.value)}
-                className="block w-full max-w-full min-w-0 px-4 py-3 text-gray-900 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
+                className="w-full px-4 py-3 text-gray-900 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
               >
                 <option value="male">Male</option>
                 <option value="female">Female</option>
@@ -197,7 +199,7 @@ const AddStudent = () => {
             </div>
 
             {/* PHONE */}
-            <div className="min-w-0">
+            <div>
               <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                 Phone
               </label>
@@ -206,12 +208,12 @@ const AddStudent = () => {
                 name="phone"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                className="block w-full max-w-full min-w-0 px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
+                className="w-full px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
               />
             </div>
 
             {/* ADDRESS */}
-            <div className="min-w-0 sm:col-span-2">
+            <div className="sm:col-span-2">
               <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                 Address
               </label>
@@ -221,7 +223,7 @@ const AddStudent = () => {
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
                 rows="3"
-                className="block w-full max-w-full min-w-0 px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
+                className="w-full px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
               />
             </div>
           </div>
