@@ -34,17 +34,13 @@ const Grades = () => {
   const { user } = useAuth();
 
   const [grades, setGrades] = useState([]);
-
   const [courses, setCourses] = useState([]);
-
   const [students, setStudents] = useState([]);
 
   const [loading, setLoading] = useState(true);
-
   const [showAddGrade, setShowAddGrade] = useState(false);
 
   const [selectedCourse, setSelectedCourse] = useState("all");
-
   const [selectedStudent, setSelectedStudent] = useState("all");
 
   const [gradeForm, setGradeForm] = useState({
@@ -106,9 +102,11 @@ const Grades = () => {
             storedUser.role,
             storedUser.userId,
           );
+
           const teacherCourses = response?.courses.filter(
             (c) => c.teacher_id === storedUser?.userId,
           );
+
           setCourses(teacherCourses || []);
         }
 
@@ -284,7 +282,6 @@ const Grades = () => {
 
       if (!storedUser) {
         toast.error("User is not logged in");
-
         return;
       }
 
@@ -292,35 +289,26 @@ const Grades = () => {
 
       if (Number.isNaN(score) || score < 0 || score > 100) {
         toast.error("Score must be between 0 and 100");
-
         return;
       }
 
       if (!gradeForm.student_id) {
         toast.error("Please select a student");
-
         return;
       }
 
       if (!gradeForm.course_id) {
         toast.error("Please select a course");
-
         return;
       }
 
       const data = {
         student_id: Number(gradeForm.student_id),
-
         course_id: Number(gradeForm.course_id),
-
         numeric_grade: score,
-
         exam_type: gradeForm.exam_type,
-
         semester: gradeForm.semester,
-
         academic_year: gradeForm.academic_year,
-
         recorded_by: Number(storedUser.userId),
       };
 
@@ -371,11 +359,8 @@ const Grades = () => {
       course_id: selectedCourse !== "all" ? selectedCourse : "",
 
       numeric_grade: "",
-
       exam_type: "assignment",
-
       semester: "2025-Spring",
-
       academic_year: "2025-2026",
     });
 
@@ -384,13 +369,14 @@ const Grades = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      {/* HEADER */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-3xl font-bold text-primary dark:text-white">
             Grades
           </h1>
 
-          <p className="text-gray-500 dark:text-gray-400 mt-1">
+          <p className="mt-1 text-gray-500 dark:text-gray-400">
             Manage student assessment scores and overall grades.
           </p>
         </div>
@@ -403,12 +389,12 @@ const Grades = () => {
         )}
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* STATISTICS */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {/* GPA */}
-
-        <div className="bg-white dark:bg-dark-card p-6 rounded-xl shadow-sm border border-gray-100 dark:border-dark-border">
+        <div className="p-6 bg-white border border-gray-100 shadow-sm dark:bg-dark-card rounded-xl dark:border-dark-border">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-full bg-primary-100 dark:bg-primary-900/20 flex items-center justify-center">
+            <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary-100 dark:bg-primary-900/20">
               <FiAward className="w-6 h-6 text-primary" />
             </div>
 
@@ -423,10 +409,9 @@ const Grades = () => {
         </div>
 
         {/* COURSES */}
-
-        <div className="bg-white dark:bg-dark-card p-6 rounded-xl shadow-sm border border-gray-100 dark:border-dark-border">
+        <div className="p-6 bg-white border border-gray-100 shadow-sm dark:bg-dark-card rounded-xl dark:border-dark-border">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900/20 flex items-center justify-center">
+            <div className="flex items-center justify-center w-12 h-12 bg-green-100 rounded-full dark:bg-green-900/20">
               <FiBook className="w-6 h-6 text-green-600" />
             </div>
 
@@ -441,10 +426,9 @@ const Grades = () => {
         </div>
 
         {/* PASSING RATE */}
-
-        <div className="bg-white dark:bg-dark-card p-6 rounded-xl shadow-sm border border-gray-100 dark:border-dark-border">
+        <div className="p-6 bg-white border border-gray-100 shadow-sm dark:bg-dark-card rounded-xl dark:border-dark-border">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/20 flex items-center justify-center">
+            <div className="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-full dark:bg-blue-900/20">
               <FiTrendingUp className="w-6 h-6 text-blue-600" />
             </div>
 
@@ -459,10 +443,9 @@ const Grades = () => {
         </div>
 
         {/* RECORDS */}
-
-        <div className="bg-white dark:bg-dark-card p-6 rounded-xl shadow-sm border border-gray-100 dark:border-dark-border">
+        <div className="p-6 bg-white border border-gray-100 shadow-sm dark:bg-dark-card rounded-xl dark:border-dark-border">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-full bg-purple-100 dark:bg-purple-900/20 flex items-center justify-center">
+            <div className="flex items-center justify-center w-12 h-12 bg-purple-100 rounded-full dark:bg-purple-900/20">
               <FiBarChart2 className="w-6 h-6 text-purple-600" />
             </div>
 
@@ -477,12 +460,18 @@ const Grades = () => {
         </div>
       </div>
 
-      <div className="bg-white dark:bg-dark-card p-4 rounded-xl shadow-sm border border-gray-100 dark:border-dark-border">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {/* FILTERS */}
+      <div className="p-4 bg-white border border-gray-100 shadow-sm dark:bg-dark-card rounded-xl dark:border-dark-border">
+        <div
+          className={`grid grid-cols-1 ${
+            user?.role !== "student" ? "md:grid-cols-2" : ""
+          } gap-4`}
+        >
           {/* COURSE */}
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <div
+            className={user?.role === "student" ? "w-full md:col-span-2" : ""}
+          >
+            <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
               Course
             </label>
 
@@ -502,10 +491,9 @@ const Grades = () => {
           </div>
 
           {/* STUDENT */}
-
           {user?.role !== "student" && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                 Student
               </label>
 
@@ -527,8 +515,9 @@ const Grades = () => {
         </div>
       </div>
 
-      <div className="bg-white dark:bg-dark-card p-6 rounded-xl shadow-sm border border-gray-100 dark:border-dark-border">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+      {/* GRADE DISTRIBUTION */}
+      <div className="p-6 bg-white border border-gray-100 shadow-sm dark:bg-dark-card rounded-xl dark:border-dark-border">
+        <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
           Grade Distribution
         </h3>
 
@@ -556,29 +545,27 @@ const Grades = () => {
         )}
       </div>
 
+      {/* ADD GRADE MODAL */}
       {showAddGrade && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
           <div className="bg-white dark:bg-dark-card rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
             {/* MODAL HEADER */}
-
             <div className="p-6 border-b border-gray-200 dark:border-dark-border">
               <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
                 Add Grade
               </h3>
 
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
                 Enter one assessment score. The overall grade is calculated
                 after all five scores are entered.
               </p>
             </div>
 
             {/* FORM */}
-
             <form onSubmit={handleAddGrade} className="p-6 space-y-4">
               {/* STUDENT */}
-
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                   Student
                 </label>
 
@@ -604,9 +591,8 @@ const Grades = () => {
               </div>
 
               {/* COURSE */}
-
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                   Course
                 </label>
 
@@ -632,9 +618,8 @@ const Grades = () => {
               </div>
 
               {/* EXAM TYPE */}
-
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                   Assessment Type
                 </label>
 
@@ -658,9 +643,8 @@ const Grades = () => {
               </div>
 
               {/* SCORE */}
-
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                   Score
                 </label>
 
@@ -696,9 +680,8 @@ const Grades = () => {
               </div>
 
               {/* SEMESTER */}
-
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                   Semester
                 </label>
 
@@ -717,9 +700,8 @@ const Grades = () => {
               </div>
 
               {/* ACADEMIC YEAR */}
-
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                   Academic Year
                 </label>
 
@@ -738,7 +720,6 @@ const Grades = () => {
               </div>
 
               {/* BUTTONS */}
-
               <div className="flex justify-end gap-3 pt-4">
                 <Button
                   type="button"
@@ -755,7 +736,8 @@ const Grades = () => {
         </div>
       )}
 
-      <div className="bg-white dark:bg-dark-card rounded-xl shadow-sm border border-gray-100 dark:border-dark-border overflow-hidden">
+      {/* GRADE RECORDS */}
+      <div className="overflow-hidden bg-white border border-gray-100 shadow-sm dark:bg-dark-card rounded-xl dark:border-dark-border">
         <div className="p-6 border-b border-gray-200 dark:border-dark-border">
           <div className="flex items-center justify-between">
             <div>
@@ -763,7 +745,7 @@ const Grades = () => {
                 Grade Records
               </h3>
 
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
                 One row contains all assessments for one student and course.
               </p>
             </div>
@@ -776,49 +758,33 @@ const Grades = () => {
         </div>
 
         {/* TABLE */}
-
         <div className="overflow-x-auto">
           <table className="w-full min-w-[1200px] text-left">
             {/* HEADER */}
-
             <thead className="bg-gray-50 dark:bg-dark-bg">
               <tr className="text-sm font-medium text-gray-500 dark:text-gray-400">
                 <th className="px-5 py-4">Student</th>
-
                 <th className="px-5 py-4">Course</th>
-
                 <th className="px-5 py-4 text-center">Assignment</th>
-
                 <th className="px-5 py-4 text-center">Quiz</th>
-
                 <th className="px-5 py-4 text-center">Project</th>
-
                 <th className="px-5 py-4 text-center">Midterm</th>
-
                 <th className="px-5 py-4 text-center">Final</th>
-
                 <th className="px-5 py-4 text-center">Overall</th>
-
                 <th className="px-5 py-4 text-center">Grade</th>
-
                 <th className="px-5 py-4 text-center">Status</th>
               </tr>
             </thead>
 
             {/* BODY */}
-
             <tbody className="divide-y divide-gray-100 dark:divide-dark-border">
-              {/* LOADING */}
-
               {loading ? (
                 <tr>
                   <td colSpan={10} className="px-6 py-10 text-center">
-                    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary mx-auto" />
+                    <div className="w-8 h-8 mx-auto border-t-2 border-b-2 rounded-full animate-spin border-primary" />
                   </td>
                 </tr>
-              ) : /* EMPTY */
-
-              grades.length === 0 ? (
+              ) : grades.length === 0 ? (
                 <tr>
                   <td
                     colSpan={10}
@@ -829,21 +795,17 @@ const Grades = () => {
                   </td>
                 </tr>
               ) : (
-                /* DATA */
-
                 grades.map((item) => (
                   <tr
                     key={item.id}
                     className="hover:bg-gray-50 dark:hover:bg-dark-bg/50"
                   >
                     {/* STUDENT */}
-
                     <td className="px-5 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap">
                       {item.first_name} {item.last_name}
                     </td>
 
                     {/* COURSE */}
-
                     <td className="px-5 py-4 whitespace-nowrap">
                       <div className="font-medium text-gray-900 dark:text-white">
                         {item.course_name}
@@ -855,7 +817,6 @@ const Grades = () => {
                     </td>
 
                     {/* ASSIGNMENT */}
-
                     <td className="px-5 py-4 text-center">
                       {item.assignment !== null
                         ? `${Number(item.assignment)}%`
@@ -863,39 +824,33 @@ const Grades = () => {
                     </td>
 
                     {/* QUIZ */}
-
                     <td className="px-5 py-4 text-center">
                       {item.quiz !== null ? `${Number(item.quiz)}%` : "—"}
                     </td>
 
                     {/* PROJECT */}
-
                     <td className="px-5 py-4 text-center">
                       {item.project !== null ? `${Number(item.project)}%` : "—"}
                     </td>
 
                     {/* MIDTERM */}
-
                     <td className="px-5 py-4 text-center">
                       {item.midterm !== null ? `${Number(item.midterm)}%` : "—"}
                     </td>
 
                     {/* FINAL */}
-
                     <td className="px-5 py-4 text-center">
                       {item.final !== null ? `${Number(item.final)}%` : "—"}
                     </td>
 
                     {/* OVERALL */}
-
-                    <td className="px-5 py-4 text-center font-bold">
+                    <td className="px-5 py-4 font-bold text-center">
                       {item.overall_score !== null
                         ? `${Number(item.overall_score).toFixed(2)}%`
                         : "Pending"}
                     </td>
 
                     {/* GRADE */}
-
                     <td className="px-5 py-4 text-center">
                       {item.grade ? (
                         <span
@@ -911,7 +866,6 @@ const Grades = () => {
                     </td>
 
                     {/* STATUS */}
-
                     <td className="px-5 py-4 text-center">
                       {item.grade ? (
                         <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400">

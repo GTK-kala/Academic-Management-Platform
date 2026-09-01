@@ -154,7 +154,7 @@ const EditStudent = () => {
                 value={dateOfBirth}
                 onChange={(e) => setDateOfBirth(e.target.value)}
                 required
-                className="block w-full max-w-full min-w-0 px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg appearance-none dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
+                className="block w-full max-w-full min-w-0 px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
               />
             </div>
             <div>
