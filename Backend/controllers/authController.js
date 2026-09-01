@@ -94,6 +94,7 @@ const CreateUser = (req, res) => {
                       ],
                       (err) => {
                         if (err) {
+                          console.log(err);
                           return res.status(500).json({
                             message: "Failed to create student",
                             error: err.message,
@@ -223,6 +224,7 @@ const LoginUser = (req, res) => {
         email = ?`;
     db.query(sql, [email], (err, results) => {
       if (err) {
+        console.log(err, "1");
         return res.status(500).json({
           message: "Failed to check email",
           error: err.message,
@@ -255,6 +257,7 @@ const LoginUser = (req, res) => {
                 user_id = ?`;
             db.query(sql_student, [user.id], (err, studentResults) => {
               if (err) {
+                console.log(err, "2");
                 return res.status(500).json({
                   message: "Failed to retrieve student data",
                   error: err.message,
@@ -263,8 +266,9 @@ const LoginUser = (req, res) => {
                 const studentData = studentResults[0];
                 const cookie = {
                   httpOnly: true,
-                  secure: false,
-                  sameSite: "lax",
+                  secure: process.env.NODE_ENV === "production",
+                  sameSite:
+                    process.env.NODE_ENV === "production" ? "none" : "lax",
                 };
                 const token = jwt.sign(
                   { userId: studentData.id, role: user.role },
@@ -290,6 +294,7 @@ const LoginUser = (req, res) => {
                 user_id = ?`;
             db.query(sql_teacher, [user.id], (err, teacherResults) => {
               if (err) {
+                console.log(err, "3");
                 return res.status(500).json({
                   message: "Failed to retrieve teacher data",
                   error: err.message,
@@ -298,8 +303,9 @@ const LoginUser = (req, res) => {
                 const teacherData = teacherResults[0];
                 const cookie = {
                   httpOnly: true,
-                  secure: false,
-                  sameSite: "lax",
+                  secure: process.env.NODE_ENV === "production",
+                  sameSite:
+                    process.env.NODE_ENV === "production" ? "none" : "lax",
                 };
                 const token = jwt.sign(
                   { userId: teacherData.id, role: user.role },
@@ -322,8 +328,8 @@ const LoginUser = (req, res) => {
             const adminData = user;
             const cookie = {
               httpOnly: true,
-              secure: false,
-              sameSite: "lax",
+              secure: process.env.NODE_ENV === "production",
+              sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
             };
             const token = jwt.sign(
               { userId: adminData.id, role: user.role },
