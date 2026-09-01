@@ -1,14 +1,21 @@
 import { useEffect, useState } from "react";
+
 import toast from "react-hot-toast";
+
 import api from "../../services/api";
+
 import { FiArrowLeft } from "react-icons/fi";
+
 import Button from "../../components/common/Button";
+
 import { useNavigate, Link, useParams } from "react-router-dom";
+
 import { Fetch_Student, Edit_Student } from "../../services/studentService";
 
 const EditStudent = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [password, setPassword] = useState("");
@@ -16,36 +23,54 @@ const EditStudent = () => {
   const [gender, setGender] = useState("male");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
+
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const FetchInitialData = async () => {
       const user = JSON.parse(localStorage.getItem("user"));
+
       try {
         const studentRes = await Fetch_Student(id, user?.role);
+
         const studentData = studentRes?.student;
+
         if (studentData) {
-          setFirstName(studentData.first_name);
-          setLastName(studentData.last_name);
-          setDateOfBirth(studentData.date_of_birth);
-          setGender(studentData.gender);
-          setPhone(studentData.phone);
-          setAddress(studentData.address);
+          setFirstName(studentData.first_name || "");
+          setLastName(studentData.last_name || "");
+
+          /*
+           * Make sure the date is in YYYY-MM-DD format.
+           * This is required by <input type="date">.
+           */
+          const formattedDate = studentData.date_of_birth
+            ? String(studentData.date_of_birth).slice(0, 10)
+            : "";
+
+          setDateOfBirth(formattedDate);
+
+          setGender(studentData.gender || "male");
+          setPhone(studentData.phone || "");
+          setAddress(studentData.address || "");
         } else {
           console.log("No student Data");
         }
       } catch (error) {
         console.error("Failed to fetch data:", error);
+
         setError("Failed to load required data. Please try again.");
       }
     };
+
     FetchInitialData();
-  }, []);
+  }, [id]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     setError("");
+
     if (
       !firstName ||
       !lastName ||
@@ -58,9 +83,12 @@ const EditStudent = () => {
       setError(
         "Date of birth, password, first name, last name, gender, address, and phone are required.",
       );
+
       return;
     }
+
     setLoading(true);
+
     try {
       const formData = {
         first_name: firstName,
@@ -71,11 +99,17 @@ const EditStudent = () => {
         address,
         phone,
       };
-      const res = await Edit_Student(id, formData);
+
+      await Edit_Student(id, formData);
+
+      toast.success("Student updated successfully");
+
+      navigate("/students");
     } catch (err) {
-      setError(err.message || "Failed to create student.");
+      setError(err.message || "Failed to update student.");
     } finally {
       setLoading(false);
+
       setGender("male");
       setFirstName("");
       setLastName("");
@@ -87,120 +121,145 @@ const EditStudent = () => {
   };
 
   return (
-    <div>
+    <div className="w-full min-w-0">
       <Link
         to="/students"
         className="inline-flex items-center gap-2 mb-6 text-primary dark:text-primary-300"
       >
-        <FiArrowLeft /> Back to Students
+        <FiArrowLeft />
+        Back to Students
       </Link>
 
       <h1 className="mb-8 text-3xl font-bold text-primary dark:text-white">
         Edit Student
       </h1>
 
-      <div className="max-w-2xl p-6 bg-white border border-gray-100 shadow-sm dark:bg-dark-card rounded-xl dark:border-dark-border">
+      <div className="w-full max-w-2xl min-w-0 p-6 bg-white border border-gray-100 shadow-sm dark:bg-dark-card rounded-xl dark:border-dark-border">
         {error && (
           <div className="p-4 mb-6 text-sm text-red-600 border border-red-200 rounded-lg bg-red-50 dark:bg-red-900/20 dark:border-red-800 dark:text-red-400">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="w-full min-w-0 space-y-6">
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-            <div>
+            {/* FIRST NAME */}
+            <div className="min-w-0">
               <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                 First Name *
               </label>
+
               <input
                 name="firstName"
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
                 required
-                className="w-full px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
+                className="block w-full max-w-full min-w-0 px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
               />
             </div>
-            <div>
+
+            {/* LAST NAME */}
+            <div className="min-w-0">
               <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                 Last Name *
               </label>
+
               <input
                 name="lastName"
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
                 required
-                className="w-full px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
+                className="block w-full max-w-full min-w-0 px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
               />
             </div>
-            <div>
+
+            {/* PASSWORD */}
+            <div className="min-w-0">
               <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                 Password
               </label>
+
               <input
                 name="password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
+                className="block w-full max-w-full min-w-0 px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
               />
             </div>
-            <div className="min-w-0">
+
+            {/* DATE OF BIRTH */}
+            <div className="w-full min-w-0">
               <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                 Date of Birth
               </label>
+
               <input
                 name="dateOfBirth"
                 type="date"
                 value={dateOfBirth}
                 onChange={(e) => setDateOfBirth(e.target.value)}
                 required
-                className="block w-full max-w-full min-w-0 px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
+                className="box-border block w-full max-w-full min-w-0 px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
               />
             </div>
-            <div>
+
+            {/* GENDER */}
+            <div className="min-w-0">
               <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
-                gender
+                Gender
               </label>
+
               <select
                 name="gender"
                 value={gender}
                 onChange={(e) => setGender(e.target.value)}
-                className="w-full px-4 py-3 text-gray-900 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
+                className="block w-full max-w-full min-w-0 px-4 py-3 text-gray-900 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
               >
                 <option value="male">Male</option>
                 <option value="female">Female</option>
               </select>
             </div>
 
-            <div>
+            {/* PHONE */}
+            <div className="min-w-0">
               <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                 Phone
               </label>
+
               <input
                 name="phone"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                className="w-full px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
+                className="block w-full max-w-full min-w-0 px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
               />
             </div>
-            <div className="sm:col-span-2">
+
+            {/* ADDRESS */}
+            <div className="min-w-0 sm:col-span-2">
               <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                 Address
               </label>
+
               <textarea
                 name="address"
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
                 rows="3"
-                className="w-full px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
+                className="block w-full max-w-full min-w-0 px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
               />
             </div>
           </div>
 
           <div className="flex justify-end gap-4">
-            <Button onClick={() => navigate("/students")} variant="secondary">
+            <Button
+              type="button"
+              onClick={() => navigate("/students")}
+              variant="secondary"
+            >
               Cancel
             </Button>
+
             <Button type="submit" disabled={loading}>
               {loading ? "Editing..." : "Edit Student"}
             </Button>
