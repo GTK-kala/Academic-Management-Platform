@@ -2,15 +2,16 @@ import { useEffect, useState } from "react";
 
 import toast from "react-hot-toast";
 
-import api from "../../services/api";
-
 import { FiArrowLeft } from "react-icons/fi";
 
 import Button from "../../components/common/Button";
 
 import { useNavigate, Link, useParams } from "react-router-dom";
 
-import { Fetch_Student, Edit_Student } from "../../services/studentService";
+import {
+  Fetch_Student,
+  Edit_Student,
+} from "../../services/studentService";
 
 const EditStudent = () => {
   const navigate = useNavigate();
@@ -55,7 +56,9 @@ const EditStudent = () => {
       } catch (error) {
         console.error("Failed to fetch data:", error);
 
-        setError("Failed to load required data. Please try again.");
+        setError(
+          "Failed to load required data. Please try again.",
+        );
       }
     };
 
@@ -117,7 +120,7 @@ const EditStudent = () => {
   };
 
   return (
-    <div>
+    <div className="w-full min-w-0">
       <Link
         to="/students"
         className="inline-flex items-center gap-2 mb-6 text-primary dark:text-primary-300"
@@ -130,17 +133,17 @@ const EditStudent = () => {
         Edit Student
       </h1>
 
-      <div className="max-w-2xl p-6 bg-white border border-gray-100 shadow-sm dark:bg-dark-card rounded-xl dark:border-dark-border">
+      <div className="w-full max-w-2xl min-w-0 p-6 bg-white border border-gray-100 shadow-sm dark:bg-dark-card rounded-xl dark:border-dark-border">
         {error && (
           <div className="p-4 mb-6 text-sm text-red-600 border border-red-200 rounded-lg bg-red-50 dark:bg-red-900/20 dark:border-red-800 dark:text-red-400">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+        <form onSubmit={handleSubmit} className="w-full min-w-0 space-y-6">
+          <div className="grid min-w-0 grid-cols-1 gap-6 sm:grid-cols-2">
             {/* FIRST NAME */}
-            <div>
+            <div className="w-full min-w-0">
               <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                 First Name *
               </label>
@@ -150,12 +153,12 @@ const EditStudent = () => {
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
                 required
-                className="w-full px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
+                className="block w-full min-w-0 max-w-full px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg box-border dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
               />
             </div>
 
             {/* LAST NAME */}
-            <div>
+            <div className="w-full min-w-0">
               <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                 Last Name *
               </label>
@@ -165,12 +168,12 @@ const EditStudent = () => {
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
                 required
-                className="w-full px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
+                className="block w-full min-w-0 max-w-full px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg box-border dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
               />
             </div>
 
             {/* PASSWORD */}
-            <div>
+            <div className="w-full min-w-0">
               <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                 Password
               </label>
@@ -180,12 +183,12 @@ const EditStudent = () => {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
+                className="block w-full min-w-0 max-w-full px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg box-border dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
               />
             </div>
 
             {/* DATE OF BIRTH */}
-            <div className="min-w-0">
+            <div className="w-full min-w-0 overflow-hidden">
               <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                 Date of Birth
               </label>
@@ -196,23 +199,27 @@ const EditStudent = () => {
                 value={dateOfBirth}
                 onChange={(e) => setDateOfBirth(e.target.value)}
                 required
-                className={`px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary ${
-                  dateOfBirth ? "w-full" : "w-auto"
-                }`}
+                style={{
+                  width: "100%",
+                  minWidth: 0,
+                  maxWidth: "100%",
+                  boxSizing: "border-box",
+                }}
+                className="block px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
               />
             </div>
 
             {/* GENDER */}
-            <div>
+            <div className="w-full min-w-0">
               <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
-                gender
+                Gender
               </label>
 
               <select
                 name="gender"
                 value={gender}
                 onChange={(e) => setGender(e.target.value)}
-                className="w-full px-4 py-3 text-gray-900 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
+                className="block w-full min-w-0 max-w-full px-4 py-3 text-gray-900 bg-white border border-gray-300 rounded-lg box-border dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
               >
                 <option value="male">Male</option>
                 <option value="female">Female</option>
@@ -220,7 +227,7 @@ const EditStudent = () => {
             </div>
 
             {/* PHONE */}
-            <div>
+            <div className="w-full min-w-0">
               <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                 Phone
               </label>
@@ -229,12 +236,12 @@ const EditStudent = () => {
                 name="phone"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                className="w-full px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
+                className="block w-full min-w-0 max-w-full px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg box-border dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
               />
             </div>
 
             {/* ADDRESS */}
-            <div className="sm:col-span-2">
+            <div className="w-full min-w-0 sm:col-span-2">
               <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                 Address
               </label>
@@ -244,7 +251,7 @@ const EditStudent = () => {
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
                 rows="3"
-                className="w-full px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
+                className="block w-full min-w-0 max-w-full px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg box-border dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
               />
             </div>
           </div>
