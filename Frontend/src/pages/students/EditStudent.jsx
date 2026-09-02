@@ -148,7 +148,7 @@ const EditStudent = () => {
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
                 required
-                className="block w-full px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg box-border dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
+                className="block w-full min-w-0 px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg box-border dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
               />
             </div>
 
@@ -163,7 +163,7 @@ const EditStudent = () => {
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
                 required
-                className="block w-full px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg box-border dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
+                className="block w-full min-w-0 px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg box-border dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
               />
             </div>
 
@@ -178,7 +178,7 @@ const EditStudent = () => {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="block w-full px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg box-border dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
+                className="block w-full min-w-0 px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg box-border dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
               />
             </div>
 
@@ -194,7 +194,7 @@ const EditStudent = () => {
                 value={dateOfBirth}
                 onChange={(e) => setDateOfBirth(e.target.value)}
                 required
-                className="block w-full px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg box-border dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
+                className="block w-full min-w-0 px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg box-border dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
               />
             </div>
 
@@ -208,7 +208,7 @@ const EditStudent = () => {
                 name="gender"
                 value={gender}
                 onChange={(e) => setGender(e.target.value)}
-                className="block w-full px-4 py-3 text-gray-900 bg-white border border-gray-300 rounded-lg box-border dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
+                className="block w-full min-w-0 px-4 py-3 text-gray-900 bg-white border border-gray-300 rounded-lg box-border dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
               >
                 <option value="male">Male</option>
                 <option value="female">Female</option>
@@ -225,7 +225,7 @@ const EditStudent = () => {
                 name="phone"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                className="block w-full px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg box-border dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
+                className="block w-full min-w-0 px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg box-border dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
               />
             </div>
 
@@ -240,7 +240,7 @@ const EditStudent = () => {
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
                 rows="3"
-                className="block w-full px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg box-border dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
+                className="block w-full min-w-0 px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg box-border dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
               />
             </div>
           </div>
