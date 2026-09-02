@@ -126,7 +126,9 @@ const Get_Students = (req, res) => {
           FROM
           students
           ORDER BY
-          enrollment_date`;
+          enrollment_date DESC
+          LIMIT
+          3`;
       db.query(sql, (err, results) => {
         if (err) {
           return res.status(500).json({
@@ -179,7 +181,12 @@ const Get_Student = (req, res) => {
     const { userRole } = req.query;
     const { studentId } = req.params;
     if (userRole === "admin" || userRole === "teacher") {
-      const student_sql = `SELECT * FROM students WHERE id = ?`;
+      const student_sql = `SELECT
+          *
+          FROM
+          students
+          WHERE
+          id = ?`;
       db.query(student_sql, [studentId], (err, results) => {
         if (err) {
           return res.status(500).json({
@@ -250,11 +257,11 @@ const Edit_Student = (req, res) => {
     }
     values.push(studentId);
 
-    const edit_sql = `
-       UPDATE students
-       SET ${fields.join(", ")}
-       WHERE id = ?
-     `;
+    const edit_sql = `UPDATE students
+        SET
+        __P__
+        WHERE
+        id = ?`;
     db.query(edit_sql, values, (err, result) => {
       if (err) {
         return res.status(500).json({

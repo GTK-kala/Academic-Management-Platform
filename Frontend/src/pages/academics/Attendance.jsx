@@ -420,7 +420,7 @@ const Attendance = () => {
             <select
               value={selectedCourse}
               onChange={(e) => setSelectedCourse(e.target.value)}
-              className="block w-full min-w-0 px-4 py-2.5 border border-gray-300 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary box-border"
+              className="block w-full min-w-0 max-w-full px-4 py-2.5 border border-gray-300 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary box-border"
             >
               <option value="all">All Courses</option>
 
@@ -433,7 +433,7 @@ const Attendance = () => {
           </div>
 
           {/* DATE */}
-          <div className="flex-1 w-full min-w-0">
+          <div className="w-full min-w-0 sm:w-auto sm:flex-1">
             <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
               Date
             </label>
@@ -442,7 +442,13 @@ const Attendance = () => {
               type="date"
               value={selectedDate}
               onChange={(e) => setSelectedDate(e.target.value)}
-              className="block w-full min-w-0 px-4 py-2.5 border border-gray-300 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary box-border"
+              className="block w-full min-w-0 max-w-full px-4 py-2.5 border border-gray-300 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary box-border"
+              style={{
+                width: "100%",
+                minWidth: 0,
+                maxWidth: "100%",
+                boxSizing: "border-box",
+              }}
             />
           </div>
         </div>
