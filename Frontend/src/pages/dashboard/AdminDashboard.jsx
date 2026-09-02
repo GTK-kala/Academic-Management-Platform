@@ -122,7 +122,7 @@ const AdminDashboard = () => {
               </tr>
             </thead>
             <tbody className="text-sm">
-              {recentStudents.map((student) => (
+              {recentStudents.slice(0, 3).map((student) => (
                 <tr
                   key={student.id}
                   className="border-b border-gray-100 dark:border-dark-border"

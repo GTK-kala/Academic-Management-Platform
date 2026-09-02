@@ -127,8 +127,7 @@ const Get_Students = (req, res) => {
           students
           ORDER BY
           enrollment_date DESC
-          LIMIT
-          3`;
+          `;
       db.query(sql, (err, results) => {
         if (err) {
           return res.status(500).json({

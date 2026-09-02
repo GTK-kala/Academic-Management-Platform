@@ -86,9 +86,10 @@ const ProfileSettings = () => {
   // Load user data on mount
   useEffect(() => {
     const fetchUserProfile = async () => {
+      const user = JSON.parse(localStorage.getItem("user"));
       try {
         // Fetch user profile data
-        const response = await api.get("/auth/me");
+        const response = await Get_User(user?.userId, user?.role);
         const userData = response.data?.user || response.data;
 
         setProfileForm({
@@ -277,31 +278,31 @@ const ProfileSettings = () => {
         <h1 className="text-3xl font-bold text-primary dark:text-white">
           Settings
         </h1>
-        <p className="text-gray-500 dark:text-gray-400 mt-1">
+        <p className="mt-1 text-gray-500 dark:text-gray-400">
           Manage your account settings and preferences
         </p>
       </div>
 
       {/* Success/Error Messages */}
       {successMessage && (
-        <div className="mb-6 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg text-green-600 dark:text-green-400 flex items-center gap-2">
-          <FiCheckCircle className="w-5 h-5 flex-shrink-0" />
+        <div className="flex items-center gap-2 p-4 mb-6 text-green-600 border border-green-200 rounded-lg bg-green-50 dark:bg-green-900/20 dark:border-green-800 dark:text-green-400">
+          <FiCheckCircle className="flex-shrink-0 w-5 h-5" />
           {successMessage}
         </div>
       )}
 
       {errorMessage && (
-        <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-red-600 dark:text-red-400 flex items-center gap-2">
-          <FiAlertCircle className="w-5 h-5 flex-shrink-0" />
+        <div className="flex items-center gap-2 p-4 mb-6 text-red-600 border border-red-200 rounded-lg bg-red-50 dark:bg-red-900/20 dark:border-red-800 dark:text-red-400">
+          <FiAlertCircle className="flex-shrink-0 w-5 h-5" />
           {errorMessage}
         </div>
       )}
 
       {/* Settings Layout */}
-      <div className="flex flex-col lg:flex-row gap-6">
+      <div className="flex flex-col gap-6 lg:flex-row">
         {/* Sidebar Navigation */}
-        <div className="lg:w-64 flex-shrink-0">
-          <div className="bg-white dark:bg-dark-card rounded-xl shadow-sm border border-gray-100 dark:border-dark-border p-2">
+        <div className="flex-shrink-0 lg:w-64">
+          <div className="p-2 bg-white border border-gray-100 shadow-sm dark:bg-dark-card rounded-xl dark:border-dark-border">
             <nav className="space-y-1">
               {[
                 { id: "profile", label: "Profile", icon: FiUser },
@@ -330,9 +331,9 @@ const ProfileSettings = () => {
           </div>
 
           {/* Account Info Card */}
-          <div className="mt-4 bg-white dark:bg-dark-card rounded-xl shadow-sm border border-gray-100 dark:border-dark-border p-4">
+          <div className="p-4 mt-4 bg-white border border-gray-100 shadow-sm dark:bg-dark-card rounded-xl dark:border-dark-border">
             <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 rounded-full bg-primary-100 dark:bg-primary-900/20 flex items-center justify-center">
+              <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary-100 dark:bg-primary-900/20">
                 <span className="text-lg font-bold text-primary dark:text-primary-300">
                   {profileForm.firstName?.[0] ||
                     user?.email?.[0]?.toUpperCase() ||
@@ -343,14 +344,14 @@ const ProfileSettings = () => {
                 <p className="text-sm font-medium text-gray-900 dark:text-white">
                   {profileForm.firstName} {profileForm.lastName}
                 </p>
-                <p className="text-xs text-gray-500 dark:text-gray-400 capitalize">
+                <p className="text-xs text-gray-500 capitalize dark:text-gray-400">
                   {user?.role}
                 </p>
               </div>
             </div>
             <button
               onClick={handleLogout}
-              className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-lg text-sm font-medium hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors"
+              className="flex items-center justify-center w-full gap-2 px-4 py-2 text-sm font-medium text-red-600 transition-colors rounded-lg bg-red-50 dark:bg-red-900/20 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30"
             >
               <FiTrash2 className="w-4 h-4" />
               Logout
@@ -360,23 +361,23 @@ const ProfileSettings = () => {
 
         {/* Main Content */}
         <div className="flex-1">
-          <div className="bg-white dark:bg-dark-card rounded-xl shadow-sm border border-gray-100 dark:border-dark-border p-6">
+          <div className="p-6 bg-white border border-gray-100 shadow-sm dark:bg-dark-card rounded-xl dark:border-dark-border">
             {/* PROFILE TAB */}
             {activeTab === "profile" && (
               <form onSubmit={handleSaveProfile}>
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
+                <h2 className="mb-6 text-xl font-semibold text-gray-900 dark:text-white">
                   Profile Information
                 </h2>
 
                 {/* Profile Image Upload */}
                 <div className="flex items-center gap-6 mb-8">
                   <div className="relative">
-                    <div className="w-24 h-24 rounded-full bg-primary-100 dark:bg-primary-900/20 flex items-center justify-center overflow-hidden">
+                    <div className="flex items-center justify-center w-24 h-24 overflow-hidden rounded-full bg-primary-100 dark:bg-primary-900/20">
                       {imagePreview ? (
                         <img
                           src={imagePreview}
                           alt="Profile"
-                          className="w-full h-full object-cover"
+                          className="object-cover w-full h-full"
                         />
                       ) : (
                         <span className="text-3xl font-bold text-primary dark:text-primary-300">
@@ -386,7 +387,7 @@ const ProfileSettings = () => {
                     </div>
                     <label
                       htmlFor="profile-image"
-                      className="absolute bottom-0 right-0 w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center cursor-pointer hover:bg-primary-dark transition-colors"
+                      className="absolute bottom-0 right-0 flex items-center justify-center w-8 h-8 text-white transition-colors rounded-full cursor-pointer bg-primary hover:bg-primary-dark"
                     >
                       <FiCamera className="w-4 h-4" />
                     </label>
@@ -400,10 +401,10 @@ const ProfileSettings = () => {
                   </div>
 
                   <div>
-                    <p className="text-sm font-medium text-gray-900 dark:text-white mb-1">
+                    <p className="mb-1 text-sm font-medium text-gray-900 dark:text-white">
                       Profile Photo
                     </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
+                    <p className="mb-2 text-xs text-gray-500 dark:text-gray-400">
                       PNG, JPG or GIF. Max 2MB.
                     </p>
                     {imagePreview && (
@@ -419,9 +420,9 @@ const ProfileSettings = () => {
                 </div>
 
                 {/* Form Fields */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                       First Name
                     </label>
                     <input
@@ -434,7 +435,7 @@ const ProfileSettings = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                       Last Name
                     </label>
                     <input
@@ -447,11 +448,11 @@ const ProfileSettings = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                       Email Address
                     </label>
                     <div className="relative">
-                      <FiMail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                      <FiMail className="absolute text-gray-400 -translate-y-1/2 left-3 top-1/2" />
                       <input
                         type="email"
                         name="email"
@@ -461,17 +462,17 @@ const ProfileSettings = () => {
                         className="w-full pl-10 pr-4 py-2.5 border border-gray-300 dark:border-dark-border rounded-lg bg-gray-50 dark:bg-dark-bg text-gray-500 dark:text-gray-400 cursor-not-allowed"
                       />
                     </div>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                       Email cannot be changed
                     </p>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                       Phone Number
                     </label>
                     <div className="relative">
-                      <FiPhone className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                      <FiPhone className="absolute text-gray-400 -translate-y-1/2 left-3 top-1/2" />
                       <input
                         type="tel"
                         name="phone"
@@ -486,7 +487,7 @@ const ProfileSettings = () => {
                   {/* Department (for teachers) */}
                   {user?.role === "teacher" && (
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                         Department
                       </label>
                       <input
@@ -501,11 +502,11 @@ const ProfileSettings = () => {
                   )}
 
                   <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                       Address
                     </label>
                     <div className="relative">
-                      <FiMapPin className="absolute left-3 top-3 text-gray-400" />
+                      <FiMapPin className="absolute text-gray-400 left-3 top-3" />
                       <textarea
                         name="address"
                         value={profileForm.address}
@@ -518,7 +519,7 @@ const ProfileSettings = () => {
                   </div>
 
                   <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                       Bio
                     </label>
                     <textarea
@@ -529,14 +530,14 @@ const ProfileSettings = () => {
                       placeholder="Tell us about yourself"
                       className="w-full px-4 py-2.5 border border-gray-300 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
                     />
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                       {profileForm.bio.length}/500 characters
                     </p>
                   </div>
                 </div>
 
                 {/* Save Button */}
-                <div className="flex justify-end mt-8 pt-6 border-t border-gray-200 dark:border-dark-border">
+                <div className="flex justify-end pt-6 mt-8 border-t border-gray-200 dark:border-dark-border">
                   <Button
                     type="submit"
                     disabled={profileLoading}
@@ -545,7 +546,7 @@ const ProfileSettings = () => {
                     {profileLoading ? (
                       <>
                         <svg
-                          className="animate-spin h-4 w-4"
+                          className="w-4 h-4 animate-spin"
                           xmlns="http://www.w3.org/2000/svg"
                           fill="none"
                           viewBox="0 0 24 24"
@@ -580,18 +581,18 @@ const ProfileSettings = () => {
             {/* PASSWORD TAB */}
             {activeTab === "password" && (
               <form onSubmit={handleChangePassword}>
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
+                <h2 className="mb-6 text-xl font-semibold text-gray-900 dark:text-white">
                   Change Password
                 </h2>
 
-                <div className="space-y-6 max-w-md">
+                <div className="max-w-md space-y-6">
                   {/* Current Password */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                       Current Password
                     </label>
                     <div className="relative">
-                      <FiLock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                      <FiLock className="absolute text-gray-400 -translate-y-1/2 left-3 top-1/2" />
                       <input
                         type={showPasswords.current ? "text" : "password"}
                         name="currentPassword"
@@ -604,7 +605,7 @@ const ProfileSettings = () => {
                       <button
                         type="button"
                         onClick={() => togglePasswordVisibility("current")}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                        className="absolute text-gray-400 -translate-y-1/2 right-3 top-1/2 hover:text-gray-600"
                       >
                         {showPasswords.current ? (
                           <FiEyeOff className="w-5 h-5" />
@@ -617,11 +618,11 @@ const ProfileSettings = () => {
 
                   {/* New Password */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                       New Password
                     </label>
                     <div className="relative">
-                      <FiLock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                      <FiLock className="absolute text-gray-400 -translate-y-1/2 left-3 top-1/2" />
                       <input
                         type={showPasswords.new ? "text" : "password"}
                         name="newPassword"
@@ -635,7 +636,7 @@ const ProfileSettings = () => {
                       <button
                         type="button"
                         onClick={() => togglePasswordVisibility("new")}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                        className="absolute text-gray-400 -translate-y-1/2 right-3 top-1/2 hover:text-gray-600"
                       >
                         {showPasswords.new ? (
                           <FiEyeOff className="w-5 h-5" />
@@ -644,18 +645,18 @@ const ProfileSettings = () => {
                         )}
                       </button>
                     </div>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                       Minimum 6 characters
                     </p>
                   </div>
 
                   {/* Confirm New Password */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                       Confirm New Password
                     </label>
                     <div className="relative">
-                      <FiLock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                      <FiLock className="absolute text-gray-400 -translate-y-1/2 left-3 top-1/2" />
                       <input
                         type={showPasswords.confirm ? "text" : "password"}
                         name="confirmPassword"
@@ -668,7 +669,7 @@ const ProfileSettings = () => {
                       <button
                         type="button"
                         onClick={() => togglePasswordVisibility("confirm")}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                        className="absolute text-gray-400 -translate-y-1/2 right-3 top-1/2 hover:text-gray-600"
                       >
                         {showPasswords.confirm ? (
                           <FiEyeOff className="w-5 h-5" />
@@ -680,11 +681,11 @@ const ProfileSettings = () => {
                   </div>
 
                   {/* Password Requirements */}
-                  <div className="bg-gray-50 dark:bg-dark-bg p-4 rounded-lg">
-                    <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <div className="p-4 rounded-lg bg-gray-50 dark:bg-dark-bg">
+                    <p className="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                       Password Requirements:
                     </p>
-                    <ul className="text-xs text-gray-500 dark:text-gray-400 space-y-1">
+                    <ul className="space-y-1 text-xs text-gray-500 dark:text-gray-400">
                       <li
                         className={
                           passwordForm.newPassword.length >= 6
@@ -725,18 +726,18 @@ const ProfileSettings = () => {
             {/* NOTIFICATIONS TAB */}
             {activeTab === "notifications" && (
               <form onSubmit={handleSaveNotifications}>
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
+                <h2 className="mb-6 text-xl font-semibold text-gray-900 dark:text-white">
                   Notification Preferences
                 </h2>
 
                 <div className="space-y-6">
                   {/* Delivery Methods */}
                   <div>
-                    <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
+                    <h3 className="mb-4 text-lg font-medium text-gray-900 dark:text-white">
                       Delivery Methods
                     </h3>
                     <div className="space-y-3">
-                      <label className="flex items-center justify-between p-4 bg-gray-50 dark:bg-dark-bg rounded-lg cursor-pointer">
+                      <label className="flex items-center justify-between p-4 rounded-lg cursor-pointer bg-gray-50 dark:bg-dark-bg">
                         <div className="flex items-center gap-3">
                           <FiMail className="w-5 h-5 text-primary" />
                           <div>
@@ -757,7 +758,7 @@ const ProfileSettings = () => {
                         />
                       </label>
 
-                      <label className="flex items-center justify-between p-4 bg-gray-50 dark:bg-dark-bg rounded-lg cursor-pointer">
+                      <label className="flex items-center justify-between p-4 rounded-lg cursor-pointer bg-gray-50 dark:bg-dark-bg">
                         <div className="flex items-center gap-3">
                           <FiSmartphone className="w-5 h-5 text-primary" />
                           <div>
@@ -778,7 +779,7 @@ const ProfileSettings = () => {
                         />
                       </label>
 
-                      <label className="flex items-center justify-between p-4 bg-gray-50 dark:bg-dark-bg rounded-lg cursor-pointer">
+                      <label className="flex items-center justify-between p-4 rounded-lg cursor-pointer bg-gray-50 dark:bg-dark-bg">
                         <div className="flex items-center gap-3">
                           <FiGlobe className="w-5 h-5 text-primary" />
                           <div>
@@ -803,7 +804,7 @@ const ProfileSettings = () => {
 
                   {/* Notification Types */}
                   <div>
-                    <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
+                    <h3 className="mb-4 text-lg font-medium text-gray-900 dark:text-white">
                       Notification Types
                     </h3>
                     <div className="space-y-3">
@@ -836,7 +837,7 @@ const ProfileSettings = () => {
                       ].map((item) => (
                         <label
                           key={item.key}
-                          className="flex items-center justify-between p-4 bg-gray-50 dark:bg-dark-bg rounded-lg cursor-pointer"
+                          className="flex items-center justify-between p-4 rounded-lg cursor-pointer bg-gray-50 dark:bg-dark-bg"
                         >
                           <div>
                             <p className="text-sm font-medium text-gray-900 dark:text-white">
@@ -875,18 +876,18 @@ const ProfileSettings = () => {
             {/* APPEARANCE TAB */}
             {activeTab === "appearance" && (
               <div>
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
+                <h2 className="mb-6 text-xl font-semibold text-gray-900 dark:text-white">
                   Appearance Settings
                 </h2>
 
                 <div className="space-y-6">
                   {/* Theme Selection */}
                   <div>
-                    <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
+                    <h3 className="mb-4 text-lg font-medium text-gray-900 dark:text-white">
                       Theme
                     </h3>
 
-                    <div className="grid grid-cols-2 gap-4 max-w-md">
+                    <div className="grid max-w-md grid-cols-2 gap-4">
                       {/* Light Theme */}
                       <button
                         onClick={() => darkMode && toggleTheme()}
@@ -896,10 +897,10 @@ const ProfileSettings = () => {
                             : "border-gray-200 dark:border-dark-border hover:border-primary"
                         }`}
                       >
-                        <div className="bg-white rounded-lg p-4 mb-3 shadow-sm">
-                          <div className="bg-gray-100 h-2 rounded mb-2"></div>
-                          <div className="bg-gray-200 h-2 rounded mb-2 w-3/4"></div>
-                          <div className="bg-gray-100 h-2 rounded w-1/2"></div>
+                        <div className="p-4 mb-3 bg-white rounded-lg shadow-sm">
+                          <div className="h-2 mb-2 bg-gray-100 rounded"></div>
+                          <div className="w-3/4 h-2 mb-2 bg-gray-200 rounded"></div>
+                          <div className="w-1/2 h-2 bg-gray-100 rounded"></div>
                         </div>
                         <div className="flex items-center justify-center gap-2">
                           <FiSun className="w-4 h-4 text-gray-600 dark:text-gray-400" />
@@ -918,10 +919,10 @@ const ProfileSettings = () => {
                             : "border-gray-200 dark:border-dark-border hover:border-primary"
                         }`}
                       >
-                        <div className="bg-gray-900 rounded-lg p-4 mb-3 shadow-sm">
-                          <div className="bg-gray-700 h-2 rounded mb-2"></div>
-                          <div className="bg-gray-600 h-2 rounded mb-2 w-3/4"></div>
-                          <div className="bg-gray-700 h-2 rounded w-1/2"></div>
+                        <div className="p-4 mb-3 bg-gray-900 rounded-lg shadow-sm">
+                          <div className="h-2 mb-2 bg-gray-700 rounded"></div>
+                          <div className="w-3/4 h-2 mb-2 bg-gray-600 rounded"></div>
+                          <div className="w-1/2 h-2 bg-gray-700 rounded"></div>
                         </div>
                         <div className="flex items-center justify-center gap-2">
                           <FiMoon className="w-4 h-4 text-gray-600 dark:text-gray-400" />
@@ -935,7 +936,7 @@ const ProfileSettings = () => {
 
                   {/* Language Selection */}
                   <div>
-                    <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
+                    <h3 className="mb-4 text-lg font-medium text-gray-900 dark:text-white">
                       Language
                     </h3>
                     <select
@@ -952,11 +953,11 @@ const ProfileSettings = () => {
 
                   {/* Accessibility */}
                   <div>
-                    <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
+                    <h3 className="mb-4 text-lg font-medium text-gray-900 dark:text-white">
                       Accessibility
                     </h3>
-                    <div className="space-y-3 max-w-md">
-                      <label className="flex items-center justify-between p-4 bg-gray-50 dark:bg-dark-bg rounded-lg cursor-pointer">
+                    <div className="max-w-md space-y-3">
+                      <label className="flex items-center justify-between p-4 rounded-lg cursor-pointer bg-gray-50 dark:bg-dark-bg">
                         <div>
                           <p className="text-sm font-medium text-gray-900 dark:text-white">
                             Reduce Motion
@@ -971,7 +972,7 @@ const ProfileSettings = () => {
                         />
                       </label>
 
-                      <label className="flex items-center justify-between p-4 bg-gray-50 dark:bg-dark-bg rounded-lg cursor-pointer">
+                      <label className="flex items-center justify-between p-4 rounded-lg cursor-pointer bg-gray-50 dark:bg-dark-bg">
                         <div>
                           <p className="text-sm font-medium text-gray-900 dark:text-white">
                             High Contrast
