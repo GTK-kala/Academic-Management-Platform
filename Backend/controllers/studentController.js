@@ -259,7 +259,7 @@ const Edit_Student = (req, res) => {
 
     const edit_sql = `UPDATE students
         SET
-        __P__
+        ${fields.join(", ")}
         WHERE
         id = ?`;
     db.query(edit_sql, values, (err, result) => {

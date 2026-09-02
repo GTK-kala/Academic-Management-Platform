@@ -412,7 +412,7 @@ const Attendance = () => {
       <div className="p-4 mb-6 bg-white border border-gray-100 shadow-sm dark:bg-dark-card rounded-xl dark:border-dark-border">
         <div className="flex flex-col min-w-0 gap-4 sm:flex-row">
           {/* COURSE */}
-          <div className="flex-1 w-full min-w-0">
+          <div className="w-full min-w-0 sm:flex-1">
             <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
               Course
             </label>
@@ -420,7 +420,7 @@ const Attendance = () => {
             <select
               value={selectedCourse}
               onChange={(e) => setSelectedCourse(e.target.value)}
-              className="block w-full min-w-0 max-w-full px-4 py-2.5 border border-gray-300 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary box-border"
+              className="block w-full px-4 py-2.5 border border-gray-300 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary"
             >
               <option value="all">All Courses</option>
 
@@ -433,27 +433,25 @@ const Attendance = () => {
           </div>
 
           {/* DATE */}
-          <div className="w-full min-w-0 sm:w-auto sm:flex-1">
+          <div className="w-full min-w-0 sm:flex-1">
             <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
               Date
             </label>
 
-            <input
-              type="date"
-              value={selectedDate}
-              onChange={(e) => setSelectedDate(e.target.value)}
-              className="block w-full min-w-0 max-w-full px-4 py-2.5 border border-gray-300 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary box-border"
-              style={{
-                width: "100%",
-                minWidth: 0,
-                maxWidth: "100%",
-                boxSizing: "border-box",
-              }}
-            />
+            <div className="w-full overflow-hidden">
+              <input
+                type="date"
+                value={selectedDate}
+                onChange={(e) => setSelectedDate(e.target.value)}
+                className="w-full px-4 py-2.5 border border-gray-300 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary"
+                style={{ minWidth: 0, maxWidth: "100%" }}
+              />
+            </div>
           </div>
         </div>
       </div>
 
+      {/* Rest of the component remains the same */}
       {/* ========================================
         STATISTICS
     ======================================== */}
