@@ -376,12 +376,8 @@ const Attendance = () => {
   // ========================================
   // JSX
   // ========================================
-
   return (
-    <div className="w-full min-w-0">
-      {/* ========================================
-        HEADER
-    ======================================== */}
+    <div className="w-full min-w-0 max-w-full overflow-hidden">
       <div className="flex flex-col gap-4 mb-6 sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0">
           <h1 className="text-3xl font-bold text-primary dark:text-white">
@@ -406,60 +402,55 @@ const Attendance = () => {
         )}
       </div>
 
-      {/* ========================================
-        FILTERS
-    ======================================== */}
-      <div className="p-4 mb-6 bg-white border border-gray-100 shadow-sm dark:bg-dark-card rounded-xl dark:border-dark-border">
-        <div className="flex flex-col min-w-0 gap-4 sm:flex-row">
-          {/* COURSE */}
-          <div className="flex-1 w-full min-w-0">
+      <div className="w-full min-w-0 p-4 mb-6 overflow-hidden bg-white border border-gray-100 shadow-sm dark:bg-dark-card rounded-xl dark:border-dark-border">
+        <div className="flex flex-col w-full min-w-0 gap-4 sm:flex-row">
+          <div className="w-full min-w-0 sm:flex-1">
             <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
               Course
             </label>
 
-            <select
-              value={selectedCourse}
-              onChange={(e) => setSelectedCourse(e.target.value)}
-              className="block w-full min-w-0 max-w-full px-4 py-2.5 border border-gray-300 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary box-border"
-            >
-              <option value="all">All Courses</option>
+            <div className="w-full min-w-0">
+              <select
+                value={selectedCourse}
+                onChange={(e) => setSelectedCourse(e.target.value)}
+                className="block w-full min-w-0 max-w-full px-4 py-2.5 border border-gray-300 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary box-border"
+              >
+                <option value="all">All Courses</option>
 
-              {courses.map((course) => (
-                <option key={course.id} value={course.id}>
-                  {course.course_name} ({course.course_code})
-                </option>
-              ))}
-            </select>
+                {courses.map((course) => (
+                  <option key={course.id} value={course.id}>
+                    {course.course_name} ({course.course_code})
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
 
-          {/* DATE */}
-          <div className="w-full min-w-0 sm:w-auto sm:flex-1">
+          <div className="w-full min-w-0 sm:flex-1">
             <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
               Date
             </label>
 
-            <input
-              type="date"
-              value={selectedDate}
-              onChange={(e) => setSelectedDate(e.target.value)}
-              className="block w-full min-w-0 max-w-full px-4 py-2.5 border border-gray-300 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary box-border"
-              style={{
-                width: "100%",
-                minWidth: 0,
-                maxWidth: "100%",
-                boxSizing: "border-box",
-              }}
-            />
+            <div className="w-full min-w-0">
+              <input
+                type="date"
+                value={selectedDate}
+                onChange={(e) => setSelectedDate(e.target.value)}
+                className="block w-full min-w-0 max-w-full px-4 py-2.5 border border-gray-300 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary box-border"
+                style={{
+                  width: "100%",
+                  minWidth: 0,
+                  maxWidth: "100%",
+                  boxSizing: "border-box",
+                }}
+              />
+            </div>
           </div>
         </div>
       </div>
 
-      {/* ========================================
-        STATISTICS
-    ======================================== */}
       <div className="grid grid-cols-2 gap-4 mb-6 sm:grid-cols-4">
-        {/* PRESENT */}
-        <div className="min-w-0 p-4 bg-green-50 dark:bg-green-900/20 rounded-xl">
+        <div className="min-w-0 p-4 overflow-hidden bg-green-50 dark:bg-green-900/20 rounded-xl">
           <div className="flex items-center min-w-0 gap-3">
             <div className="flex items-center justify-center flex-shrink-0 w-10 h-10 bg-green-100 rounded-full dark:bg-green-800">
               <FiCheck className="w-5 h-5 text-green-600 dark:text-green-400" />
@@ -477,8 +468,7 @@ const Attendance = () => {
           </div>
         </div>
 
-        {/* ABSENT */}
-        <div className="min-w-0 p-4 bg-red-50 dark:bg-red-900/20 rounded-xl">
+        <div className="min-w-0 p-4 overflow-hidden bg-red-50 dark:bg-red-900/20 rounded-xl">
           <div className="flex items-center min-w-0 gap-3">
             <div className="flex items-center justify-center flex-shrink-0 w-10 h-10 bg-red-100 rounded-full dark:bg-red-800">
               <FiX className="w-5 h-5 text-red-600 dark:text-red-400" />
@@ -494,8 +484,7 @@ const Attendance = () => {
           </div>
         </div>
 
-        {/* LATE */}
-        <div className="min-w-0 p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-xl">
+        <div className="min-w-0 p-4 overflow-hidden bg-yellow-50 dark:bg-yellow-900/20 rounded-xl">
           <div className="flex items-center min-w-0 gap-3">
             <div className="flex items-center justify-center flex-shrink-0 w-10 h-10 bg-yellow-100 rounded-full dark:bg-yellow-800">
               <FiClock className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
@@ -513,8 +502,7 @@ const Attendance = () => {
           </div>
         </div>
 
-        {/* EXCUSED */}
-        <div className="min-w-0 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
+        <div className="min-w-0 p-4 overflow-hidden bg-blue-50 dark:bg-blue-900/20 rounded-xl">
           <div className="flex items-center min-w-0 gap-3">
             <div className="flex items-center justify-center flex-shrink-0 w-10 h-10 bg-blue-100 rounded-full dark:bg-blue-800">
               <FiAlertCircle className="w-5 h-5 text-blue-600 dark:text-blue-400" />
@@ -533,11 +521,8 @@ const Attendance = () => {
         </div>
       </div>
 
-      {/* ========================================
-        PROGRESS
-    ======================================== */}
-      <div className="p-6 mb-6 bg-white border border-gray-100 shadow-sm dark:bg-dark-card rounded-xl dark:border-dark-border">
-        <div className="flex items-center justify-between gap-4 mb-3">
+      <div className="w-full min-w-0 p-6 mb-6 overflow-hidden bg-white border border-gray-100 shadow-sm dark:bg-dark-card rounded-xl dark:border-dark-border">
+        <div className="flex items-center justify-between min-w-0 gap-4 mb-3">
           <h3 className="min-w-0 text-lg font-semibold text-gray-900 dark:text-white">
             Overall Attendance
           </h3>
@@ -557,16 +542,13 @@ const Attendance = () => {
         </div>
       </div>
 
-      {/* ========================================
-        MARK ATTENDANCE
-    ======================================== */}
       {markingAttendance && (
-        <div className="p-6 mb-6 bg-white border border-gray-100 shadow-sm dark:bg-dark-card rounded-xl dark:border-dark-border">
+        <div className="w-full min-w-0 p-6 mb-6 overflow-hidden bg-white border border-gray-100 shadow-sm dark:bg-dark-card rounded-xl dark:border-dark-border">
           <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
             Mark Attendance - {selectedDate}
           </h3>
 
-          <div className="overflow-x-auto">
+          <div className="w-full min-w-0 overflow-x-auto">
             <table className="w-full text-left">
               <thead>
                 <tr className="text-sm text-gray-500 border-b border-gray-200 dark:text-gray-400 dark:border-dark-border">
@@ -606,7 +588,6 @@ const Attendance = () => {
             </table>
           </div>
 
-          {/* BUTTONS */}
           <div className="flex flex-col justify-end gap-3 mt-4 sm:flex-row">
             <Button variant="secondary" onClick={cancelMarkingAttendance}>
               Cancel
@@ -617,10 +598,7 @@ const Attendance = () => {
         </div>
       )}
 
-      {/* ========================================
-        ATTENDANCE RECORDS
-    ======================================== */}
-      <div className="overflow-hidden bg-white border border-gray-100 shadow-sm dark:bg-dark-card rounded-xl dark:border-dark-border">
+      <div className="w-full min-w-0 overflow-hidden bg-white border border-gray-100 shadow-sm dark:bg-dark-card rounded-xl dark:border-dark-border">
         <div className="p-4 border-b border-gray-200 sm:p-6 dark:border-dark-border">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
@@ -637,7 +615,7 @@ const Attendance = () => {
           </div>
         </div>
 
-        <div className="overflow-x-auto">
+        <div className="w-full overflow-x-auto">
           <table className="w-full text-left">
             <thead className="bg-gray-50 dark:bg-dark-bg">
               <tr className="text-sm font-medium text-gray-500 dark:text-gray-400">
