@@ -21,6 +21,7 @@ import {
   FiShield,
 } from "react-icons/fi";
 import api from "../../services/api";
+import { Get_User } from "../../services/userService";
 import Button from "../../components/common/Button";
 import { useAuth } from "../../context/AuthContext";
 import { useTheme } from "../../context/ThemeContext";
@@ -90,11 +91,11 @@ const ProfileSettings = () => {
       try {
         // Fetch user profile data
         const response = await Get_User(user?.userId, user?.role);
-        const userData = response.data?.user || response.data;
+        const userData = response?.user || response.data;
 
         setProfileForm({
-          firstName: userData.first_name || userData.firstName || "",
-          lastName: userData.last_name || userData.lastName || "",
+          firstName: userData.first_name || userData.first_name || "",
+          lastName: userData.last_name || userData.last_name || "",
           email: userData.email || user?.email || "",
           phone: userData.phone || "",
           address: userData.address || "",
