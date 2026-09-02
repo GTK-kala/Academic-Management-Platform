@@ -1,5 +1,6 @@
 import toast from "react-hot-toast";
 import { useState, useEffect } from "react";
+
 import {
   FiCalendar,
   FiCheck,
@@ -8,9 +9,12 @@ import {
   FiAlertCircle,
   FiDownload,
 } from "react-icons/fi";
+
 import { useAuth } from "../../context/AuthContext";
 import Button from "../../components/common/Button";
+
 import { Get_Courses, Enrolled_Courses } from "../../services/courseService";
+
 import {
   Add_Attendance,
   Get_Attendances,
@@ -24,7 +28,9 @@ const Attendance = () => {
   // ========================================
 
   const [attendanceRecords, setAttendanceRecords] = useState([]);
+
   const [courses, setCourses] = useState([]);
+
   const [selectedCourse, setSelectedCourse] = useState("all");
 
   const [selectedDate, setSelectedDate] = useState(
@@ -32,7 +38,9 @@ const Attendance = () => {
   );
 
   const [loading, setLoading] = useState(true);
+
   const [markingAttendance, setMarkingAttendance] = useState(false);
+
   const [students, setStudents] = useState([]);
 
   // Current attendance status
@@ -70,13 +78,12 @@ const Attendance = () => {
             storedUser?.role,
             selectedCourse,
           );
-
-          const enrolledCourseData = studentCourses?.enrollments || [];
-
-          setCourses(enrolledCourseData);
+          const courseData = studentCourses?.enrollments || [];
+          setCourses(courseData);
         }
       } catch (error) {
         console.error("Failed to fetch courses:", error);
+
         setCourses([]);
       }
     };
@@ -95,7 +102,7 @@ const Attendance = () => {
       setLoading(true);
 
       try {
-        if (selectedCourse === "all" && storedUser?.role) {
+        if (selectedCourse === "all" && storedUser.role) {
           const res = await Get_Attendances(
             selectedCourse,
             storedUser?.role,
@@ -114,6 +121,7 @@ const Attendance = () => {
         }
       } catch (error) {
         console.error("Failed to fetch attendance:", error);
+
         setAttendanceRecords([]);
       } finally {
         setLoading(false);
@@ -132,6 +140,7 @@ const Attendance = () => {
 
     if (selectedCourse === "all") {
       toast.error("Please select a course first.");
+
       return;
     }
 
@@ -174,6 +183,7 @@ const Attendance = () => {
         const status = existingAttendance?.status || "present";
 
         form[studentId] = status;
+
         original[studentId] = status;
       });
 
@@ -205,27 +215,6 @@ const Attendance = () => {
   };
 
   // ========================================
-  // MARK ALL PRESENT
-  // ========================================
-
-  const handleMarkAllPresent = () => {
-    if (students.length === 0) {
-      toast.error("No students loaded.");
-      return;
-    }
-
-    const updatedForm = {};
-
-    students.forEach((student) => {
-      updatedForm[student.id] = "present";
-    });
-
-    setAttendanceForm(updatedForm);
-
-    toast.success("All students marked as present.");
-  };
-
-  // ========================================
   // SUBMIT ONLY CHANGED STUDENTS
   // ========================================
 
@@ -233,16 +222,19 @@ const Attendance = () => {
     try {
       if (selectedCourse === "all") {
         toast.error("Please select a course first.");
+
         return;
       }
 
       if (!selectedDate) {
         toast.error("Please select a date.");
+
         return;
       }
 
       if (students.length === 0) {
         toast.error("No students are enrolled in this course.");
+
         return;
       }
 
@@ -254,6 +246,7 @@ const Attendance = () => {
         const studentId = student.id;
 
         const oldStatus = originalAttendance[studentId];
+
         const newStatus = attendanceForm[studentId];
 
         return oldStatus !== newStatus;
@@ -265,10 +258,9 @@ const Attendance = () => {
 
       if (changedStudents.length === 0) {
         toast.error("No attendance changes were made.");
+
         return;
       }
-
-      setLoading(true);
 
       // ========================================
       // SEND ONLY CHANGED STUDENTS
@@ -279,9 +271,13 @@ const Attendance = () => {
 
         const attendanceData = {
           student_id: Number(studentId),
+
           course_id: Number(selectedCourse),
+
           attendance_date: selectedDate,
+
           recorded_by: Number(user?.userId),
+
           status: attendanceForm[studentId],
         };
 
@@ -315,11 +311,9 @@ const Attendance = () => {
         return updated;
       });
 
-      // ========================================
-      // CLOSE FORM
-      // ========================================
-
+      // Close form
       setMarkingAttendance(false);
+
       setAttendanceForm({});
 
       // ========================================
@@ -328,8 +322,8 @@ const Attendance = () => {
 
       const res = await Get_Attendances(
         selectedCourse,
+        selectedDate,
         user?.role,
-        user?.userId,
       );
 
       setAttendanceRecords(res?.attendance || []);
@@ -340,8 +334,6 @@ const Attendance = () => {
         "Failed to record attendance: " +
           (error?.response?.data?.message || error?.message || "Unknown error"),
       );
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -351,8 +343,11 @@ const Attendance = () => {
 
   const cancelMarkingAttendance = () => {
     setMarkingAttendance(false);
+
     setStudents([]);
+
     setAttendanceForm({});
+
     setOriginalAttendance({});
   };
 
@@ -383,28 +378,41 @@ const Attendance = () => {
   // ========================================
 
   return (
-    <div className="w-full min-w-0 max-w-full overflow-hidden">
-      {/* HEADER */}
-
-      <div className="flex flex-col justify-between gap-4 mb-8 sm:flex-row sm:items-center">
-        <div>
+    <div className="w-full min-w-0">
+      {/* ========================================
+        HEADER
+    ======================================== */}
+      <div className="flex flex-col gap-4 mb-6 sm:flex-row sm:items-center sm:justify-between">
+        <div className="min-w-0">
           <h1 className="text-3xl font-bold text-primary dark:text-white">
             Attendance
           </h1>
 
-          <p className="mt-1 text-gray-600 dark:text-gray-400">
-            Manage and track student attendance
+          <p className="mt-1 text-gray-500 dark:text-gray-400">
+            {user?.role === "teacher"
+              ? "Mark and view attendance for your courses"
+              : "View your attendance records"}
           </p>
         </div>
+
+        {user?.role === "teacher" && !markingAttendance && (
+          <Button
+            onClick={startMarkingAttendance}
+            className="flex items-center justify-center flex-shrink-0 gap-2"
+          >
+            <FiCheck />
+            Mark Attendance
+          </Button>
+        )}
       </div>
 
-      {/* FILTERS */}
-
-      <div className="w-full min-w-0 p-4 mb-6 overflow-hidden bg-white border border-gray-100 shadow-sm sm:p-6 dark:bg-dark-card rounded-xl dark:border-dark-border">
-        <div className="flex flex-col w-full min-w-0 gap-4 sm:flex-row">
+      {/* ========================================
+        FILTERS
+    ======================================== */}
+      <div className="p-4 mb-6 bg-white border border-gray-100 shadow-sm dark:bg-dark-card rounded-xl dark:border-dark-border">
+        <div className="flex flex-col min-w-0 gap-4 sm:flex-row">
           {/* COURSE */}
-
-          <div className="w-full min-w-0 sm:flex-1">
+          <div className="flex-1 w-full min-w-0">
             <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
               Course
             </label>
@@ -412,21 +420,20 @@ const Attendance = () => {
             <select
               value={selectedCourse}
               onChange={(e) => setSelectedCourse(e.target.value)}
-              className="block w-full min-w-0 max-w-full px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg box-border dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
+              className="block w-full min-w-0 max-w-full px-4 py-2.5 border border-gray-300 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary box-border"
             >
-              <option value="all">Select Course</option>
+              <option value="all">All Courses</option>
 
               {courses.map((course) => (
                 <option key={course.id} value={course.id}>
-                  {course.course_name}
+                  {course.course_name} ({course.course_code})
                 </option>
               ))}
             </select>
           </div>
 
           {/* DATE */}
-
-          <div className="w-full min-w-0 sm:flex-1">
+          <div className="w-full min-w-0 sm:w-auto sm:flex-1">
             <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
               Date
             </label>
@@ -435,88 +442,114 @@ const Attendance = () => {
               type="date"
               value={selectedDate}
               onChange={(e) => setSelectedDate(e.target.value)}
-              className="block w-full min-w-0 max-w-full px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg box-border dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
+              className="block w-full min-w-0 max-w-full px-4 py-2.5 border border-gray-300 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary box-border"
+              style={{
+                width: "100%",
+                minWidth: 0,
+                maxWidth: "100%",
+                boxSizing: "border-box",
+              }}
             />
           </div>
         </div>
       </div>
 
-      {/* STATISTICS */}
-
-      <div className="grid w-full min-w-0 grid-cols-2 gap-4 mb-6 sm:grid-cols-2 lg:grid-cols-4">
-        {/* TOTAL */}
-
-        <div className="min-w-0 p-4 overflow-hidden bg-white border border-gray-100 shadow-sm dark:bg-dark-card rounded-xl dark:border-dark-border">
-          <div className="min-w-0">
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              Total Students
-            </p>
-
-            <p className="mt-1 text-2xl font-bold text-gray-900 truncate dark:text-white">
-              {students.length}
-            </p>
-          </div>
-        </div>
-
+      {/* ========================================
+        STATISTICS
+    ======================================== */}
+      <div className="grid grid-cols-2 gap-4 mb-6 sm:grid-cols-4">
         {/* PRESENT */}
+        <div className="min-w-0 p-4 bg-green-50 dark:bg-green-900/20 rounded-xl">
+          <div className="flex items-center min-w-0 gap-3">
+            <div className="flex items-center justify-center flex-shrink-0 w-10 h-10 bg-green-100 rounded-full dark:bg-green-800">
+              <FiCheck className="w-5 h-5 text-green-600 dark:text-green-400" />
+            </div>
 
-        <div className="min-w-0 p-4 overflow-hidden bg-white border border-gray-100 shadow-sm dark:bg-dark-card rounded-xl dark:border-dark-border">
-          <div className="min-w-0">
-            <p className="text-sm text-gray-500 dark:text-gray-400">Present</p>
+            <div className="min-w-0">
+              <p className="text-sm text-green-600 dark:text-green-400">
+                Present
+              </p>
 
-            <p className="mt-1 text-2xl font-bold text-green-600 truncate">
-              {stats.present}
-            </p>
-          </div>
-        </div>
-
-        {/* LATE */}
-
-        <div className="min-w-0 p-4 overflow-hidden bg-white border border-gray-100 shadow-sm dark:bg-dark-card rounded-xl dark:border-dark-border">
-          <div className="min-w-0">
-            <p className="text-sm text-gray-500 dark:text-gray-400">Late</p>
-
-            <p className="mt-1 text-2xl font-bold text-yellow-600 truncate">
-              {stats.late}
-            </p>
+              <p className="text-xl font-bold text-green-700 dark:text-green-300">
+                {stats.present}
+              </p>
+            </div>
           </div>
         </div>
 
         {/* ABSENT */}
+        <div className="min-w-0 p-4 bg-red-50 dark:bg-red-900/20 rounded-xl">
+          <div className="flex items-center min-w-0 gap-3">
+            <div className="flex items-center justify-center flex-shrink-0 w-10 h-10 bg-red-100 rounded-full dark:bg-red-800">
+              <FiX className="w-5 h-5 text-red-600 dark:text-red-400" />
+            </div>
 
-        <div className="min-w-0 p-4 overflow-hidden bg-white border border-gray-100 shadow-sm dark:bg-dark-card rounded-xl dark:border-dark-border">
-          <div className="min-w-0">
-            <p className="text-sm text-gray-500 dark:text-gray-400">Absent</p>
+            <div className="min-w-0">
+              <p className="text-sm text-red-600 dark:text-red-400">Absent</p>
 
-            <p className="mt-1 text-2xl font-bold text-red-600 truncate">
-              {stats.absent}
-            </p>
+              <p className="text-xl font-bold text-red-700 dark:text-red-300">
+                {stats.absent}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* LATE */}
+        <div className="min-w-0 p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-xl">
+          <div className="flex items-center min-w-0 gap-3">
+            <div className="flex items-center justify-center flex-shrink-0 w-10 h-10 bg-yellow-100 rounded-full dark:bg-yellow-800">
+              <FiClock className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
+            </div>
+
+            <div className="min-w-0">
+              <p className="text-sm text-yellow-600 dark:text-yellow-400">
+                Late
+              </p>
+
+              <p className="text-xl font-bold text-yellow-700 dark:text-yellow-300">
+                {stats.late}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* EXCUSED */}
+        <div className="min-w-0 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
+          <div className="flex items-center min-w-0 gap-3">
+            <div className="flex items-center justify-center flex-shrink-0 w-10 h-10 bg-blue-100 rounded-full dark:bg-blue-800">
+              <FiAlertCircle className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+            </div>
+
+            <div className="min-w-0">
+              <p className="text-sm text-blue-600 dark:text-blue-400">
+                Excused
+              </p>
+
+              <p className="text-xl font-bold text-blue-700 dark:text-blue-300">
+                {stats.excused}
+              </p>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* ATTENDANCE PROGRESS */}
+      {/* ========================================
+        PROGRESS
+    ======================================== */}
+      <div className="p-6 mb-6 bg-white border border-gray-100 shadow-sm dark:bg-dark-card rounded-xl dark:border-dark-border">
+        <div className="flex items-center justify-between gap-4 mb-3">
+          <h3 className="min-w-0 text-lg font-semibold text-gray-900 dark:text-white">
+            Overall Attendance
+          </h3>
 
-      <div className="w-full min-w-0 p-4 mb-6 overflow-hidden bg-white border border-gray-100 shadow-sm sm:p-6 dark:bg-dark-card rounded-xl dark:border-dark-border">
-        <div className="flex flex-col gap-4 mb-6 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-              Attendance Progress
-            </h2>
-
-            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-              Overall attendance for the selected course
-            </p>
-          </div>
-
-          <div className="text-2xl font-bold text-primary">
+          <span className="flex-shrink-0 text-2xl font-bold text-primary">
             {attendancePercentage}%
-          </div>
+          </span>
         </div>
 
-        <div className="w-full h-3 overflow-hidden bg-gray-200 rounded-full dark:bg-dark-bg">
+        <div className="w-full h-3 overflow-hidden bg-gray-200 rounded-full dark:bg-gray-700">
           <div
-            className="h-full transition-all duration-300 bg-primary"
+            className="h-3 transition-all duration-500 rounded-full bg-primary"
             style={{
               width: `${attendancePercentage}%`,
             }}
@@ -524,167 +557,167 @@ const Attendance = () => {
         </div>
       </div>
 
-      {/* MARK ATTENDANCE */}
+      {/* ========================================
+        MARK ATTENDANCE
+    ======================================== */}
+      {markingAttendance && (
+        <div className="p-6 mb-6 bg-white border border-gray-100 shadow-sm dark:bg-dark-card rounded-xl dark:border-dark-border">
+          <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
+            Mark Attendance - {selectedDate}
+          </h3>
 
-      <div className="w-full min-w-0 p-4 mb-6 overflow-hidden bg-white border border-gray-100 shadow-sm sm:p-6 dark:bg-dark-card rounded-xl dark:border-dark-border">
-        <div className="flex flex-col gap-4 mb-6 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-              Mark Attendance
-            </h2>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left">
+              <thead>
+                <tr className="text-sm text-gray-500 border-b border-gray-200 dark:text-gray-400 dark:border-dark-border">
+                  <th className="pb-3 pr-4 whitespace-nowrap">Student</th>
 
-            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-              Select the attendance status for each student
-            </p>
+                  <th className="pb-3 pr-4 whitespace-nowrap">Status</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {students.map((student) => (
+                  <tr
+                    key={student.id}
+                    className="border-b border-gray-100 dark:border-dark-border"
+                  >
+                    <td className="py-3 pr-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                      {student.first_name} {student.last_name}
+                    </td>
+
+                    <td className="py-3 pr-4">
+                      <select
+                        value={attendanceForm[student.id] || "present"}
+                        onChange={(e) =>
+                          handleAttendanceChange(student.id, e.target.value)
+                        }
+                        className="px-3 py-1.5 border border-gray-300 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-primary"
+                      >
+                        <option value="present">Present</option>
+                        <option value="absent">Absent</option>
+                        <option value="late">Late</option>
+                        <option value="excused">Excused</option>
+                      </select>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
 
-          <div className="flex flex-col w-full gap-2 sm:w-auto sm:flex-row">
-            <Button onClick={handleMarkAllPresent} className="w-full sm:w-auto">
-              Mark All Present
+          {/* BUTTONS */}
+          <div className="flex flex-col justify-end gap-3 mt-4 sm:flex-row">
+            <Button variant="secondary" onClick={cancelMarkingAttendance}>
+              Cancel
             </Button>
+
+            <Button onClick={submitAttendance}>Save Attendance</Button>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================
+        ATTENDANCE RECORDS
+    ======================================== */}
+      <div className="overflow-hidden bg-white border border-gray-100 shadow-sm dark:bg-dark-card rounded-xl dark:border-dark-border">
+        <div className="p-4 border-b border-gray-200 sm:p-6 dark:border-dark-border">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+              Attendance Records
+            </h3>
 
             <Button
-              onClick={submitAttendance}
-              disabled={loading}
-              className="w-full sm:w-auto"
+              variant="outline"
+              className="flex items-center justify-center w-full gap-2 text-sm sm:w-auto"
             >
-              {loading ? "Saving..." : "Save Attendance"}
+              <FiDownload className="w-4 h-4" />
+              Export
             </Button>
           </div>
         </div>
 
-        {/* STUDENT TABLE */}
+        <div className="overflow-x-auto">
+          <table className="w-full text-left">
+            <thead className="bg-gray-50 dark:bg-dark-bg">
+              <tr className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                <th className="px-6 py-4 whitespace-nowrap">Student</th>
 
-        <div className="w-full min-w-0 overflow-x-auto">
-          <table className="w-full min-w-[700px]">
-            <thead>
-              <tr className="border-b border-gray-200 dark:border-dark-border">
-                <th className="px-4 py-3 text-sm font-semibold text-left text-gray-600 dark:text-gray-300">
-                  Student
-                </th>
+                <th className="px-6 py-4 whitespace-nowrap">Course</th>
 
-                <th className="px-4 py-3 text-sm font-semibold text-left text-gray-600 dark:text-gray-300">
-                  Student ID
-                </th>
+                <th className="px-6 py-4 whitespace-nowrap">Date</th>
 
-                <th className="px-4 py-3 text-sm font-semibold text-left text-gray-600 dark:text-gray-300">
-                  Status
-                </th>
+                <th className="px-6 py-4 whitespace-nowrap">Status</th>
+
+                <th className="px-6 py-4 whitespace-nowrap">Recorded By</th>
               </tr>
             </thead>
 
-            <tbody>
-              {students.map((student) => (
-                <tr
-                  key={student.id}
-                  className="border-b border-gray-100 dark:border-dark-border"
-                >
-                  <td className="px-4 py-4 text-sm text-gray-900 dark:text-white">
-                    {student.first_name} {student.last_name}
-                  </td>
-
-                  <td className="px-4 py-4 text-sm text-gray-600 dark:text-gray-400">
-                    {student.id}
-                  </td>
-
-                  <td className="px-4 py-4">
-                    <select
-                      value={attendanceForm[student.id] || "present"}
-                      onChange={(e) =>
-                        handleAttendanceChange(student.id, e.target.value)
-                      }
-                      className="px-3 py-2 text-sm text-gray-900 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white"
-                    >
-                      <option value="present">Present</option>
-
-                      <option value="late">Late</option>
-
-                      <option value="absent">Absent</option>
-                    </select>
+            <tbody className="text-sm divide-y divide-gray-100 dark:divide-dark-border">
+              {loading ? (
+                <tr>
+                  <td
+                    colSpan={5}
+                    className="px-6 py-8 text-center text-gray-500"
+                  >
+                    <div className="w-8 h-8 mx-auto border-t-2 border-b-2 rounded-full animate-spin border-primary" />
                   </td>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* ATTENDANCE RECORDS */}
-
-      <div className="w-full min-w-0 p-4 overflow-hidden bg-white border border-gray-100 shadow-sm sm:p-6 dark:bg-dark-card rounded-xl dark:border-dark-border">
-        <div className="mb-6">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-            Attendance Records
-          </h2>
-
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-            View previously recorded attendance
-          </p>
-        </div>
-
-        <div className="w-full min-w-0 overflow-x-auto">
-          <table className="w-full min-w-[700px]">
-            <thead>
-              <tr className="border-b border-gray-200 dark:border-dark-border">
-                <th className="px-4 py-3 text-sm font-semibold text-left text-gray-600 whitespace-nowrap dark:text-gray-300">
-                  Student
-                </th>
-
-                <th className="px-4 py-3 text-sm font-semibold text-left text-gray-600 whitespace-nowrap dark:text-gray-300">
-                  Course
-                </th>
-
-                <th className="px-4 py-3 text-sm font-semibold text-left text-gray-600 whitespace-nowrap dark:text-gray-300">
-                  Date
-                </th>
-
-                <th className="px-4 py-3 text-sm font-semibold text-left text-gray-600 whitespace-nowrap dark:text-gray-300">
-                  Status
-                </th>
-
-                <th className="px-4 py-3 text-sm font-semibold text-left text-gray-600 whitespace-nowrap dark:text-gray-300">
-                  Recorded By
-                </th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {attendanceRecords.map((record) => (
-                <tr
-                  key={record.id}
-                  className="border-b border-gray-100 dark:border-dark-border"
-                >
-                  <td className="px-4 py-4 text-sm text-gray-900 whitespace-nowrap dark:text-white">
-                    {record.student_name}
-                  </td>
-
-                  <td className="px-4 py-4 text-sm text-gray-600 whitespace-nowrap dark:text-gray-400">
-                    {record.course_name}
-                  </td>
-
-                  <td className="px-4 py-4 text-sm text-gray-600 whitespace-nowrap dark:text-gray-400">
-                    {record.attendance_date}
-                  </td>
-
-                  <td className="px-4 py-4 text-sm whitespace-nowrap">
-                    <span
-                      className={`inline-flex px-3 py-1 text-xs font-medium rounded-full ${
-                        record.status === "present"
-                          ? "bg-green-100 text-green-700"
-                          : record.status === "late"
-                            ? "bg-yellow-100 text-yellow-700"
-                            : "bg-red-100 text-red-700"
-                      }`}
-                    >
-                      {record.status}
-                    </span>
-                  </td>
-
-                  <td className="px-4 py-4 text-sm text-gray-600 whitespace-nowrap dark:text-gray-400">
-                    {record.recorded_by_name}
+              ) : attendanceRecords.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan={5}
+                    className="px-6 py-8 text-center text-gray-500 dark:text-gray-400"
+                  >
+                    <FiCalendar className="w-12 h-12 mx-auto mb-3 text-gray-300 dark:text-gray-600" />
+                    No attendance records found
                   </td>
                 </tr>
-              ))}
+              ) : (
+                attendanceRecords.map((record, idx) => (
+                  <tr
+                    key={record.id || idx}
+                    className="hover:bg-gray-50 dark:hover:bg-dark-card/50"
+                  >
+                    <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                      {record.first_name} {record.last_name}
+                    </td>
+
+                    <td className="px-6 py-4 text-gray-600 whitespace-nowrap dark:text-gray-300">
+                      {record.course_name || `Course #${record.course_id}`}
+                    </td>
+
+                    <td className="px-6 py-4 text-gray-600 whitespace-nowrap dark:text-gray-300">
+                      {record.attendance_date
+                        ? new Date(record.attendance_date).toLocaleDateString()
+                        : "-"}
+                    </td>
+
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          record.status === "present"
+                            ? "bg-green-100 text-green-600 dark:bg-green-900/20 dark:text-green-400"
+                            : record.status === "absent"
+                              ? "bg-red-100 text-red-600 dark:bg-red-900/20 dark:text-red-400"
+                              : record.status === "late"
+                                ? "bg-yellow-100 text-yellow-600 dark:bg-yellow-900/20 dark:text-yellow-400"
+                                : "bg-blue-100 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400"
+                        }`}
+                      >
+                        {record.status
+                          ? record.status.charAt(0).toUpperCase() +
+                            record.status.slice(1)
+                          : "-"}
+                      </span>
+                    </td>
+
+                    <td className="px-6 py-4 text-gray-600 whitespace-nowrap dark:text-gray-300">
+                      Teacher ID: {record.recorded_by || "-"}
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
