@@ -214,8 +214,7 @@ const CreateUser = (req, res) => {
 /////////////// Login User Logic ///////////////
 
 const LoginUser = (req, res) => {
-  console.log("NODE_ENV:", JSON.stringify(process.env.NODE_ENV));
-  console.log("BACKEND URL:", process.env.VITE_FRONTEND_URL);
+  console.log("LOGIN NODE_ENV:", JSON.stringify(process.env.NODE_ENV));
 
   try {
     const { email, password } = req.body;
