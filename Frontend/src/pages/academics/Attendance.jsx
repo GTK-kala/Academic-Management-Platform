@@ -1,6 +1,5 @@
 import toast from "react-hot-toast";
 import { useState, useEffect } from "react";
-
 import {
   FiCalendar,
   FiCheck,
@@ -9,12 +8,9 @@ import {
   FiAlertCircle,
   FiDownload,
 } from "react-icons/fi";
-
 import { useAuth } from "../../context/AuthContext";
 import Button from "../../components/common/Button";
-
 import { Get_Courses, Enrolled_Courses } from "../../services/courseService";
-
 import {
   Add_Attendance,
   Get_Attendances,
@@ -28,9 +24,7 @@ const Attendance = () => {
   // ========================================
 
   const [attendanceRecords, setAttendanceRecords] = useState([]);
-
   const [courses, setCourses] = useState([]);
-
   const [selectedCourse, setSelectedCourse] = useState("all");
 
   const [selectedDate, setSelectedDate] = useState(
@@ -38,9 +32,7 @@ const Attendance = () => {
   );
 
   const [loading, setLoading] = useState(true);
-
   const [markingAttendance, setMarkingAttendance] = useState(false);
-
   const [students, setStudents] = useState([]);
 
   // Current attendance status
@@ -78,12 +70,13 @@ const Attendance = () => {
             storedUser?.role,
             selectedCourse,
           );
-          const courseData = studentCourses?.enrollments || [];
-          setCourses(courseData);
+
+          const enrolledCourseData = studentCourses?.enrollments || [];
+
+          setCourses(enrolledCourseData);
         }
       } catch (error) {
         console.error("Failed to fetch courses:", error);
-
         setCourses([]);
       }
     };
@@ -102,7 +95,7 @@ const Attendance = () => {
       setLoading(true);
 
       try {
-        if (selectedCourse === "all" && storedUser.role) {
+        if (selectedCourse === "all" && storedUser?.role) {
           const res = await Get_Attendances(
             selectedCourse,
             storedUser?.role,
@@ -121,7 +114,6 @@ const Attendance = () => {
         }
       } catch (error) {
         console.error("Failed to fetch attendance:", error);
-
         setAttendanceRecords([]);
       } finally {
         setLoading(false);
@@ -140,7 +132,6 @@ const Attendance = () => {
 
     if (selectedCourse === "all") {
       toast.error("Please select a course first.");
-
       return;
     }
 
@@ -183,7 +174,6 @@ const Attendance = () => {
         const status = existingAttendance?.status || "present";
 
         form[studentId] = status;
-
         original[studentId] = status;
       });
 
@@ -215,6 +205,27 @@ const Attendance = () => {
   };
 
   // ========================================
+  // MARK ALL PRESENT
+  // ========================================
+
+  const handleMarkAllPresent = () => {
+    if (students.length === 0) {
+      toast.error("No students loaded.");
+      return;
+    }
+
+    const updatedForm = {};
+
+    students.forEach((student) => {
+      updatedForm[student.id] = "present";
+    });
+
+    setAttendanceForm(updatedForm);
+
+    toast.success("All students marked as present.");
+  };
+
+  // ========================================
   // SUBMIT ONLY CHANGED STUDENTS
   // ========================================
 
@@ -222,19 +233,16 @@ const Attendance = () => {
     try {
       if (selectedCourse === "all") {
         toast.error("Please select a course first.");
-
         return;
       }
 
       if (!selectedDate) {
         toast.error("Please select a date.");
-
         return;
       }
 
       if (students.length === 0) {
         toast.error("No students are enrolled in this course.");
-
         return;
       }
 
@@ -246,7 +254,6 @@ const Attendance = () => {
         const studentId = student.id;
 
         const oldStatus = originalAttendance[studentId];
-
         const newStatus = attendanceForm[studentId];
 
         return oldStatus !== newStatus;
@@ -258,9 +265,10 @@ const Attendance = () => {
 
       if (changedStudents.length === 0) {
         toast.error("No attendance changes were made.");
-
         return;
       }
+
+      setLoading(true);
 
       // ========================================
       // SEND ONLY CHANGED STUDENTS
@@ -271,13 +279,9 @@ const Attendance = () => {
 
         const attendanceData = {
           student_id: Number(studentId),
-
           course_id: Number(selectedCourse),
-
           attendance_date: selectedDate,
-
           recorded_by: Number(user?.userId),
-
           status: attendanceForm[studentId],
         };
 
@@ -311,9 +315,11 @@ const Attendance = () => {
         return updated;
       });
 
-      // Close form
-      setMarkingAttendance(false);
+      // ========================================
+      // CLOSE FORM
+      // ========================================
 
+      setMarkingAttendance(false);
       setAttendanceForm({});
 
       // ========================================
@@ -322,8 +328,8 @@ const Attendance = () => {
 
       const res = await Get_Attendances(
         selectedCourse,
-        selectedDate,
         user?.role,
+        user?.userId,
       );
 
       setAttendanceRecords(res?.attendance || []);
@@ -334,6 +340,8 @@ const Attendance = () => {
         "Failed to record attendance: " +
           (error?.response?.data?.message || error?.message || "Unknown error"),
       );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -343,11 +351,8 @@ const Attendance = () => {
 
   const cancelMarkingAttendance = () => {
     setMarkingAttendance(false);
-
     setStudents([]);
-
     setAttendanceForm({});
-
     setOriginalAttendance({});
   };
 
@@ -376,21 +381,29 @@ const Attendance = () => {
   // ========================================
   // JSX
   // ========================================
+
   return (
     <div className="w-full min-w-0 max-w-full overflow-hidden">
+      {/* HEADER */}
+
       <div className="flex flex-col justify-between gap-4 mb-8 sm:flex-row sm:items-center">
         <div>
           <h1 className="text-3xl font-bold text-primary dark:text-white">
             Attendance
           </h1>
+
           <p className="mt-1 text-gray-600 dark:text-gray-400">
             Manage and track student attendance
           </p>
         </div>
       </div>
 
+      {/* FILTERS */}
+
       <div className="w-full min-w-0 p-4 mb-6 overflow-hidden bg-white border border-gray-100 shadow-sm sm:p-6 dark:bg-dark-card rounded-xl dark:border-dark-border">
         <div className="flex flex-col w-full min-w-0 gap-4 sm:flex-row">
+          {/* COURSE */}
+
           <div className="w-full min-w-0 sm:flex-1">
             <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
               Course
@@ -401,7 +414,7 @@ const Attendance = () => {
               onChange={(e) => setSelectedCourse(e.target.value)}
               className="block w-full min-w-0 max-w-full px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg box-border dark:border-dark-border dark:bg-dark-bg dark:text-white focus:ring-2 focus:ring-primary"
             >
-              <option value="">Select Course</option>
+              <option value="all">Select Course</option>
 
               {courses.map((course) => (
                 <option key={course.id} value={course.id}>
@@ -410,6 +423,8 @@ const Attendance = () => {
               ))}
             </select>
           </div>
+
+          {/* DATE */}
 
           <div className="w-full min-w-0 sm:flex-1">
             <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -426,7 +441,11 @@ const Attendance = () => {
         </div>
       </div>
 
+      {/* STATISTICS */}
+
       <div className="grid w-full min-w-0 grid-cols-2 gap-4 mb-6 sm:grid-cols-2 lg:grid-cols-4">
+        {/* TOTAL */}
+
         <div className="min-w-0 p-4 overflow-hidden bg-white border border-gray-100 shadow-sm dark:bg-dark-card rounded-xl dark:border-dark-border">
           <div className="min-w-0">
             <p className="text-sm text-gray-500 dark:text-gray-400">
@@ -439,36 +458,44 @@ const Attendance = () => {
           </div>
         </div>
 
+        {/* PRESENT */}
+
         <div className="min-w-0 p-4 overflow-hidden bg-white border border-gray-100 shadow-sm dark:bg-dark-card rounded-xl dark:border-dark-border">
           <div className="min-w-0">
             <p className="text-sm text-gray-500 dark:text-gray-400">Present</p>
 
             <p className="mt-1 text-2xl font-bold text-green-600 truncate">
-              {presentCount}
+              {stats.present}
             </p>
           </div>
         </div>
+
+        {/* LATE */}
 
         <div className="min-w-0 p-4 overflow-hidden bg-white border border-gray-100 shadow-sm dark:bg-dark-card rounded-xl dark:border-dark-border">
           <div className="min-w-0">
             <p className="text-sm text-gray-500 dark:text-gray-400">Late</p>
 
             <p className="mt-1 text-2xl font-bold text-yellow-600 truncate">
-              {lateCount}
+              {stats.late}
             </p>
           </div>
         </div>
+
+        {/* ABSENT */}
 
         <div className="min-w-0 p-4 overflow-hidden bg-white border border-gray-100 shadow-sm dark:bg-dark-card rounded-xl dark:border-dark-border">
           <div className="min-w-0">
             <p className="text-sm text-gray-500 dark:text-gray-400">Absent</p>
 
             <p className="mt-1 text-2xl font-bold text-red-600 truncate">
-              {absentCount}
+              {stats.absent}
             </p>
           </div>
         </div>
       </div>
+
+      {/* ATTENDANCE PROGRESS */}
 
       <div className="w-full min-w-0 p-4 mb-6 overflow-hidden bg-white border border-gray-100 shadow-sm sm:p-6 dark:bg-dark-card rounded-xl dark:border-dark-border">
         <div className="flex flex-col gap-4 mb-6 sm:flex-row sm:items-center sm:justify-between">
@@ -490,10 +517,14 @@ const Attendance = () => {
         <div className="w-full h-3 overflow-hidden bg-gray-200 rounded-full dark:bg-dark-bg">
           <div
             className="h-full transition-all duration-300 bg-primary"
-            style={{ width: `${attendancePercentage}%` }}
+            style={{
+              width: `${attendancePercentage}%`,
+            }}
           />
         </div>
       </div>
+
+      {/* MARK ATTENDANCE */}
 
       <div className="w-full min-w-0 p-4 mb-6 overflow-hidden bg-white border border-gray-100 shadow-sm sm:p-6 dark:bg-dark-card rounded-xl dark:border-dark-border">
         <div className="flex flex-col gap-4 mb-6 sm:flex-row sm:items-center sm:justify-between">
@@ -513,7 +544,7 @@ const Attendance = () => {
             </Button>
 
             <Button
-              onClick={handleSubmitAttendance}
+              onClick={submitAttendance}
               disabled={loading}
               className="w-full sm:w-auto"
             >
@@ -521,6 +552,8 @@ const Attendance = () => {
             </Button>
           </div>
         </div>
+
+        {/* STUDENT TABLE */}
 
         <div className="w-full min-w-0 overflow-x-auto">
           <table className="w-full min-w-[700px]">
@@ -563,7 +596,9 @@ const Attendance = () => {
                       className="px-3 py-2 text-sm text-gray-900 bg-white border border-gray-300 rounded-lg dark:border-dark-border dark:bg-dark-bg dark:text-white"
                     >
                       <option value="present">Present</option>
+
                       <option value="late">Late</option>
+
                       <option value="absent">Absent</option>
                     </select>
                   </td>
@@ -573,6 +608,8 @@ const Attendance = () => {
           </table>
         </div>
       </div>
+
+      {/* ATTENDANCE RECORDS */}
 
       <div className="w-full min-w-0 p-4 overflow-hidden bg-white border border-gray-100 shadow-sm sm:p-6 dark:bg-dark-card rounded-xl dark:border-dark-border">
         <div className="mb-6">
