@@ -214,8 +214,6 @@ const CreateUser = (req, res) => {
 /////////////// Login User Logic ///////////////
 
 const LoginUser = (req, res) => {
-  console.log("LOGIN NODE_ENV:", JSON.stringify(process.env.NODE_ENV));
-
   try {
     const { email, password } = req.body;
     const sql = `SELECT
