@@ -118,7 +118,6 @@ const Add_Student = (req, res) => {
 
 const Get_Students = (req, res) => {
   try {
-    const token = req.cookies.token;
     const userRole = req.query.userRole;
     const userId = req.params.userId;
     if (userRole === "admin") {

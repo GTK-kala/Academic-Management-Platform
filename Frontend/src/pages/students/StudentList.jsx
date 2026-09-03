@@ -16,7 +16,6 @@ const StudentList = () => {
       const user = JSON.parse(localStorage.getItem("user"));
       const response = await fetchRecentStudents(user?.userId, user?.role);
       setStudents(response.students || []);
-      toast.success(response.token);
     } catch (err) {
       console.error(err);
       toast.error("Failed to fetch students");
@@ -35,7 +34,7 @@ const StudentList = () => {
       const response = await fetchRecentStudents();
       setStudents(students.filter((s) => s.id !== id));
     } catch (err) {
-      alert("Delete failed: " + err.message);
+      toast.error("Delete failed: " + err.message);
     }
   };
 

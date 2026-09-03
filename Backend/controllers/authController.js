@@ -257,7 +257,6 @@ const LoginUser = (req, res) => {
                 user_id = ?`;
             db.query(sql_student, [user.id], (err, studentResults) => {
               if (err) {
-                console.log(err, "2");
                 return res.status(500).json({
                   message: "Failed to retrieve student data",
                   error: err.message,
@@ -294,7 +293,6 @@ const LoginUser = (req, res) => {
                 user_id = ?`;
             db.query(sql_teacher, [user.id], (err, teacherResults) => {
               if (err) {
-                console.log(err, "3");
                 return res.status(500).json({
                   message: "Failed to retrieve teacher data",
                   error: err.message,
@@ -344,6 +342,7 @@ const LoginUser = (req, res) => {
               userId: adminData.id,
               role: user.role,
               email: user.email,
+              token: token,
             });
           }
         }
