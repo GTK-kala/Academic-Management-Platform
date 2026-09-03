@@ -94,8 +94,8 @@ const ProfileSettings = () => {
         const userData = response?.user || response.data;
 
         setProfileForm({
-          firstName: userData.first_name || userData.first_name || "",
-          lastName: userData.last_name || userData.last_name || "",
+          firstName: userData.first_name || "",
+          lastName: userData.last_name || "",
           email: userData.email || user?.email || "",
           phone: userData.phone || "",
           address: userData.address || "",

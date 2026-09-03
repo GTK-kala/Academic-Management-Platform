@@ -39,7 +39,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 ////// Routes///////////////////
-
+app.use("/users", UserRoutes);
 app.use("/grades", GradeRouters);
 app.use("/api/auth", UserRoutes);
 app.use("/courses", CourseRoutes);
