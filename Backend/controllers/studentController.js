@@ -138,7 +138,6 @@ const Get_Students = (req, res) => {
         res.status(200).json({
           message: "Recent students fetched successfully",
           students: results,
-          token: token,
         });
       });
     } else if (userRole === "teacher") {
