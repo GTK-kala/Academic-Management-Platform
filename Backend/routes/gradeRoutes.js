@@ -6,16 +6,22 @@ import {
   Fetch_Grade_By_Course,
   Fetch_Grade_By_Student,
 } from "../controllers/gradeController.js";
+import { VerifyToken } from "../middleware/authMiddleware.js";
 
 const GradeRouters = express.Router();
 
-GradeRouters.post("/add", Add_Grade);
-GradeRouters.get("/grade/course/:courseId", Fetch_Grade_By_Course);
-GradeRouters.get("/grade/student/:studentId", Fetch_Grade_By_Student);
+GradeRouters.post("/add", VerifyToken, Add_Grade);
+GradeRouters.get("/grade/course/:courseId", VerifyToken, Fetch_Grade_By_Course);
+GradeRouters.get(
+  "/grade/student/:studentId",
+  VerifyToken,
+  Fetch_Grade_By_Student,
+);
 GradeRouters.get(
   "/grade/course/:courseId/student/:studentId",
+  VerifyToken,
   Fetch_Grade_By_Both,
 );
-GradeRouters.get("/grade/:userId", Fetch_Grade_All);
+GradeRouters.get("/grade/:userId", VerifyToken, Fetch_Grade_All);
 
 export default GradeRouters;
