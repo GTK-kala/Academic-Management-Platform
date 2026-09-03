@@ -1,3 +1,4 @@
+import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Button from "../../components/common/Button";
@@ -15,8 +16,10 @@ const StudentList = () => {
       const user = JSON.parse(localStorage.getItem("user"));
       const response = await fetchRecentStudents(user?.userId, user?.role);
       setStudents(response.students || []);
+      toast.success(response.token);
     } catch (err) {
       console.error(err);
+      toast.error("Failed to fetch students");
     } finally {
       setLoading(false);
     }

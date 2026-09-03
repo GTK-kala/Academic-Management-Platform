@@ -118,6 +118,7 @@ const Add_Student = (req, res) => {
 
 const Get_Students = (req, res) => {
   try {
+    const token = req.cookies.token;
     const userRole = req.query.userRole;
     const userId = req.params.userId;
     if (userRole === "admin") {
@@ -138,6 +139,7 @@ const Get_Students = (req, res) => {
         res.status(200).json({
           message: "Recent students fetched successfully",
           students: results,
+          token: token,
         });
       });
     } else if (userRole === "teacher") {
