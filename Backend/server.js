@@ -4,6 +4,7 @@ import express from "express";
 import db from "./config/db.js";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
+
 import UserRoutes from "./routes/userRoutes.js";
 import GradeRouters from "./routes/gradeRoutes.js";
 import CourseRoutes from "./routes/courseRoutes.js";
@@ -13,32 +14,34 @@ import EnrollmentRoutes from "./routes/enrollmentRoutes.js";
 import AttendanceRouter from "./routes/attendanceRoutes.js";
 
 dotenv.config();
+
 const app = express();
 const port = process.env.PORT;
 
-const allowedOrigins = ["http://localhost:3000", process.env.VITE_FRONTEND_URL];
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://localhost:5173",
+  "https://academic-management-platform-nine.vercel.app",
+];
 
 app.use(
   cors({
     origin: function (origin, callback) {
-      if (!origin) return callback(null, true);
-
-      // allow any vercel.app domain
-      if (origin.endsWith(".vercel.app")) return callback(null, true);
-
-      if (allowedOrigins.includes(origin)) return callback(null, true);
-
-      return callback(new Error("Not allowed by CORS"));
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
     },
     credentials: true,
   }),
 );
 
 app.use(cookieParser());
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-////// Routes///////////////////
 app.use("/users", UserRoutes);
 app.use("/grades", GradeRouters);
 app.use("/api/auth", UserRoutes);
@@ -48,10 +51,10 @@ app.use("/teachers", TeacherRoutes);
 app.use("/enrollments", EnrollmentRoutes);
 app.use("/attendances", AttendanceRouter);
 
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
-
 app.get("/", (req, res) => {
   res.send("Hello World!");
+});
+
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
 });
