@@ -5,7 +5,7 @@ import { Get_User } from "../controllers/userController.js";
 
 const UserRouter = express.Router();
 
-UserRouter.get("/profile/:userId", Get_User);
+UserRouter.get("/profile/:userId", VerifyToken, Get_User);
 UserRouter.post("/login", LoginUser);
 UserRouter.post("/register", CreateUser);
 

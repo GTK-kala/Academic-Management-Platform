@@ -4,6 +4,13 @@ export const Get_User = async (userId, userRole) => {
   try {
     const res = await fetch(
       `${BASE_URL}/users/profile/${userId}?userRole=${userRole}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      },
     );
     if (!res.ok) {
       throw new Error("Failed to fetch user data");
