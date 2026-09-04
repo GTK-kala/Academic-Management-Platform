@@ -51,7 +51,6 @@ const ProfileSettings = () => {
     phone: "",
     address: "",
     department: "", // For teachers
-    bio: "",
   });
 
   // Password form state
@@ -100,7 +99,6 @@ const ProfileSettings = () => {
           phone: userData.phone || "",
           address: userData.address || "",
           department: userData.department || "",
-          bio: userData.bio || "",
         });
 
         // Set notification preferences if available
@@ -120,7 +118,6 @@ const ProfileSettings = () => {
           phone: "",
           address: "",
           department: "",
-          bio: "",
         });
       }
     };
@@ -518,23 +515,6 @@ const ProfileSettings = () => {
                         className="w-full pl-10 pr-4 py-2.5 border border-gray-300 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
                       />
                     </div>
-                  </div>
-
-                  <div className="md:col-span-2">
-                    <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Bio
-                    </label>
-                    <textarea
-                      name="bio"
-                      value={profileForm.bio}
-                      onChange={handleProfileChange}
-                      rows="4"
-                      placeholder="Tell us about yourself"
-                      className="w-full px-4 py-2.5 border border-gray-300 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
-                    />
-                    <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                      {profileForm.bio.length}/500 characters
-                    </p>
                   </div>
                 </div>
 

@@ -73,7 +73,8 @@ const Get_User = (req, res) => {
 const Update_User = (req, res) => {
   const { userRole } = req.query;
   const { userId } = req.params;
-  const { firstName, lastName, phone, address, department, bio } = req.body;
+  const { firstName, lastName, phone, address, department } = req.body;
+  console.log(firstName, lastName, phone, address, department);
   let fields = [];
   let values = [];
   if (firstName !== undefined) {
@@ -84,27 +85,16 @@ const Update_User = (req, res) => {
     fields.push("last_name = ?");
     values.push(lastName);
   }
-  if (phone !== undefined) {
-    fields.push("phone = ?");
-    values.push(phone);
-  }
-  if (address !== undefined) {
-    fields.push("address = ?");
-    values.push(address);
-  }
-  if (department !== undefined) {
-    fields.push("department = ?");
-    values.push(department);
-  }
-  if (bio !== undefined) {
-    fields.push("bio = ?");
-    values.push(bio);
-  }
   try {
     if (userRole === "admin") {
-      const admin_sql = `UPDATE users SET ${fields.join(", ")} WHERE id = ?`;
-      db.query(admin_sql, [...values, userId], (err, results) => {
+      const admin_sql = `UPDATE users
+          SET
+          ${fields.join(", ")}
+          WHERE
+          id = ?`;
+      db.query(admin_sql, [values, userId], (err, results) => {
         if (err) {
+          console.log(err);
           return res.status(500).json({
             message: "Failed to update admin",
             error: err.message,
@@ -116,9 +106,20 @@ const Update_User = (req, res) => {
         });
       });
     } else if (userRole === "teacher") {
-      const teacher_sql = `UPDATE teachers SET ${fields.join(
-        ", ",
-      )} WHERE id = ?`;
+      if (phone !== undefined) {
+        fields.push("phone = ?");
+        values.push(phone);
+      }
+      if (department !== undefined) {
+        fields.push("department = ?");
+        values.push(department);
+      }
+
+      const teacher_sql = `UPDATE teachers
+          SET
+          ${fields.join(", ")}
+          WHERE
+          id = ?`;
       db.query(teacher_sql, [...values, userId], (err, results) => {
         if (err) {
           return res.status(500).json({
@@ -132,9 +133,20 @@ const Update_User = (req, res) => {
         });
       });
     } else if (userRole === "student") {
-      const student_sql = `UPDATE students SET ${fields.join(
-        ", ",
-      )} WHERE id = ?`;
+      if (phone !== undefined) {
+        fields.push("phone = ?");
+        values.push(phone);
+      }
+      if (address !== undefined) {
+        fields.push("address = ?");
+        values.push(address);
+      }
+
+      const student_sql = `UPDATE students
+          SET
+          ${fields.join(", ")}
+          WHERE
+          id = ?`;
       db.query(student_sql, [...values, userId], (err, results) => {
         if (err) {
           return res.status(500).json({
