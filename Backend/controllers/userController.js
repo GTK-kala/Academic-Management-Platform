@@ -1,3 +1,4 @@
+import bcrypt from "bcryptjs";
 import db from "../config/db.js";
 
 const Get_User = (req, res) => {
@@ -88,7 +89,7 @@ const Update_User = (req, res) => {
       }
       const admin_sql = `UPDATE users
           SET
-          ${fields.join(", ")}
+         ${fields.join(", ")}
           WHERE
           id = ?`;
       db.query(admin_sql, [...values, userId], (err, results) => {
@@ -187,4 +188,68 @@ const Update_User = (req, res) => {
   }
 };
 
-export { Get_User, Update_User };
+const Update_Password = (req, res) => {
+  const { userId } = req.params;
+  const { userRole } = req.query;
+  const { current_password, new_password } = req.body;
+  try {
+    if (
+      userRole === "admin" ||
+      userRole === "teacher" ||
+      userRole === "student"
+    ) {
+      const admin_sql = `SELECT
+          password_hash
+          FROM
+          users
+          WHERE
+          id = ?`;
+      db.query(admin_sql, userId, (err, results) => {
+        if (err) {
+          return res.status(500).json({
+            message: "Failed to fetch admin",
+            error: err.message,
+          });
+        } else {
+          const hashedPassword = results[0].password_hash;
+          const isMatch = bcrypt.compareSync(current_password, hashedPassword);
+          if (!isMatch) {
+            return res.status(400).json({
+              message: "Current password is incorrect",
+            });
+          } else {
+            const newHashedPassword = bcrypt.hashSync(new_password, 10);
+            const update_sql = `UPDATE users
+                SET
+                password_hash = ?
+                WHERE
+                id = ?`;
+            db.query(
+              update_sql,
+              [newHashedPassword, userId],
+              (err, results) => {
+                if (err) {
+                  return res.status(500).json({
+                    message: "Failed to update password",
+                    error: err.message,
+                  });
+                } else {
+                  res.status(200).json({
+                    message: "Password updated successfully",
+                  });
+                }
+              },
+            );
+          }
+        }
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to update password",
+      error: error.message,
+    });
+  }
+};
+
+export { Get_User, Update_User, Update_Password };
