@@ -21,7 +21,7 @@ import {
   FiShield,
 } from "react-icons/fi";
 import api from "../../services/api";
-import { Get_User } from "../../services/userService";
+import { Get_User, Update_User } from "../../services/userService";
 import Button from "../../components/common/Button";
 import { useAuth } from "../../context/AuthContext";
 import { useTheme } from "../../context/ThemeContext";
@@ -171,6 +171,7 @@ const ProfileSettings = () => {
     setProfileLoading(true);
     setSuccessMessage("");
     setErrorMessage("");
+    const user = JSON.parse(localStorage.getItem("user"));
 
     try {
       // Create FormData for file upload
@@ -183,7 +184,7 @@ const ProfileSettings = () => {
       }
 
       // Call API to update profile
-      await api.put("/auth/profile", profileForm);
+      await Update_User(user?.userId, user?.role, profileForm);
 
       setSuccessMessage("Profile updated successfully!");
 

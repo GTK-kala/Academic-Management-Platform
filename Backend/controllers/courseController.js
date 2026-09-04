@@ -68,7 +68,6 @@ export const Add_Course = async (req, res) => {
 };
 
 export const Get_Courses = async (req, res) => {
-  const token = req.cookies.token;
   const userId = req.params.userId;
   try {
     const sql = `SELECT
@@ -97,7 +96,6 @@ export const Get_Courses = async (req, res) => {
       } else {
         res.status(200).json({
           courses: result,
-          token: token,
         });
       }
     });

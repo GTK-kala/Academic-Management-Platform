@@ -25,7 +25,6 @@ const AdminDashboard = () => {
       const response = await fetchRecentStudents(user?.userId, user?.role);
       setRecentStudents(response.students || []);
       setCourses(courses.courses);
-      toast.success(courses.token);
     } catch (error) {
       console.error("Error fetching recent students:", error);
     }
