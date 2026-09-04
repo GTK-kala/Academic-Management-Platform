@@ -43,7 +43,6 @@ const Login = () => {
         );
         if (data.role === "admin") {
           navigate("/dashboard/admin");
-          toast.success(data.token);
         } else if (data.role === "teacher") {
           navigate("/dashboard/teacher");
         } else if (data.role === "student") {

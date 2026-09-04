@@ -342,7 +342,6 @@ const LoginUser = (req, res) => {
               userId: adminData.id,
               role: user.role,
               email: user.email,
-              token: token,
             });
           }
         }
