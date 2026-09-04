@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import {
   FiUser,
   FiLock,
@@ -21,7 +22,11 @@ import {
   FiShield,
 } from "react-icons/fi";
 import api from "../../services/api";
-import { Get_User, Update_User } from "../../services/userService";
+import {
+  Get_User,
+  Update_Profile,
+  Update_Password,
+} from "../../services/userService";
 import Button from "../../components/common/Button";
 import { useAuth } from "../../context/AuthContext";
 import { useTheme } from "../../context/ThemeContext";
@@ -181,9 +186,17 @@ const ProfileSettings = () => {
       }
 
       // Call API to update profile
-      await Update_User(user?.userId, user?.role, profileForm);
+      const update_profile = await Update_Profile(
+        user?.userId,
+        user?.role,
+        profileForm,
+      );
 
-      setSuccessMessage("Profile updated successfully!");
+      if (update_profile) {
+        toast.success("Profile updated successfully!");
+      } else {
+        toast.error("Failed to update profile");
+      }
 
       // Clear success message after 3 seconds
       setTimeout(() => setSuccessMessage(""), 3000);
@@ -203,34 +216,34 @@ const ProfileSettings = () => {
 
     // Validate passwords
     if (passwordForm.newPassword.length < 6) {
-      setErrorMessage("New password must be at least 6 characters");
+      toast.error("New password must be at least 6 characters");
       return;
     }
 
     if (passwordForm.newPassword !== passwordForm.confirmPassword) {
-      setErrorMessage("New passwords do not match");
+      toast.error("New passwords do not match");
       return;
     }
 
     setPasswordLoading(true);
 
     try {
-      await api.put("/auth/password", {
+      await Update_Password(user?.userId, user?.role, {
         current_password: passwordForm.currentPassword,
         new_password: passwordForm.newPassword,
       });
 
-      setSuccessMessage("Password changed successfully!");
+      toast.success("Password changed successfully!");
       setPasswordForm({
         currentPassword: "",
         newPassword: "",
         confirmPassword: "",
       });
 
-      setTimeout(() => setSuccessMessage(""), 3000);
+      setTimeout(() => toast.dismiss(), 3000);
     } catch (error) {
       console.error("Failed to change password:", error);
-      setErrorMessage(error.message || "Failed to change password");
+      toast.error(error.message || "Failed to change password");
     } finally {
       setPasswordLoading(false);
     }
@@ -245,13 +258,11 @@ const ProfileSettings = () => {
 
     try {
       await api.put("/auth/notifications", notificationPrefs);
-      setSuccessMessage("Notification preferences saved!");
-      setTimeout(() => setSuccessMessage(""), 3000);
+      toast.success("Notification preferences saved!");
+      setTimeout(() => toast.dismiss(), 3000);
     } catch (error) {
       console.error("Failed to save notifications:", error);
-      setErrorMessage(
-        error.message || "Failed to save notification preferences",
-      );
+      toast.error(error.message || "Failed to save notification preferences");
     } finally {
       setNotificationLoading(false);
     }

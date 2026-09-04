@@ -74,25 +74,24 @@ const Update_User = (req, res) => {
   const { userRole } = req.query;
   const { userId } = req.params;
   const { firstName, lastName, phone, address, department } = req.body;
-  console.log(firstName, lastName, phone, address, department);
-  let fields = [];
-  let values = [];
-  if (firstName !== undefined) {
-    fields.push("first_name = ?");
-    values.push(firstName);
-  }
-  if (lastName !== undefined) {
-    fields.push("last_name = ?");
-    values.push(lastName);
-  }
   try {
     if (userRole === "admin") {
+      let fields = [];
+      let values = [];
+      if (firstName !== undefined) {
+        fields.push("first_name = ?");
+        values.push(firstName);
+      }
+      if (lastName !== undefined) {
+        fields.push("last_name = ?");
+        values.push(lastName);
+      }
       const admin_sql = `UPDATE users
           SET
           ${fields.join(", ")}
           WHERE
           id = ?`;
-      db.query(admin_sql, [values, userId], (err, results) => {
+      db.query(admin_sql, [...values, userId], (err, results) => {
         if (err) {
           console.log(err);
           return res.status(500).json({
@@ -106,6 +105,16 @@ const Update_User = (req, res) => {
         });
       });
     } else if (userRole === "teacher") {
+      let fields = [];
+      let values = [];
+      if (firstName !== undefined) {
+        fields.push("first_name = ?");
+        values.push(firstName);
+      }
+      if (lastName !== undefined) {
+        fields.push("last_name = ?");
+        values.push(lastName);
+      }
       if (phone !== undefined) {
         fields.push("phone = ?");
         values.push(phone);
@@ -133,6 +142,16 @@ const Update_User = (req, res) => {
         });
       });
     } else if (userRole === "student") {
+      let fields = [];
+      let values = [];
+      if (firstName !== undefined) {
+        fields.push("first_name = ?");
+        values.push(firstName);
+      }
+      if (lastName !== undefined) {
+        fields.push("last_name = ?");
+        values.push(lastName);
+      }
       if (phone !== undefined) {
         fields.push("phone = ?");
         values.push(phone);

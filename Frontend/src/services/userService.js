@@ -23,8 +23,7 @@ export const Get_User = async (userId, userRole) => {
   }
 };
 
-export const Update_User = async (userId, userRole, updatedData) => {
-  console.log(userId, userRole, updatedData);
+export const Update_Profile = async (userId, userRole, updatedData) => {
   try {
     const res = await fetch(
       `${BASE_URL}/users/profile/${userId}?userRole=${userRole}`,
@@ -44,6 +43,30 @@ export const Update_User = async (userId, userRole, updatedData) => {
     return userData;
   } catch (error) {
     console.error("Error updating user data:", error);
+    throw error;
+  }
+};
+
+export const Update_Password = async (userId, userRole, passwordData) => {
+  try {
+    const res = await fetch(
+      `${BASE_URL}/users/password/${userId}?userRole=${userRole}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(passwordData),
+      },
+    );
+    if (!res.ok) {
+      throw new Error("Failed to update password");
+    }
+    const userData = await res.json();
+    return userData;
+  } catch (error) {
+    console.error("Error updating password:", error);
     throw error;
   }
 };
