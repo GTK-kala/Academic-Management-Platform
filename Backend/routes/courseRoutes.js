@@ -9,9 +9,9 @@ import { VerifyToken } from "../middleware/authMiddleware.js";
 
 const CourseRouter = express.Router();
 
-CourseRouter.post("/add", VerifyToken, Add_Course);
-CourseRouter.get("/list/:userId", VerifyToken, Get_Courses);
-CourseRouter.get("/detail/:courseId", VerifyToken, Get_Course);
-CourseRouter.put("/edit/:courseId", VerifyToken, Edit_Course);
+CourseRouter.post("/add", Add_Course);
+CourseRouter.get("/list/:userId", Get_Courses);
+CourseRouter.get("/detail/:courseId", Get_Course);
+CourseRouter.put("/edit/:courseId", Edit_Course);
 
 export default CourseRouter;

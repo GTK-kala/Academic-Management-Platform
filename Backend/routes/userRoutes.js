@@ -9,9 +9,9 @@ import {
 
 const UserRouter = express.Router();
 
-UserRouter.get("/profile/:userId", VerifyToken, Get_User);
-UserRouter.put("/profile/:userId", VerifyToken, Update_User);
-UserRouter.put("/password/:userId", VerifyToken, Update_Password);
+UserRouter.get("/profile/:userId", Get_User);
+UserRouter.put("/profile/:userId", Update_User);
+UserRouter.put("/password/:userId", Update_Password);
 UserRouter.post("/login", LoginUser);
 UserRouter.post("/register", CreateUser);
 
