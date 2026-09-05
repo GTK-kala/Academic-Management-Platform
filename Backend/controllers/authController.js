@@ -222,6 +222,7 @@ const LoginUser = (req, res) => {
         users
         WHERE
         email = ?`;
+
     db.query(sql, [email], (err, results) => {
       if (err) {
         console.log(err, "1");
@@ -230,12 +231,15 @@ const LoginUser = (req, res) => {
           error: err.message,
         });
       }
+
       if (results.length === 0) {
         return res.status(400).json({
           message: "Invalid email or password",
         });
       }
+
       const user = results[0];
+
       bcrypt.compare(password, user.password_hash, (err, isMatch) => {
         if (err) {
           return res.status(500).json({
@@ -243,117 +247,112 @@ const LoginUser = (req, res) => {
             error: err.message,
           });
         }
+
         if (!isMatch) {
           return res.status(400).json({
             message: "Invalid email or password",
           });
-        } else {
-          if (user.role === "student") {
-            const sql_student = `SELECT
-                *
-                FROM
-                students
-                WHERE
-                user_id = ?`;
-            db.query(sql_student, [user.id], (err, studentResults) => {
-              if (err) {
-                return res.status(500).json({
-                  message: "Failed to retrieve student data",
-                  error: err.message,
-                });
-              } else {
-                const studentData = studentResults[0];
-                const cookie = {
-                  httpOnly: true,
-                  secure: process.env.NODE_ENV === "production",
-                  sameSite:
-                    process.env.NODE_ENV === "production" ? "none" : "lax",
-                };
-                const token = jwt.sign(
-                  { userId: studentData.id, role: user.role },
-                  process.env.JWT_SECRET,
-                  {
-                    expiresIn: "8h",
-                  },
-                );
-                res.status(200).cookie("token", token, cookie).json({
-                  message: "Login successful",
-                  userId: studentData.id,
-                  role: user.role,
-                  email: user.email,
-                });
-              }
-            });
-          } else if (user.role === "teacher") {
-            const sql_teacher = `SELECT
-                *
-                FROM
-                teachers
-                WHERE
-                user_id = ?`;
-            db.query(sql_teacher, [user.id], (err, teacherResults) => {
-              if (err) {
-                return res.status(500).json({
-                  message: "Failed to retrieve teacher data",
-                  error: err.message,
-                });
-              } else {
-                const teacherData = teacherResults[0];
-                const cookie = {
-                  httpOnly: true,
-                  secure: process.env.NODE_ENV === "production",
-                  sameSite:
-                    process.env.NODE_ENV === "production" ? "none" : "lax",
-                };
-                const token = jwt.sign(
-                  { userId: teacherData.id, role: user.role },
-                  process.env.JWT_SECRET,
-                  {
-                    expiresIn: "8h",
-                  },
-                );
-                res.status(200).cookie("token", token, cookie).json({
-                  message: "Login successful",
-                  userId: teacherData.id,
-                  role: user.role,
-                  firstName: teacherData.first_name,
-                  lastName: teacherData.last_name,
-                  email: user.email,
-                });
-              }
-            });
-          } else if (user.role === "admin") {
-            const adminData = user;
-            const cookie = {
-              httpOnly: true,
-              secure: process.env.NODE_ENV === "production",
-              sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-            };
-            const token = jwt.sign(
-              { userId: adminData.id, role: user.role },
-              process.env.JWT_SECRET,
-              {
-                expiresIn: "8h",
-              },
-            );
+        }
 
-            res.status(200).cookie("token", token, cookie).json({
-              message: "Login successful",
-              userId: adminData.id,
-              role: user.role,
-              email: user.email,
-            });
-          }
+        // Create cookie options with proper settings for cross-domain
+        const isProduction = process.env.NODE_ENV === "production";
+        const cookieOptions = {
+          httpOnly: true,
+          secure: true, // Always true for HTTPS (Vercel/Render)
+          sameSite: "None", // Always 'None' for cross-domain
+          maxAge: 8 * 60 * 60 * 1000, // 8 hours in milliseconds
+          path: "/", // Important: makes cookie available across all routes
+          // domain: isProduction ? '.onrender.com' : undefined // Uncomment if needed
+        };
+
+        // Create token payload with consistent structure
+        const tokenPayload = {
+          userId: user.id, // Use user.id consistently
+          role: user.role,
+          email: user.email,
+        };
+
+        const token = jwt.sign(tokenPayload, process.env.JWT_SECRET, {
+          expiresIn: "8h",
+        });
+
+        // Handle different roles
+        if (user.role === "student") {
+          const sql_student = `SELECT
+              *
+              FROM
+              students
+              WHERE
+              user_id = ?`;
+          db.query(sql_student, [user.id], (err, studentResults) => {
+            if (err) {
+              return res.status(500).json({
+                message: "Failed to retrieve student data",
+                error: err.message,
+              });
+            }
+
+            const studentData = studentResults[0];
+            res
+              .status(200)
+              .cookie("token", token, cookieOptions)
+              .json({
+                message: "Login successful",
+                userId: user.id,
+                role: user.role,
+                email: user.email,
+                studentId: studentData ? studentData.id : null,
+              });
+          });
+        } else if (user.role === "teacher") {
+          const sql_teacher = `SELECT
+              *
+              FROM
+              teachers
+              WHERE
+              user_id = ?`;
+          db.query(sql_teacher, [user.id], (err, teacherResults) => {
+            if (err) {
+              return res.status(500).json({
+                message: "Failed to retrieve teacher data",
+                error: err.message,
+              });
+            }
+
+            const teacherData = teacherResults[0];
+            res
+              .status(200)
+              .cookie("token", token, cookieOptions)
+              .json({
+                message: "Login successful",
+                userId: user.id,
+                role: user.role,
+                email: user.email,
+                firstName: teacherData ? teacherData.first_name : null,
+                lastName: teacherData ? teacherData.last_name : null,
+              });
+          });
+        } else if (user.role === "admin") {
+          res.status(200).cookie("token", token, cookieOptions).json({
+            message: "Login successful",
+            userId: user.id,
+            role: user.role,
+            email: user.email,
+          });
+        } else {
+          return res.status(400).json({
+            message: "Invalid user role",
+          });
         }
       });
     });
   } catch (error) {
+    console.error("Login error:", error);
     res.status(500).json({
       message: "Failed to login user",
       error: error.message,
     });
   }
-  // Implement login logic here
 };
 
 export { CreateUser, LoginUser };
