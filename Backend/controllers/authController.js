@@ -211,7 +211,7 @@ const CreateUser = (req, res) => {
   }
 };
 
-/////////////// Login User Logic ///////////////
+/////////////// Login User Logic //////////////////
 
 const LoginUser = (req, res) => {
   try {
@@ -225,7 +225,6 @@ const LoginUser = (req, res) => {
 
     db.query(sql, [email], (err, results) => {
       if (err) {
-        console.log(err, "1");
         return res.status(500).json({
           message: "Failed to check email",
           error: err.message,
@@ -254,20 +253,17 @@ const LoginUser = (req, res) => {
           });
         }
 
-        // Create cookie options with proper settings for cross-domain
-        const isProduction = process.env.NODE_ENV === "production";
+        // const isProduction = process.env.NODE_ENV === "production";
         const cookieOptions = {
           httpOnly: true,
-          secure: true, // Always true for HTTPS (Vercel/Render)
-          sameSite: "None", // Always 'None' for cross-domain
-          maxAge: 8 * 60 * 60 * 1000, // 8 hours in milliseconds
-          path: "/", // Important: makes cookie available across all routes
-          // domain: isProduction ? '.onrender.com' : undefined // Uncomment if needed
+          secure: true,
+          sameSite: "None",
+          maxAge: 8 * 60 * 60 * 1000,
+          path: "/",
         };
 
-        // Create token payload with consistent structure
         const tokenPayload = {
-          userId: user.id, // Use user.id consistently
+          userId: user.id,
           role: user.role,
           email: user.email,
         };

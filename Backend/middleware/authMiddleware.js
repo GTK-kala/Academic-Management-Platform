@@ -22,6 +22,7 @@ export const VerifyUser = (req, res, next) => {
   const role = req.user.role;
 
   const sql = "SELECT * FROM users WHERE role = ?";
+
   if (role === "admin") {
     db.query(sql, [role], (err, result) => {
       if (err) {

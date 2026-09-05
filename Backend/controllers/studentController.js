@@ -281,27 +281,4 @@ const Edit_Student = (req, res) => {
   }
 };
 
-// const Get_Recent_Students = (req, res) => {
-//   try {
-//     const sql = "SELECT * FROM students ORDER BY enrollment_date DESC LIMIT 5";
-//     db.query(sql, (err, results) => {
-//       if (err) {
-//         return res.status(500).json({
-//           message: "Failed to fetch recent students",
-//           error: err.message,
-//         });
-//       }
-//       res.status(200).json({
-//         message: "Recent students fetched successfully",
-//         students: results,
-//       });
-//     });
-//   } catch (error) {
-//     res.status(500).json({
-//       message: "Failed to fetch recent students",
-//       error: error.message,
-//     });
-//   }
-// };
-
 export { Add_Student, Get_Students, Get_Student, Edit_Student };
