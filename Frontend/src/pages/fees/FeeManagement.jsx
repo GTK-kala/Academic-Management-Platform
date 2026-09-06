@@ -18,6 +18,8 @@ import {
 } from "react-icons/fi";
 import Button from "../../components/common/Button";
 import { useAuth } from "../../context/AuthContext";
+import { Get_Courses } from "../../services/courseService";
+import { Get_Fee_Structure } from "../../services/feeService";
 
 const FeeManagement = () => {
   const { user } = useAuth();
@@ -71,72 +73,10 @@ const FeeManagement = () => {
   const fetchFeeStructures = async () => {
     setLoading(true);
     try {
-      // TODO: Replace with actual API call
-      // const response = await api.get('/fees/structures');
-      // setFeeStructures(response.data?.feeStructures || []);
-
-      // Mock data
-      const mockData = [
-        {
-          id: 1,
-          course_id: 1,
-          course_code: "CS101",
-          course_name: "Introduction to Programming",
-          fee_name: "Tuition Fee",
-          amount: 5000,
-          due_date: "2025-06-01",
-          academic_session: "2025-Spring",
-          total_collected: 3500,
-          total_students: 30,
-          paid_students: 20,
-          status: "active",
-        },
-        {
-          id: 2,
-          course_id: 1,
-          course_code: "CS101",
-          course_name: "Introduction to Programming",
-          fee_name: "Lab Fee",
-          amount: 1000,
-          due_date: "2025-06-01",
-          academic_session: "2025-Spring",
-          total_collected: 800,
-          total_students: 30,
-          paid_students: 25,
-          status: "active",
-        },
-        {
-          id: 3,
-          course_id: 2,
-          course_code: "MATH201",
-          course_name: "Calculus II",
-          fee_name: "Tuition Fee",
-          amount: 4500,
-          due_date: "2025-06-15",
-          academic_session: "2025-Spring",
-          total_collected: 2000,
-          total_students: 25,
-          paid_students: 10,
-          status: "active",
-        },
-        {
-          id: 4,
-          course_id: 3,
-          course_code: "PHYS101",
-          course_name: "Physics I",
-          fee_name: "Lab Fee",
-          amount: 1500,
-          due_date: "2025-05-30",
-          academic_session: "2025-Spring",
-          total_collected: 1500,
-          total_students: 20,
-          paid_students: 20,
-          status: "completed",
-        },
-      ];
-
-      setFeeStructures(mockData);
-      setFilteredStructures(mockData);
+      const FeeData = await Get_Fee_Structure();
+      const FeeStructures = FeeData.feeStructures || [];
+      setFeeStructures(FeeStructures);
+      setFilteredStructures(FeeStructures);
     } catch (error) {
       console.error("Failed to fetch fee structures:", error);
       setErrorMessage("Failed to load fee structures");
@@ -147,21 +87,9 @@ const FeeManagement = () => {
 
   const fetchCourses = async () => {
     try {
-      // TODO: Replace with actual API call
-      // const response = await api.get('/courses');
-      // setCourses(response.data?.courses || []);
-
-      // Mock data
-      setCourses([
-        {
-          id: 1,
-          course_code: "CS101",
-          course_name: "Introduction to Programming",
-        },
-        { id: 2, course_code: "MATH201", course_name: "Calculus II" },
-        { id: 3, course_code: "PHYS101", course_name: "Physics I" },
-        { id: 4, course_code: "ENG101", course_name: "English Composition" },
-      ]);
+      const CourseData = await Get_Courses();
+      const courses = CourseData.courses || [];
+      setCourses(courses);
     } catch (error) {
       console.error("Failed to fetch courses:", error);
     }
