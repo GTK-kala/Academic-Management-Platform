@@ -4,6 +4,8 @@ import express from "express";
 import db from "./config/db.js";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
+
+import FeeRoutes from "./routes/feeRoutes.js";
 import UserRoutes from "./routes/userRoutes.js";
 import GradeRouters from "./routes/gradeRoutes.js";
 import CourseRoutes from "./routes/courseRoutes.js";
@@ -40,6 +42,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 ////// Routes///////////////////
 
+app.use("/fees", FeeRoutes);
 app.use("/users", UserRoutes);
 app.use("/grades", GradeRouters);
 app.use("/api/auth", UserRoutes);

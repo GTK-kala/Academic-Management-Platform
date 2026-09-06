@@ -74,7 +74,7 @@ const FeeManagement = () => {
     setLoading(true);
     try {
       const FeeData = await Get_Fee_Structure();
-      const FeeStructures = FeeData.feeStructures || [];
+      const FeeStructures = FeeData.fee_structure || [];
       setFeeStructures(FeeStructures);
       setFilteredStructures(FeeStructures);
     } catch (error) {
