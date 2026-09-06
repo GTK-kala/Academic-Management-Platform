@@ -19,7 +19,10 @@ import {
 import Button from "../../components/common/Button";
 import { useAuth } from "../../context/AuthContext";
 import { Get_Courses } from "../../services/courseService";
-import { Get_Fee_Structure } from "../../services/feeService";
+import {
+  Get_Fee_Structure,
+  Add_Fee_Structure,
+} from "../../services/feeService";
 
 const FeeManagement = () => {
   const { user } = useAuth();
@@ -158,24 +161,7 @@ const FeeManagement = () => {
     }
 
     try {
-      // TODO: Replace with actual API call
-      // await api.post('/fees/structures', feeForm);
-
-      // Add to local state (mock)
-      const newFee = {
-        id: feeStructures.length + 1,
-        ...feeForm,
-        course_code:
-          courses.find((c) => c.id === parseInt(feeForm.course_id))
-            ?.course_code || "",
-        course_name:
-          courses.find((c) => c.id === parseInt(feeForm.course_id))
-            ?.course_name || "",
-        total_collected: 0,
-        total_students: 0,
-        paid_students: 0,
-        status: "active",
-      };
+      const newFee = await Add_Fee_Structure(feeForm);
 
       setFeeStructures([newFee, ...feeStructures]);
       setShowAddFeeModal(false);
@@ -249,19 +235,19 @@ const FeeManagement = () => {
   const getStatusBadge = (rate) => {
     if (rate >= 100) {
       return (
-        <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400">
+        <span className="px-2 py-1 text-xs font-medium text-green-700 bg-green-100 rounded-full dark:bg-green-900/20 dark:text-green-400">
           Completed
         </span>
       );
     } else if (rate >= 50) {
       return (
-        <span className="px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700 dark:bg-yellow-900/20 dark:text-yellow-400">
+        <span className="px-2 py-1 text-xs font-medium text-yellow-700 bg-yellow-100 rounded-full dark:bg-yellow-900/20 dark:text-yellow-400">
           In Progress
         </span>
       );
     } else {
       return (
-        <span className="px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400">
+        <span className="px-2 py-1 text-xs font-medium text-red-700 bg-red-100 rounded-full dark:bg-red-900/20 dark:text-red-400">
           Low Collection
         </span>
       );
@@ -271,12 +257,12 @@ const FeeManagement = () => {
   return (
     <div>
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
+      <div className="flex flex-col gap-4 mb-6 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-3xl font-bold text-primary dark:text-white">
             Fee Management
           </h1>
-          <p className="text-gray-500 dark:text-gray-400 mt-1">
+          <p className="mt-1 text-gray-500 dark:text-gray-400">
             {user?.role === "admin"
               ? "Manage fee structures and track collections"
               : "View your fees and make payments"}
@@ -294,24 +280,24 @@ const FeeManagement = () => {
 
       {/* Success/Error Messages */}
       {successMessage && (
-        <div className="mb-6 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg text-green-600 dark:text-green-400 flex items-center gap-2">
+        <div className="flex items-center gap-2 p-4 mb-6 text-green-600 border border-green-200 rounded-lg bg-green-50 dark:bg-green-900/20 dark:border-green-800 dark:text-green-400">
           <FiCheckCircle className="w-5 h-5" />
           {successMessage}
         </div>
       )}
 
       {errorMessage && (
-        <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-red-600 dark:text-red-400 flex items-center gap-2">
+        <div className="flex items-center gap-2 p-4 mb-6 text-red-600 border border-red-200 rounded-lg bg-red-50 dark:bg-red-900/20 dark:border-red-800 dark:text-red-400">
           <FiAlertCircle className="w-5 h-5" />
           {errorMessage}
         </div>
       )}
 
       {/* Statistics Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <div className="bg-white dark:bg-dark-card p-4 rounded-xl shadow-sm border border-gray-100 dark:border-dark-border">
+      <div className="grid grid-cols-2 gap-4 mb-6 lg:grid-cols-4">
+        <div className="p-4 bg-white border border-gray-100 shadow-sm dark:bg-dark-card rounded-xl dark:border-dark-border">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-primary-100 dark:bg-primary-900/20 flex items-center justify-center">
+            <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary-100 dark:bg-primary-900/20">
               <FiDollarSign className="w-5 h-5 text-primary" />
             </div>
             <div>
@@ -328,9 +314,9 @@ const FeeManagement = () => {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-dark-card p-4 rounded-xl shadow-sm border border-gray-100 dark:border-dark-border">
+        <div className="p-4 bg-white border border-gray-100 shadow-sm dark:bg-dark-card rounded-xl dark:border-dark-border">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-green-100 dark:bg-green-900/20 flex items-center justify-center">
+            <div className="flex items-center justify-center w-10 h-10 bg-green-100 rounded-lg dark:bg-green-900/20">
               <FiTrendingUp className="w-5 h-5 text-green-600" />
             </div>
             <div>
@@ -347,9 +333,9 @@ const FeeManagement = () => {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-dark-card p-4 rounded-xl shadow-sm border border-gray-100 dark:border-dark-border">
+        <div className="p-4 bg-white border border-gray-100 shadow-sm dark:bg-dark-card rounded-xl dark:border-dark-border">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-yellow-100 dark:bg-yellow-900/20 flex items-center justify-center">
+            <div className="flex items-center justify-center w-10 h-10 bg-yellow-100 rounded-lg dark:bg-yellow-900/20">
               <FiTrendingDown className="w-5 h-5 text-yellow-600" />
             </div>
             <div>
@@ -370,9 +356,9 @@ const FeeManagement = () => {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-dark-card p-4 rounded-xl shadow-sm border border-gray-100 dark:border-dark-border">
+        <div className="p-4 bg-white border border-gray-100 shadow-sm dark:bg-dark-card rounded-xl dark:border-dark-border">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/20 flex items-center justify-center">
+            <div className="flex items-center justify-center w-10 h-10 bg-blue-100 rounded-lg dark:bg-blue-900/20">
               <FiCheckCircle className="w-5 h-5 text-blue-600" />
             </div>
             <div>
@@ -401,10 +387,10 @@ const FeeManagement = () => {
       </div>
 
       {/* Filters */}
-      <div className="bg-white dark:bg-dark-card p-4 rounded-xl shadow-sm border border-gray-100 dark:border-dark-border mb-6">
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="flex-1 relative">
-            <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+      <div className="p-4 mb-6 bg-white border border-gray-100 shadow-sm dark:bg-dark-card rounded-xl dark:border-dark-border">
+        <div className="flex flex-col gap-4 sm:flex-row">
+          <div className="relative flex-1">
+            <FiSearch className="absolute text-gray-400 -translate-y-1/2 left-3 top-1/2" />
             <input
               type="text"
               placeholder="Search fee structures..."
@@ -440,7 +426,7 @@ const FeeManagement = () => {
       </div>
 
       {/* Fee Structures Table */}
-      <div className="bg-white dark:bg-dark-card rounded-xl shadow-sm border border-gray-100 dark:border-dark-border overflow-hidden">
+      <div className="overflow-hidden bg-white border border-gray-100 shadow-sm dark:bg-dark-card rounded-xl dark:border-dark-border">
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead className="bg-gray-50 dark:bg-dark-bg">
@@ -461,7 +447,7 @@ const FeeManagement = () => {
                     colSpan={7}
                     className="px-6 py-8 text-center text-gray-500"
                   >
-                    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary mx-auto"></div>
+                    <div className="w-8 h-8 mx-auto border-t-2 border-b-2 rounded-full animate-spin border-primary"></div>
                   </td>
                 </tr>
               ) : filteredStructures.length === 0 ? (
@@ -502,7 +488,7 @@ const FeeManagement = () => {
                       </td>
                       <td className="px-6 py-4">
                         <div className="w-32">
-                          <div className="flex justify-between text-xs mb-1">
+                          <div className="flex justify-between mb-1 text-xs">
                             <span className="text-gray-500 dark:text-gray-400">
                               {fee.paid_students}/{fee.total_students} students
                             </span>
@@ -510,7 +496,7 @@ const FeeManagement = () => {
                               {collectionRate}%
                             </span>
                           </div>
-                          <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                          <div className="w-full h-2 bg-gray-200 rounded-full dark:bg-gray-700">
                             <div
                               className={`h-2 rounded-full ${
                                 collectionRate >= 100
@@ -531,13 +517,13 @@ const FeeManagement = () => {
                         <div className="flex gap-2">
                           <button
                             onClick={() => openPaymentModal(fee)}
-                            className="p-2 text-primary hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-lg transition-colors"
+                            className="p-2 transition-colors rounded-lg text-primary hover:bg-primary-50 dark:hover:bg-primary-900/20"
                             title="Record Payment"
                           >
                             <FiCreditCard className="w-4 h-4" />
                           </button>
                           <button
-                            className="p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-dark-bg rounded-lg transition-colors"
+                            className="p-2 text-gray-500 transition-colors rounded-lg hover:bg-gray-100 dark:hover:bg-dark-bg"
                             title="View Details"
                           >
                             <FiEye className="w-4 h-4" />
@@ -555,9 +541,9 @@ const FeeManagement = () => {
 
       {/* Add Fee Structure Modal */}
       {showAddFeeModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
           <div className="bg-white dark:bg-dark-card rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b border-gray-200 dark:border-dark-border flex items-center justify-between">
+            <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-dark-border">
               <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
                 Add Fee Structure
               </h3>
@@ -571,7 +557,7 @@ const FeeManagement = () => {
 
             <form onSubmit={handleAddFee} className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                   Course <span className="text-red-500">*</span>
                 </label>
                 <select
@@ -591,7 +577,7 @@ const FeeManagement = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                   Fee Name <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -607,7 +593,7 @@ const FeeManagement = () => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                     Amount <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -623,7 +609,7 @@ const FeeManagement = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                     Due Date <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -638,7 +624,7 @@ const FeeManagement = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                   Academic Session
                 </label>
                 <input
@@ -651,7 +637,7 @@ const FeeManagement = () => {
                 />
               </div>
 
-              <div className="flex gap-3 justify-end pt-4">
+              <div className="flex justify-end gap-3 pt-4">
                 <Button
                   type="button"
                   variant="secondary"
@@ -668,9 +654,9 @@ const FeeManagement = () => {
 
       {/* Record Payment Modal */}
       {showPaymentModal && selectedFee && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-dark-card rounded-2xl shadow-xl w-full max-w-lg">
-            <div className="p-6 border-b border-gray-200 dark:border-dark-border flex items-center justify-between">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
+          <div className="w-full max-w-lg bg-white shadow-xl dark:bg-dark-card rounded-2xl">
+            <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-dark-border">
               <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
                 Record Payment
               </h3>
@@ -684,8 +670,8 @@ const FeeManagement = () => {
 
             <div className="p-6">
               {/* Fee Details */}
-              <div className="bg-gray-50 dark:bg-dark-bg p-4 rounded-lg mb-6">
-                <h4 className="font-medium text-gray-900 dark:text-white mb-2">
+              <div className="p-4 mb-6 rounded-lg bg-gray-50 dark:bg-dark-bg">
+                <h4 className="mb-2 font-medium text-gray-900 dark:text-white">
                   Fee Details
                 </h4>
                 <p className="text-sm text-gray-600 dark:text-gray-300">
@@ -701,7 +687,7 @@ const FeeManagement = () => {
 
               <form onSubmit={handlePayment} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                     Student ID <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -716,7 +702,7 @@ const FeeManagement = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                     Amount Paid <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -733,7 +719,7 @@ const FeeManagement = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                     Payment Method
                   </label>
                   <select
@@ -749,7 +735,7 @@ const FeeManagement = () => {
                   </select>
                 </div>
 
-                <div className="flex gap-3 justify-end pt-4">
+                <div className="flex justify-end gap-3 pt-4">
                   <Button
                     type="button"
                     variant="secondary"
