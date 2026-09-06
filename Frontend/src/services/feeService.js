@@ -1,14 +1,18 @@
 const BASE_URL = import.meta.env.VITE_API_URL;
 
-export const Get_Fee_Structure = async () => {
+export const Get_Fee_Structure = async (userId, role) => {
+  console.log(userId, role);
   try {
-    const response = await fetch(`${BASE_URL}/fees/structure`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
+    const response = await fetch(
+      `${BASE_URL}/fees/structure?userId=${userId}&role=${role}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
       },
-      credentials: "include",
-    });
+    );
 
     if (!response.ok) {
       throw new Error("Failed to fetch fee structures");

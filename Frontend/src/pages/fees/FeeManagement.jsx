@@ -60,7 +60,8 @@ const FeeManagement = () => {
 
   // Load initial data
   useEffect(() => {
-    fetchFeeStructures();
+    const user = JSON.parse(localStorage.getItem("user"));
+    fetchFeeStructures(user?.userId, user?.role);
     fetchCourses();
   }, []);
 
@@ -70,10 +71,10 @@ const FeeManagement = () => {
   }, [searchTerm, filterStatus, selectedCourse, feeStructures]);
 
   // Mock data for demonstration - Replace with API call
-  const fetchFeeStructures = async () => {
+  const fetchFeeStructures = async (userId, role) => {
     setLoading(true);
     try {
-      const FeeData = await Get_Fee_Structure();
+      const FeeData = await Get_Fee_Structure(userId, role);
       const FeeStructures = FeeData.fee_structure || [];
       setFeeStructures(FeeStructures);
       setFilteredStructures(FeeStructures);
