@@ -18,7 +18,6 @@ export const Get_Fee_Structure = async (userId, role) => {
     }
 
     const data = await response.json();
-    console.log(data);
     return data;
   } catch (error) {
     console.error("Error fetching fee structures:", error);

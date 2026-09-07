@@ -493,7 +493,7 @@ const FeeManagement = () => {
                               {fee.paid_students}/{fee.total_students} students
                             </span>
                             <span className="font-medium text-gray-900 dark:text-white">
-                              {collectionRate}%
+                              {(fee.paid_students * 100) / fee.total_students}%
                             </span>
                           </div>
                           <div className="w-full h-2 bg-gray-200 rounded-full dark:bg-gray-700">

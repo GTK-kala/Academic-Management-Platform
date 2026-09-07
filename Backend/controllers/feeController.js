@@ -7,11 +7,31 @@ const Get_Fee_Structure = (req, res) => {
       const fee_sql = `SELECT
           f.*,
           c.course_name,
-          SUM(fp.amount_paid) OVER () AS paid_amount
+          COALESCE(s.paid_students, 0) AS paid_students,
+          COALESCE(e.total_students, 0) AS total_students,
+          COALESCE(s.paid_amount, 0) AS paid_amount
           FROM
           fee_structure f
           LEFT JOIN courses c ON f.course_id = c.id
-          LEFT JOIN fee_payments fp ON f.id = fp.fee_structure_id`;
+          LEFT JOIN (
+          SELECT
+          fee_structure_id,
+          COUNT(DISTINCT student_id) AS paid_students,
+          SUM(amount_paid) AS paid_amount
+          FROM
+          fee_payments
+          GROUP BY
+          fee_structure_id
+          ) s ON f.id = s.fee_structure_id
+          LEFT JOIN (
+          SELECT
+          course_id,
+          COUNT(DISTINCT student_id) AS total_students
+          FROM
+          enrollments
+          GROUP BY
+          course_id
+          ) e ON f.course_id = e.course_id`;
       db.query(fee_sql, (err, fee_result) => {
         if (err) {
           console.error("Error fetching fee structures:", err);
