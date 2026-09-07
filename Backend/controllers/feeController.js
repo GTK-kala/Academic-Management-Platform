@@ -5,9 +5,11 @@ const Get_Fee_Structure = (req, res) => {
   try {
     if (userRole === "admin") {
       const fee_sql = `SELECT
-          *
+          f.*,
+          c.course_name
           FROM
-          fee_structure`;
+          fee_structure f
+          LEFT JOIN courses c ON f.course_id = c.id`;
       db.query(fee_sql, (err, fee_result) => {
         if (err) {
           console.error("Error fetching fee structures:", err);

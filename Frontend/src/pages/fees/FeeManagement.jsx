@@ -78,7 +78,7 @@ const FeeManagement = () => {
     setLoading(true);
     try {
       const FeeData = await Get_Fee_Structure(userId, role);
-      const FeeStructures = FeeData.fee_structure || [];
+      const FeeStructures = FeeData?.fee_structure || [];
       setFeeStructures(FeeStructures);
       setFilteredStructures(FeeStructures);
     } catch (error) {
@@ -307,7 +307,7 @@ const FeeManagement = () => {
               <p className="text-xl font-bold text-gray-900 dark:text-white">
                 $
                 {feeStructures
-                  .reduce((sum, f) => sum + f.amount * f.total_students, 0)
+                  .reduce((sum, f) => sum + Number(f.amount), 0)
                   .toLocaleString()}
               </p>
             </div>
@@ -326,8 +326,8 @@ const FeeManagement = () => {
               <p className="text-xl font-bold text-green-600 dark:text-green-400">
                 $
                 {feeStructures
-                  .reduce((sum, f) => sum + f.total_collected, 0)
-                  .toLocaleString()}
+                  .reduce((sum, f) => sum + Number(f.total_collected), 0)
+                  .toLocaleString() || "0"}
               </p>
             </div>
           </div>
@@ -347,10 +347,12 @@ const FeeManagement = () => {
                 {feeStructures
                   .reduce(
                     (sum, f) =>
-                      sum + (f.amount * f.total_students - f.total_collected),
+                      sum +
+                      (Number(f.amount) * Number(f.total_students) -
+                        Number(f.total_collected)),
                     0,
                   )
-                  .toLocaleString()}
+                  .toLocaleString() || "0"}
               </p>
             </div>
           </div>
@@ -368,11 +370,12 @@ const FeeManagement = () => {
               <p className="text-xl font-bold text-blue-600 dark:text-blue-400">
                 {(() => {
                   const totalExpected = feeStructures.reduce(
-                    (sum, f) => sum + f.amount * f.total_students,
+                    (sum, f) =>
+                      sum + Number(f.amount) * Number(f.total_students),
                     0,
                   );
                   const totalCollected = feeStructures.reduce(
-                    (sum, f) => sum + f.total_collected,
+                    (sum, f) => sum + Number(f.total_collected),
                     0,
                   );
                   return totalExpected > 0
