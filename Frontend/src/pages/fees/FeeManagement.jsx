@@ -326,7 +326,7 @@ const FeeManagement = () => {
               <p className="text-xl font-bold text-green-600 dark:text-green-400">
                 $
                 {feeStructures
-                  .reduce((sum, f) => sum + Number(f.total_collected), 0)
+                  .reduce((sum, f) => sum + Number(f.paid_amount), 0)
                   .toLocaleString() || "0"}
               </p>
             </div>
@@ -347,9 +347,7 @@ const FeeManagement = () => {
                 {feeStructures
                   .reduce(
                     (sum, f) =>
-                      sum +
-                      (Number(f.amount) * Number(f.total_students) -
-                        Number(f.total_collected)),
+                      sum + (Number(f.amount) - Number(f.paid_amount)),
                     0,
                   )
                   .toLocaleString() || "0"}
@@ -370,12 +368,11 @@ const FeeManagement = () => {
               <p className="text-xl font-bold text-blue-600 dark:text-blue-400">
                 {(() => {
                   const totalExpected = feeStructures.reduce(
-                    (sum, f) =>
-                      sum + Number(f.amount) * Number(f.total_students),
+                    (sum, f) => sum + Number(f.amount),
                     0,
                   );
                   const totalCollected = feeStructures.reduce(
-                    (sum, f) => sum + Number(f.total_collected),
+                    (sum, f) => sum + Number(f.paid_amount),
                     0,
                   );
                   return totalExpected > 0

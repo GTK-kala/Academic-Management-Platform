@@ -6,10 +6,12 @@ const Get_Fee_Structure = (req, res) => {
     if (userRole === "admin") {
       const fee_sql = `SELECT
           f.*,
-          c.course_name
+          c.course_name,
+          SUM(fp.amount_paid) OVER () AS paid_amount
           FROM
           fee_structure f
-          LEFT JOIN courses c ON f.course_id = c.id`;
+          LEFT JOIN courses c ON f.course_id = c.id
+          LEFT JOIN fee_payments fp ON f.id = fp.fee_structure_id`;
       db.query(fee_sql, (err, fee_result) => {
         if (err) {
           console.error("Error fetching fee structures:", err);
