@@ -47,3 +47,26 @@ export const Add_Fee_Structure = async (feeData) => {
     throw error;
   }
 };
+
+export const Pay_Fee_Structure = async (paymentData) => {
+  try {
+    const response = await fetch(`${BASE_URL}/fees/structure/pay`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify(paymentData),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to pay fee structure");
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error paying fee structure:", error);
+    throw error;
+  }
+};

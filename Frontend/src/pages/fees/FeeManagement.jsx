@@ -20,6 +20,7 @@ import Button from "../../components/common/Button";
 import { useAuth } from "../../context/AuthContext";
 import { Get_Courses } from "../../services/courseService";
 import {
+  Pay_Fee_Structure,
   Get_Fee_Structure,
   Add_Fee_Structure,
 } from "../../services/feeService";
@@ -193,19 +194,21 @@ const FeeManagement = () => {
     }
 
     try {
-      // TODO: Replace with actual API call
-      // await api.post('/fees/payments', paymentForm);
+      const paymentResponse = await Pay_Fee_Structure(paymentForm);
+      if (paymentResponse.success) {
+        setShowPaymentModal(false);
+        setSuccessMessage("Payment recorded successfully!");
 
-      setShowPaymentModal(false);
-      setSuccessMessage("Payment recorded successfully!");
-
-      // Reset form
-      setPaymentForm({
-        student_id: "",
-        fee_structure_id: "",
-        amount_paid: "",
-        payment_method: "cash",
-      });
+        // Reset form
+        setPaymentForm({
+          student_id: "",
+          fee_structure_id: "",
+          amount_paid: "",
+          payment_method: "cash",
+        });
+      } else {
+        setErrorMessage("Failed to record payment");
+      }
 
       setTimeout(() => setSuccessMessage(""), 3000);
     } catch (error) {

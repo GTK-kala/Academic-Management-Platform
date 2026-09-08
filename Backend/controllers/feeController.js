@@ -99,4 +99,37 @@ const Add_Fee_Structure = (req, res) => {
     res.status(500).json({ error: "Failed to add fee structure" });
   }
 };
-export { Get_Fee_Structure, Add_Fee_Structure };
+
+const Pay_Fee_Structure = (req, res) => {
+  const { student_id, fee_structure_id, amount_paid } = req.body;
+  try {
+    const insert_sql = `INSERT INTO
+        fee_payments (
+        student_id,
+        fee_structure_id,
+        amount_paid,
+        payment_date
+        )
+        VALUES
+        (?, ?, ?, NOW())`;
+    db.query(
+      insert_sql,
+      [student_id, fee_structure_id, amount_paid],
+      (err, result) => {
+        if (err) {
+          console.error("Error paying fee structure:", err);
+          return res.status(500).json({ error: "Internal server error" });
+        }
+        res.status(201).json({
+          message: "Payment recorded successfully",
+          payment_id: result.insertId,
+        });
+      },
+    );
+  } catch (error) {
+    console.error("Error paying fee structure:", error);
+    res.status(500).json({ error: "Failed to pay fee structure" });
+  }
+};
+
+export { Get_Fee_Structure, Add_Fee_Structure, Pay_Fee_Structure };
