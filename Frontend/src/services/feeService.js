@@ -51,7 +51,7 @@ export const Add_Fee_Structure = async (feeData) => {
 export const Pay_Fee_Structure = async (paymentData) => {
   try {
     const response = await fetch(`${BASE_URL}/fees/structure/pay`, {
-      method: "POST",
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },

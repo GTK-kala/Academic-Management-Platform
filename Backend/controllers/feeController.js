@@ -103,27 +103,63 @@ const Add_Fee_Structure = (req, res) => {
 const Pay_Fee_Structure = (req, res) => {
   const { student_id, fee_structure_id, amount_paid } = req.body;
   try {
-    const insert_sql = `INSERT INTO
-        fee_payments (
-        student_id,
-        fee_structure_id,
-        amount_paid,
-        payment_date
-        )
-        VALUES
-        (?, ?, ?, NOW())`;
+    const student_sql = `SELECT
+        *
+        FROM
+        fee_payments
+        WHERE
+        student_id = ?
+        AND fee_structure_id = ?`;
     db.query(
-      insert_sql,
-      [student_id, fee_structure_id, amount_paid],
-      (err, result) => {
+      student_sql,
+      [student_id, fee_structure_id],
+      (err, student_result) => {
         if (err) {
-          console.error("Error paying fee structure:", err);
+          console.error("Error checking payment:", err);
           return res.status(500).json({ error: "Internal server error" });
         }
-        res.status(201).json({
-          message: "Payment recorded successfully",
-          payment_id: result.insertId,
-        });
+        if (student_result.length > 0) {
+          // Update existing payment
+          const update_sql = `UPDATE fee_payments
+            SET
+            amount_paid = amount_paid + ?
+            WHERE
+            student_id = ?
+            AND fee_structure_id = ?`;
+          db.query(
+            update_sql,
+            [amount_paid, student_id, fee_structure_id],
+            (err, update_result) => {
+              if (err) {
+                console.error("Error updating payment:", err);
+                return res.status(500).json({ error: "Internal server error" });
+              }
+              res.status(200).json({
+                message: "Payment updated successfully",
+              });
+            },
+          );
+        } else {
+          // Insert new payment
+          const insert_sql = `INSERT INTO
+            fee_payments (student_id, fee_structure_id, amount_paid, payment_date)
+            VALUES
+            (?, ?, ?, ?)`;
+          db.query(
+            insert_sql,
+            [student_id, fee_structure_id, amount_paid, new Date()],
+            (err, insert_result) => {
+              if (err) {
+                console.error("Error inserting payment:", err);
+                return res.status(500).json({ error: "Internal server error" });
+              }
+              res.status(201).json({
+                message: "Payment recorded successfully",
+                payment_id: insert_result.insertId,
+              });
+            },
+          );
+        }
       },
     );
   } catch (error) {

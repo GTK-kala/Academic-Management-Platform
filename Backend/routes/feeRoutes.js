@@ -10,6 +10,6 @@ const FeeRouter = express.Router();
 
 FeeRouter.get("/structure", VerifyToken, Get_Fee_Structure);
 FeeRouter.post("/structure/add", VerifyToken, Add_Fee_Structure);
-FeeRouter.post("/structure/pay", VerifyToken, Pay_Fee_Structure);
+FeeRouter.put("/structure/pay", VerifyToken, Pay_Fee_Structure);
 
 export default FeeRouter;

@@ -24,6 +24,7 @@ import {
   Get_Fee_Structure,
   Add_Fee_Structure,
 } from "../../services/feeService";
+import toast from "react-hot-toast";
 
 const FeeManagement = () => {
   const { user } = useAuth();
@@ -84,7 +85,7 @@ const FeeManagement = () => {
       setFilteredStructures(FeeStructures);
     } catch (error) {
       console.error("Failed to fetch fee structures:", error);
-      setErrorMessage("Failed to load fee structures");
+      toast.error("Failed to load fee structures");
     } finally {
       setLoading(false);
     }
@@ -97,6 +98,7 @@ const FeeManagement = () => {
       setCourses(courses);
     } catch (error) {
       console.error("Failed to fetch courses:", error);
+      toast.error("Failed to load courses");
     }
   };
 
@@ -166,7 +168,7 @@ const FeeManagement = () => {
 
       setFeeStructures([newFee, ...feeStructures]);
       setShowAddFeeModal(false);
-      setSuccessMessage("Fee structure created successfully!");
+      toast.success("Fee structure created successfully!");
 
       // Reset form
       setFeeForm({
@@ -179,7 +181,7 @@ const FeeManagement = () => {
 
       setTimeout(() => setSuccessMessage(""), 3000);
     } catch (error) {
-      setErrorMessage("Failed to create fee structure");
+      toast.error("Failed to create fee structure");
     }
   };
 
@@ -195,9 +197,9 @@ const FeeManagement = () => {
 
     try {
       const paymentResponse = await Pay_Fee_Structure(paymentForm);
-      if (paymentResponse.success) {
+      if (paymentResponse.message) {
         setShowPaymentModal(false);
-        setSuccessMessage("Payment recorded successfully!");
+        toast.success("Payment recorded successfully!");
 
         // Reset form
         setPaymentForm({
@@ -207,12 +209,19 @@ const FeeManagement = () => {
           payment_method: "cash",
         });
       } else {
-        setErrorMessage("Failed to record payment");
+        setPaymentForm({
+          student_id: "",
+          fee_structure_id: "",
+          amount_paid: "",
+          payment_method: "cash",
+        });
+        setShowPaymentModal(false);
+        toast.error("Failed to record payment");
       }
 
       setTimeout(() => setSuccessMessage(""), 3000);
     } catch (error) {
-      setErrorMessage("Failed to record payment");
+      toast.error("Failed to record payment");
     }
   };
 
