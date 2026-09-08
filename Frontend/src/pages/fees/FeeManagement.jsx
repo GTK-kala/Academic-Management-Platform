@@ -25,6 +25,7 @@ import {
   Add_Fee_Structure,
 } from "../../services/feeService";
 import toast from "react-hot-toast";
+import { Link } from "react-router-dom";
 
 const FeeManagement = () => {
   const { user } = useAuth();
@@ -209,14 +210,14 @@ const FeeManagement = () => {
           payment_method: "cash",
         });
       } else {
+        setShowPaymentModal(false);
+        toast.error("Failed to record payment");
         setPaymentForm({
           student_id: "",
           fee_structure_id: "",
           amount_paid: "",
           payment_method: "cash",
         });
-        setShowPaymentModal(false);
-        toast.error("Failed to record payment");
       }
 
       setTimeout(() => setSuccessMessage(""), 3000);
@@ -511,9 +512,15 @@ const FeeManagement = () => {
                           <div className="w-full h-2 bg-gray-200 rounded-full dark:bg-gray-700">
                             <div
                               className={`h-2 rounded-full ${
-                                collectionRate >= 100
+                                (fee.paid_students * 100) / fee.total_students >
+                                80
                                   ? "bg-green-500"
-                                  : collectionRate >= 50
+                                  : (fee.paid_students * 100) /
+                                        fee.total_students <=
+                                        80 &&
+                                      (fee.paid_students * 100) /
+                                        fee.total_students >=
+                                        30
                                     ? "bg-yellow-500"
                                     : "bg-red-500"
                               }`}
@@ -523,7 +530,9 @@ const FeeManagement = () => {
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        {getStatusBadge(collectionRate)}
+                        {getStatusBadge(
+                          (fee.paid_students * 100) / fee.total_students,
+                        )}
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex gap-2">
@@ -534,12 +543,14 @@ const FeeManagement = () => {
                           >
                             <FiCreditCard className="w-4 h-4" />
                           </button>
-                          <button
-                            className="p-2 text-gray-500 transition-colors rounded-lg hover:bg-gray-100 dark:hover:bg-dark-bg"
-                            title="View Details"
-                          >
-                            <FiEye className="w-4 h-4" />
-                          </button>
+                          <Link to={`/fees/history`}>
+                            <button
+                              className="p-2 text-gray-500 transition-colors rounded-lg hover:bg-gray-100 dark:hover:bg-dark-bg"
+                              title="View Details"
+                            >
+                              <FiEye className="w-4 h-4" />
+                            </button>
+                          </Link>
                         </div>
                       </td>
                     </tr>
