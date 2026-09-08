@@ -289,16 +289,12 @@ const LoginUser = (req, res) => {
             }
 
             const studentData = studentResults[0];
-            res
-              .status(200)
-              .cookie("token", token, cookieOptions)
-              .json({
-                message: "Login successful",
-                userId: user.id,
-                role: user.role,
-                email: user.email,
-                studentId: studentData ? studentData.id : null,
-              });
+            res.status(200).cookie("token", token, cookieOptions).json({
+              message: "Login successful",
+              userId: studentData.id,
+              role: user.role,
+              email: user.email,
+            });
           });
         } else if (user.role === "teacher") {
           const sql_teacher = `SELECT
@@ -321,7 +317,7 @@ const LoginUser = (req, res) => {
               .cookie("token", token, cookieOptions)
               .json({
                 message: "Login successful",
-                userId: user.id,
+                userId: teacherData.id,
                 role: user.role,
                 email: user.email,
                 firstName: teacherData ? teacherData.first_name : null,

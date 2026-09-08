@@ -1,6 +1,6 @@
 import db from "../config/db.js";
 
-export const Add_Course = async (req, res) => {
+const Add_Course = async (req, res) => {
   try {
     const {
       course_name,
@@ -67,7 +67,7 @@ export const Add_Course = async (req, res) => {
   }
 };
 
-export const Get_Courses = async (req, res) => {
+const Get_Courses = async (req, res) => {
   const userId = req.params.userId;
   try {
     const sql = `SELECT
@@ -105,7 +105,7 @@ export const Get_Courses = async (req, res) => {
   }
 };
 
-export const Get_Course = async (req, res) => {
+const Get_Course = async (req, res) => {
   try {
     const courseId = req.params.courseId;
     const sql = `SELECT
@@ -146,7 +146,7 @@ export const Get_Course = async (req, res) => {
   }
 };
 
-export const Edit_Course = (req, res) => {
+const Edit_Course = (req, res) => {
   const { courseId } = req.params;
   const {
     course_code,
@@ -208,3 +208,5 @@ export const Edit_Course = (req, res) => {
     throw error;
   }
 };
+
+export { Add_Course, Get_Courses, Get_Course, Edit_Course };

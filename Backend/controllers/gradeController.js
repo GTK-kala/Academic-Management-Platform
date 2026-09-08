@@ -59,7 +59,7 @@ const calculateOverall = ({ assignment, quiz, project, midterm, final }) => {
 // ADD / UPDATE GRADE
 // ============================================================
 
-export const Add_Grade = async (req, res) => {
+const Add_Grade = async (req, res) => {
   try {
     const {
       student_id,
@@ -356,7 +356,7 @@ export const Add_Grade = async (req, res) => {
 
 // Fetch All Grade
 
-export const Fetch_Grade_All = (req, res) => {
+const Fetch_Grade_All = (req, res) => {
   const { userId } = req.params;
   const { userRole } = req.query;
   try {
@@ -478,7 +478,7 @@ export const Fetch_Grade_All = (req, res) => {
 
 // Fetch Grade by Course Id
 
-export const Fetch_Grade_By_Course = (req, res) => {
+const Fetch_Grade_By_Course = (req, res) => {
   const { courseId } = req.params;
   const { userRole, userId } = req.query;
   try {
@@ -566,7 +566,7 @@ export const Fetch_Grade_By_Course = (req, res) => {
 
 // Fetch Grade by Student Id
 
-export const Fetch_Grade_By_Student = (req, res) => {
+const Fetch_Grade_By_Student = (req, res) => {
   const { studentId } = req.params;
   const { userRole, userId } = req.query;
   try {
@@ -691,7 +691,7 @@ export const Fetch_Grade_By_Student = (req, res) => {
 
 // Fetch Grade By Both Student and Course Id
 
-export const Fetch_Grade_By_Both = (req, res) => {
+const Fetch_Grade_By_Both = (req, res) => {
   const { courseId, studentId } = req.params;
   try {
     const grade_sql = `SELECT
@@ -735,4 +735,12 @@ export const Fetch_Grade_By_Both = (req, res) => {
     console.error("Error fetching grade:", error);
     res.status(500).json({ error: "Failed to fetch grade" });
   }
+};
+
+export {
+  Add_Grade,
+  Fetch_Grade_All,
+  Fetch_Grade_By_Course,
+  Fetch_Grade_By_Student,
+  Fetch_Grade_By_Both,
 };

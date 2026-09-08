@@ -1,6 +1,6 @@
 import db from "../config/db.js";
 
-export const Enroll_Course = async (req, res) => {
+const Enroll_Course = async (req, res) => {
   try {
     const { courseId, studentId, teacherId } = req.body;
     const checkSql = `SELECT
@@ -76,7 +76,7 @@ export const Enroll_Course = async (req, res) => {
     });
   }
 };
-export const Get_Enrolled_Courses = async (req, res) => {
+const Get_Enrolled_Courses = async (req, res) => {
   const { userRole, courseId } = req.query;
   try {
     if (userRole === "student") {
@@ -164,3 +164,5 @@ export const Get_Enrolled_Courses = async (req, res) => {
     throw error;
   }
 };
+
+export { Enroll_Course, Get_Enrolled_Courses };
