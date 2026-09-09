@@ -1,18 +1,18 @@
 import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
-import db from "./config/db.js";
+// import db from "./config/db.js";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 
-import FeeRoutes from "./routes/feeRoutes.js";
-import UserRoutes from "./routes/userRoutes.js";
-import GradeRouters from "./routes/gradeRoutes.js";
-import CourseRoutes from "./routes/courseRoutes.js";
-import StudentRoutes from "./routes/studentRoutes.js";
-import TeacherRoutes from "./routes/teacherRoutes.js";
-import EnrollmentRoutes from "./routes/enrollmentRoutes.js";
-import AttendanceRouter from "./routes/attendanceRoutes.js";
+import FeeRoutes from "./src/routes/feeRoutes.js";
+import UserRoutes from "./src/routes/userRoutes.js";
+import GradeRouters from "./src/routes/gradeRoutes.js";
+import CourseRoutes from "./src/routes/courseRoutes.js";
+import StudentRoutes from "./src/routes/studentRoutes.js";
+import TeacherRoutes from "./src/routes/teacherRoutes.js";
+import EnrollmentRoutes from "./src/routes/enrollmentRoutes.js";
+import AttendanceRouter from "./src/routes/attendanceRoutes.js";
 
 dotenv.config();
 const app = express();
