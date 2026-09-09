@@ -7,6 +7,7 @@ const Get_Fee_Structure = (req, res) => {
       const fee_sql = `SELECT
           f.*,
           c.course_name,
+          c.course_code,
           COALESCE(s.paid_students, 0) AS paid_students,
           COALESCE(e.total_students, 0) AS total_students,
           COALESCE(s.paid_amount, 0) AS paid_amount,

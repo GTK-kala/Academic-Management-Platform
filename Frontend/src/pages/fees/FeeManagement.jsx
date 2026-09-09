@@ -121,9 +121,13 @@ const FeeManagement = () => {
     if (filterStatus !== "all") {
       filtered = filtered.filter((fee) => {
         const collectionRate =
-          (fee.total_collected / fee.amount) * fee.total_students * 100;
-        if (filterStatus === "active") return collectionRate < 100;
+          ((fee.paid_students * fee.paid_amount) /
+            (fee.total_students * fee.amount)) *
+          100;
+        if (filterStatus === "in progress")
+          return collectionRate < 100 && collectionRate >= 20;
         if (filterStatus === "completed") return collectionRate >= 100;
+        if (filterStatus === "low collection") return collectionRate < 20;
         return true;
       });
     }
@@ -432,8 +436,9 @@ const FeeManagement = () => {
             className="px-4 py-2.5 border border-gray-300 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary"
           >
             <option value="all">All Status</option>
-            <option value="active">In Progress</option>
             <option value="completed">Completed</option>
+            <option value="in progress">In Progress</option>
+            <option value="low collection">Low Collection</option>
           </select>
         </div>
       </div>
