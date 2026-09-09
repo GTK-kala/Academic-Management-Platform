@@ -256,7 +256,7 @@ const FeeManagement = () => {
           Completed
         </span>
       );
-    } else if (rate >= 50) {
+    } else if (rate < 100 && rate >= 30) {
       return (
         <span className="px-2 py-1 text-xs font-medium text-yellow-700 bg-yellow-100 rounded-full dark:bg-yellow-900/20 dark:text-yellow-400">
           In Progress
@@ -324,7 +324,7 @@ const FeeManagement = () => {
               <p className="text-xl font-bold text-gray-900 dark:text-white">
                 $
                 {feeStructures
-                  .reduce((sum, f) => sum + Number(f.amount), 0)
+                  .reduce((sum, f) => sum + Number(f.total_amount), 0)
                   .toLocaleString()}
               </p>
             </div>
@@ -364,7 +364,7 @@ const FeeManagement = () => {
                 {feeStructures
                   .reduce(
                     (sum, f) =>
-                      sum + (Number(f.amount) - Number(f.paid_amount)),
+                      sum + (Number(f.total_amount) - Number(f.paid_amount)),
                     0,
                   )
                   .toLocaleString() || "0"}
@@ -385,7 +385,7 @@ const FeeManagement = () => {
               <p className="text-xl font-bold text-blue-600 dark:text-blue-400">
                 {(() => {
                   const totalExpected = feeStructures.reduce(
-                    (sum, f) => sum + Number(f.amount),
+                    (sum, f) => sum + Number(f.total_amount),
                     0,
                   );
                   const totalCollected = feeStructures.reduce(
@@ -517,12 +517,13 @@ const FeeManagement = () => {
                           <div className="w-full h-2 bg-gray-200 rounded-full dark:bg-gray-700">
                             <div
                               className={`h-2 rounded-full ${
-                                (fee.paid_students * 100) / fee.total_students >
-                                80
+                                (fee.paid_students * 100) /
+                                  fee.total_students >=
+                                100
                                   ? "bg-green-500"
                                   : (fee.paid_students * 100) /
-                                        fee.total_students <=
-                                        80 &&
+                                        fee.total_students <
+                                        100 &&
                                       (fee.paid_students * 100) /
                                         fee.total_students >=
                                         30
@@ -536,7 +537,7 @@ const FeeManagement = () => {
                       </td>
                       <td className="px-6 py-4">
                         {getStatusBadge(
-                          (fee.paid_students * 100) / fee.total_students,
+                          (fee.paid_amount * 100) / fee.total_amount,
                         )}
                       </td>
                       <td className="px-6 py-4">
