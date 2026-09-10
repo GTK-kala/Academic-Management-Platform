@@ -1,4 +1,3 @@
-import { use, useId } from "react";
 import db from "../config/db.js";
 
 const Get_Fee_Structure = (req, res) => {
@@ -309,19 +308,30 @@ const Pay_Fee_Structure = (req, res) => {
   }
 };
 
-const Payed_Fee_Structure = (req, re) => {
+const Payed_Fee_Structure = (req, res) => {
   const { userId } = req.params;
   const { userRole } = req.query;
   try {
     if (userRole === "admin") {
-      const fee_sql = `SELECT * FROM fee_payments WHERE student_id = ?`;
+      const fee_sql = `SELECT
+          fp.*,
+          fs.amount,
+          fs.fee_name
+          FROM
+          fee_payments fp
+          LEFT JOIN fee_structure fs ON fs.id = fp.fee_structure_id
+          WHERE
+          student_id = ?`;
       db.query(fee_sql, [userId], (err, fee_results) => {
         if (err) {
           console.error("Error inserting payment:", err);
           return res.status(500).json({ error: "Internal server error" });
+        } else if (fee_results.length === 0) {
+          res.status(200).json({
+            message: "No Payed recorded for the student",
+          });
         } else {
           res.status(200).json({
-            message: "Payed recorded successfully",
             fee_results: fee_results,
           });
         }

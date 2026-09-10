@@ -74,8 +74,8 @@ const StudentProfile = () => {
         setGradeRecords(gradesRes?.grades || []);
 
         // // Fetch fee payments
-        const feesRes = Payed_Fee_Structure(id, user?.role);
-        // setFeeRecords(feesRes.data?.payments || []);
+        const feesRes = await Payed_Fee_Structure(id, user?.role);
+        setFeeRecords(feesRes?.fee_results || []);
       } catch (err) {
         console.error("Failed to fetch student data:", err);
         setError(err.message || "Failed to load student data");

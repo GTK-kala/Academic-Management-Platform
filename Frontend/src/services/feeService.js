@@ -74,7 +74,7 @@ export const Pay_Fee_Structure = async (paymentData) => {
 export const Payed_Fee_Structure = async (userId, userRole) => {
   try {
     const res = await fetch(
-      `${BASE_URL}/fee/structure/payed/${userId}?userRole=${userRole}`,
+      `${BASE_URL}/fees/structure/payed/${userId}?userRole=${userRole}`,
       {
         method: "GET",
         headers: {
@@ -87,6 +87,7 @@ export const Payed_Fee_Structure = async (userId, userRole) => {
       throw new Error("Failed to fetch fee structures");
     }
     const data = await res.json();
+    console.log(data);
     return data;
   } catch (error) {
     console.error("Error fetching payed fee structure:", error);
