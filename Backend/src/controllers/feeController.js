@@ -1,3 +1,4 @@
+import { use, useId } from "react";
 import db from "../config/db.js";
 
 const Get_Fee_Structure = (req, res) => {
@@ -308,4 +309,37 @@ const Pay_Fee_Structure = (req, res) => {
   }
 };
 
-export { Get_Fee_Structure, Add_Fee_Structure, Pay_Fee_Structure };
+const Payed_Fee_Structure = (req, re) => {
+  const { userId } = req.params;
+  const { userRole } = req.query;
+  try {
+    if (userRole === "admin") {
+      const fee_sql = `SELECT * FROM fee_payments WHERE student_id = ?`;
+      db.query(fee_sql, [userId], (err, fee_results) => {
+        if (err) {
+          console.error("Error inserting payment:", err);
+          return res.status(500).json({ error: "Internal server error" });
+        } else {
+          res.status(200).json({
+            message: "Payed recorded successfully",
+            fee_results: fee_results,
+          });
+        }
+      });
+    } else {
+      return res.status(400).json({
+        error: "Payment exceeds the fee structure amount",
+      });
+    }
+  } catch (error) {
+    console.error("Error paying fee structure:", error);
+    res.status(500).json({ error: "Failed to pay fee structure" });
+  }
+};
+
+export {
+  Get_Fee_Structure,
+  Add_Fee_Structure,
+  Pay_Fee_Structure,
+  Payed_Fee_Structure,
+};

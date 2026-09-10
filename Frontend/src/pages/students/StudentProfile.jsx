@@ -20,6 +20,7 @@ import {
 import api from "../../services/api";
 import Button from "../../components/common/Button";
 import { useAuth } from "../../context/AuthContext";
+import { Payed_Fee_Structure } from "../../services/feeService";
 import { Fetch_Student } from "../../services/studentService";
 import { Enrolled_Courses } from "../../services/courseService";
 import { Get_Attendances } from "../../services/attendanceService";
@@ -73,7 +74,7 @@ const StudentProfile = () => {
         setGradeRecords(gradesRes?.grades || []);
 
         // // Fetch fee payments
-        // const feesRes = await api.get(`/fees/payments?student_id=${id}`);
+        const feesRes = Payed_Fee_Structure(id, user?.role);
         // setFeeRecords(feesRes.data?.payments || []);
       } catch (err) {
         console.error("Failed to fetch student data:", err);

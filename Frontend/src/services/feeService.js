@@ -70,3 +70,26 @@ export const Pay_Fee_Structure = async (paymentData) => {
     throw error;
   }
 };
+
+export const Payed_Fee_Structure = async (userId, userRole) => {
+  try {
+    const res = await fetch(
+      `${BASE_URL}/fee/structure/payed/${userId}?userRole=${userRole}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      },
+    );
+    if (!res.ok) {
+      throw new Error("Failed to fetch fee structures");
+    }
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching payed fee structure:", error);
+    throw error;
+  }
+};
