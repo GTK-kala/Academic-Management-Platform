@@ -116,11 +116,11 @@ const StudentProfile = () => {
         : 0;
 
     const totalFees = feeRecords.reduce(
-      (sum, fee) => sum + (fee.total_due || fee.amount || 0),
+      (sum, fee) => sum + (Number(fee.total_due) || Number(fee.amount) || 0),
       0,
     );
     const paidFees = feeRecords.reduce(
-      (sum, fee) => sum + (fee.amount_paid || 0),
+      (sum, fee) => sum + (Number(fee.amount_paid) || 0),
       0,
     );
     const pendingFees = totalFees - paidFees;
@@ -128,9 +128,11 @@ const StudentProfile = () => {
     const averageGrade =
       gradeRecords.length > 0
         ? (
-            gradeRecords.reduce((sum, g) => sum + (g.numeric_grade || 0), 0) /
-            gradeRecords.length
-          ).toFixed(1)
+            gradeRecords.reduce(
+              (sum, g) => sum + (Number(g.overall_score) || 0),
+              0,
+            ) / gradeRecords.length
+          ).toFixed(2)
         : 0;
 
     return {
