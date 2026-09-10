@@ -11,20 +11,36 @@ import {
 import { useState, useEffect } from "react";
 import Button from "../../components/common/Button";
 import { Get_Courses } from "../../services/courseService";
+import { Get_Fee_Structure } from "../../services/feeService";
 import { fetchRecentStudents } from "../../services/studentService";
 
 const AdminDashboard = () => {
   const [stats, setStats] = useState(null);
+  const [feeData, setFeeData] = useState([]);
   const [courses, setCourses] = useState([]);
+  const [collectionRate, setCollectionRate] = useState(0);
   const [recentStudents, setRecentStudents] = useState([]);
 
   const fetchData = async () => {
     try {
       const user = JSON.parse(localStorage.getItem("user"));
       const courses = await Get_Courses(user?.role, user?.userId);
+      const feeRes = await Get_Fee_Structure(user?.userId, user?.role);
       const response = await fetchRecentStudents(user?.userId, user?.role);
-      setRecentStudents(response.students || []);
+      const fee = feeRes.fee_structure;
+      let collectedFee = fee.reduce((sum, f) => sum + Number(f.paid_amount), 0);
+      let totalFee = fee.reduce((sum, f) => sum + Number(f.total_amount), 0);
+      if (collectedFee) {
+        const rate = Math.round(
+          (Number(collectedFee) * 100) / Number(totalFee),
+        );
+        setCollectionRate(rate);
+      } else {
+        setCollectionRate(0);
+      }
+      setFeeData(collectedFee);
       setCourses(courses.courses);
+      setRecentStudents(response.students || []);
     } catch (error) {
       console.error("Error fetching recent students:", error);
     }
@@ -48,9 +64,9 @@ const AdminDashboard = () => {
     },
     {
       title: "Fee Collected",
-      value: stats?.feeCollected || "$0",
+      value: `$${feeData.toLocaleString()}` || "$0",
       icon: FiDollarSign,
-      change: "+22%",
+      change: `${collectionRate.toLocaleString()}%`,
     },
     {
       title: "Attendance Rate",

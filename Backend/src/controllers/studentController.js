@@ -122,14 +122,33 @@ const Get_Students = (req, res) => {
     const userId = req.params.userId;
     if (userRole === "admin") {
       const sql = `SELECT
-          *
+          s.id,
+          s.first_name,
+          s.last_name,
+          s.email,
+          s.enrollment_date,
+          c.course_name,
+          c.course_code,
+          c.max_capacity,
+          COALESCE(ec.total_students, 0) AS total_students
           FROM
-          students
+          students s
+          INNER JOIN enrollments e ON e.student_id = s.id
+          INNER JOIN courses c ON c.id = e.course_id
+          LEFT JOIN (
+          SELECT
+          course_id,
+          COUNT(DISTINCT student_id) AS total_students
+          FROM
+          enrollments
+          GROUP BY
+          course_id
+          ) ec ON ec.course_id = c.id
           ORDER BY
-          enrollment_date DESC
-          `;
+          s.enrollment_date DESC;`;
       db.query(sql, (err, results) => {
         if (err) {
+          console.log(err);
           return res.status(500).json({
             message: "Failed to fetch recent students",
             error: err.message,

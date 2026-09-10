@@ -41,6 +41,7 @@ export const fetchRecentStudents = async (userId, userRole) => {
       throw new Error(errorData.message || "API request failed");
     } else {
       const responseData = await res.json();
+      console.log(responseData);
       return responseData;
     }
   } catch (error) {
