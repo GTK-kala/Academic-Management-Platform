@@ -219,6 +219,7 @@ const Attendance = () => {
   // ========================================
 
   const submitAttendance = async () => {
+    const user = JSON.parse(localStorage.getItem("user"));
     try {
       if (selectedCourse === "all") {
         toast.error("Please select a course first.");
@@ -238,10 +239,6 @@ const Attendance = () => {
         return;
       }
 
-      // ========================================
-      // FIND ONLY CHANGED STUDENTS
-      // ========================================
-
       const changedStudents = students.filter((student) => {
         const studentId = student.id;
 
@@ -252,19 +249,11 @@ const Attendance = () => {
         return oldStatus !== newStatus;
       });
 
-      // ========================================
-      // NOTHING CHANGED
-      // ========================================
-
       if (changedStudents.length === 0) {
         toast.error("No attendance changes were made.");
 
         return;
       }
-
-      // ========================================
-      // SEND ONLY CHANGED STUDENTS
-      // ========================================
 
       for (const student of changedStudents) {
         const studentId = student.id;
@@ -282,22 +271,13 @@ const Attendance = () => {
         };
 
         // ONE request for this student
-        await Add_Attendance(attendanceData);
+        const set_attendance = await Add_Attendance(attendanceData, user?.role);
+        toast.success(
+          `${changedStudents.length} attendance record${
+            changedStudents.length > 1 ? "s" : ""
+          } updated successfully!`,
+        );
       }
-
-      // ========================================
-      // SUCCESS
-      // ========================================
-
-      toast.success(
-        `${changedStudents.length} attendance record${
-          changedStudents.length > 1 ? "s" : ""
-        } updated successfully!`,
-      );
-
-      // ========================================
-      // UPDATE ORIGINAL VALUES
-      // ========================================
 
       setOriginalAttendance((prev) => {
         const updated = {
@@ -316,10 +296,6 @@ const Attendance = () => {
 
       setAttendanceForm({});
 
-      // ========================================
-      // REFRESH ATTENDANCE
-      // ========================================
-
       const res = await Get_Attendances(
         selectedCourse,
         selectedDate,
@@ -329,11 +305,6 @@ const Attendance = () => {
       setAttendanceRecords(res?.attendance || []);
     } catch (error) {
       console.error("Failed to record attendance:", error);
-
-      toast.error(
-        "Failed to record attendance: " +
-          (error?.response?.data?.message || error?.message || "Unknown error"),
-      );
     }
   };
 

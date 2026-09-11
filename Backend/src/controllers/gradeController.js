@@ -1,9 +1,5 @@
 import db from "../config/db.js";
 
-// ============================================================
-// CALCULATE LETTER GRADE
-// ============================================================
-
 const calculateLetterGrade = (score) => {
   const value = Number(score);
 
@@ -22,14 +18,7 @@ const calculateLetterGrade = (score) => {
   return "F";
 };
 
-// ============================================================
-// CALCULATE OVERALL SCORE
-// ============================================================
-
 const calculateOverall = ({ assignment, quiz, project, midterm, final }) => {
-  // We only calculate the overall grade
-  // when all five scores exist.
-
   if (
     assignment === null ||
     assignment === undefined ||
@@ -55,10 +44,6 @@ const calculateOverall = ({ assignment, quiz, project, midterm, final }) => {
   return Number(overall.toFixed(2));
 };
 
-// ============================================================
-// ADD / UPDATE GRADE
-// ============================================================
-
 const Add_Grade = async (req, res) => {
   try {
     const {
@@ -70,10 +55,6 @@ const Add_Grade = async (req, res) => {
       academic_year,
       recorded_by,
     } = req.body;
-
-    // --------------------------------------------------------
-    // VALIDATION
-    // --------------------------------------------------------
 
     if (
       !student_id ||
@@ -90,10 +71,6 @@ const Add_Grade = async (req, res) => {
       });
     }
 
-    // --------------------------------------------------------
-    // VALID EXAM TYPES
-    // --------------------------------------------------------
-
     const validExamTypes = [
       "assignment",
       "quiz",
@@ -108,10 +85,6 @@ const Add_Grade = async (req, res) => {
         message: "Invalid exam type",
       });
     }
-
-    // --------------------------------------------------------
-    // SCORE
-    // --------------------------------------------------------
 
     const score = Number(numeric_grade);
 
@@ -128,10 +101,6 @@ const Add_Grade = async (req, res) => {
         message: "Numeric grade must be between 0 and 100",
       });
     }
-
-    // --------------------------------------------------------
-    // CHECK IF STUDENT + COURSE ROW EXISTS
-    // --------------------------------------------------------
 
     const checkSql = `
       SELECT *
@@ -156,10 +125,6 @@ const Add_Grade = async (req, res) => {
             error: checkErr.message,
           });
         }
-
-        // ====================================================
-        // ROW DOES NOT EXIST
-        // ====================================================
 
         if (rows.length === 0) {
           const column = exam_type;
@@ -197,9 +162,6 @@ const Add_Grade = async (req, res) => {
                 });
               }
 
-              // New row only has one assessment,
-              // therefore overall is still NULL.
-
               return res.status(201).json({
                 success: true,
                 message: `${exam_type} grade added successfully`,
@@ -210,10 +172,6 @@ const Add_Grade = async (req, res) => {
 
           return;
         }
-
-        // ====================================================
-        // ROW ALREADY EXISTS
-        // ====================================================
 
         const existingGrade = rows[0];
 
@@ -240,10 +198,6 @@ const Add_Grade = async (req, res) => {
               });
             }
 
-            // ------------------------------------------------
-            // GET UPDATED ROW
-            // ------------------------------------------------
-
             const selectSql = `
               SELECT *
               FROM grades
@@ -263,10 +217,6 @@ const Add_Grade = async (req, res) => {
 
               const updatedGrade = updatedRows[0];
 
-              // ------------------------------------------------
-              // CALCULATE OVERALL
-              // ------------------------------------------------
-
               const overall = calculateOverall({
                 assignment: updatedGrade.assignment,
 
@@ -279,10 +229,6 @@ const Add_Grade = async (req, res) => {
                 final: updatedGrade.final,
               });
 
-              // ------------------------------------------------
-              // NOT COMPLETE YET
-              // ------------------------------------------------
-
               if (overall === null) {
                 return res.status(200).json({
                   success: true,
@@ -293,15 +239,7 @@ const Add_Grade = async (req, res) => {
                 });
               }
 
-              // ------------------------------------------------
-              // CALCULATE LETTER GRADE
-              // ------------------------------------------------
-
               const letterGrade = calculateLetterGrade(overall);
-
-              // ------------------------------------------------
-              // SAVE OVERALL + LETTER GRADE
-              // ------------------------------------------------
 
               const overallSql = `
                   UPDATE grades
@@ -397,7 +335,8 @@ const Fetch_Grade_All = (req, res) => {
       });
     } else if (userRole === "teacher") {
       const fetch_sql = `SELECT
-            s.first_name,
+          g.id,
+          s.first_name,
           s.last_name,
           c.course_name,
           g.student_id,
@@ -411,9 +350,8 @@ const Fetch_Grade_All = (req, res) => {
           g.semester
           FROM
           grades g
+          LEFT JOIN courses c ON g.course_id = c.id 
           LEFT JOIN students s ON g.student_id = s.id
-          LEFT JOIN teachers t ON g.recorded_by = t.id
-          LEFT JOIN courses c ON g.course_id = c.id
           WHERE
           g.recorded_by = ?`;
       db.query(fetch_sql, [userId], (err, results) => {

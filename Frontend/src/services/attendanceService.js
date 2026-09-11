@@ -50,9 +50,9 @@ export const Get_Attendances = async (courseId, userRole, userId) => {
   }
 };
 
-export const Add_Attendance = async (attendanceData) => {
+export const Add_Attendance = async (attendanceData, userRole) => {
   try {
-    const res = fetch(`${BASE_URL}/attendances/add`, {
+    const res = fetch(`${BASE_URL}/attendances/add?userRole=${userRole}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -64,6 +64,7 @@ export const Add_Attendance = async (attendanceData) => {
       throw new Error("Failed to Attendance");
     } else {
       const data = await res.json();
+      console.log(data);
       return data;
     }
   } catch (error) {
