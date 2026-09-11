@@ -61,14 +61,13 @@ export const Add_Attendance = async (attendanceData, userRole) => {
       credentials: "include",
     });
     if (!res.ok) {
-      throw new Error("Failed to Attendance");
+      throw new Error("Failed to Add Attendance");
     } else {
       const data = await res.json();
-      console.log(data);
       return data;
     }
   } catch (error) {
-    console.error("Error fetching Attendance:", error);
+    console.error("Error Adding Attendance:", error);
     throw error;
   }
 };

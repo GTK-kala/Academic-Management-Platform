@@ -272,11 +272,6 @@ const Attendance = () => {
 
         // ONE request for this student
         const set_attendance = await Add_Attendance(attendanceData, user?.role);
-        toast.success(
-          `${changedStudents.length} attendance record${
-            changedStudents.length > 1 ? "s" : ""
-          } updated successfully!`,
-        );
       }
 
       setOriginalAttendance((prev) => {

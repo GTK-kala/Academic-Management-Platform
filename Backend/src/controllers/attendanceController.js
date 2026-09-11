@@ -179,15 +179,10 @@ const Add_Attendances = (req, res) => {
               message: "Failed to add attendance",
               error: err.message,
             });
-          } else if (results.affectedRows === 1) {
+          } else {
             res.status(201).json({
               message: "Student attendance added",
               userId: results.insertId,
-            });
-          } else {
-            return res.status(500).json({
-              message: "Failed to add attendance",
-              error: err.message,
             });
           }
         },
