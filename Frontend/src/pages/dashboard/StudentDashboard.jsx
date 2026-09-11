@@ -10,6 +10,7 @@ import {
   FiBarChart2,
   FiClock,
 } from "react-icons/fi";
+import { Get_Fee_Structure } from "../../services/feeService";
 import { Fetch_ALL_Grades } from "../../services/gradeService";
 
 const StudentDashboard = () => {
@@ -33,20 +34,24 @@ const StudentDashboard = () => {
         const enrollments = enrollmentsRes.enrollments || [];
         // Fetch course details for enrolled courses
         setEnrolledCourses(enrollments.slice(0, 3));
-        // const courseDetailsResponses = enrollments.map((enrollment) =>
-        //   console.log(enrollment),
-        // );
         // Fetch recent grades (you'd filter by student in real app)
         const gradesRes = await Fetch_ALL_Grades(user?.userId, user?.role);
         setRecentGrades(gradesRes?.grades?.slice(0, 5) || []);
 
         // Fetch fee payments
-        // const feesRes = await api.get("/fees/payments");
-        // const payments = feesRes.data?.payments || [];
-        // setFeeSummary({
-        //   totalDue: payments.reduce((sum, p) => sum + (p.total_due || 0), 0),
-        //   totalPaid: payments.reduce((sum, p) => sum + p.amount_paid, 0),
-        // });
+        const feesRes = await Get_Fee_Structure(user?.userId, user?.role);
+        const payments = feesRes?.fee_structure || [];
+
+        setFeeSummary({
+          totalDue: payments.reduce(
+            (sum, p) => sum + (Number(p.amount) || 0),
+            0,
+          ),
+          totalPaid: payments.reduce(
+            (sum, p) => sum + Number(p.paid_amount),
+            0,
+          ),
+        });
 
         // Attendance stats (simplified)
         // const attendanceRes = await api.get("/attendance");
@@ -134,7 +139,7 @@ const StudentDashboard = () => {
                 Fees Paid
               </p>
               <p className="mt-2 text-2xl font-bold text-purple-600 dark:text-purple-400">
-                ${feeSummary.totalPaid}
+                ${feeSummary.totalPaid.toLocaleString()}
               </p>
             </div>
             <div className="flex items-center justify-center w-12 h-12 bg-purple-100 dark:bg-purple-900/20 rounded-xl">
@@ -150,7 +155,7 @@ const StudentDashboard = () => {
                 Pending Fees
               </p>
               <p className="mt-2 text-2xl font-bold text-red-600 dark:text-red-400">
-                ${feeSummary.totalDue - feeSummary.totalPaid}
+                ${(feeSummary.totalDue - feeSummary.totalPaid).toLocaleString()}
               </p>
             </div>
             <div className="flex items-center justify-center w-12 h-12 bg-red-100 dark:bg-red-900/20 rounded-xl">
