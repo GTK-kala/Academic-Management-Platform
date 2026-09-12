@@ -30,12 +30,28 @@ const CreateUser = (req, res) => {
         if (role === "student") {
           const { date_of_birth, gender, phone, address } = req.body;
           const sql_student_first = `INSERT INTO
-              users (first_name, last_name, email, password_hash, role)
+              users (
+              first_name,
+              last_name,
+              email,
+              password_hash,
+              role,
+              phone,
+              address
+              )
               VALUES
-              (?, ?, ?, ?, ?)`;
+              (?, ?, ?, ?, ?, ?, ?)`;
           db.query(
             sql_student_first,
-            [first_name, last_name, email, hashedPassword, role],
+            [
+              first_name,
+              last_name,
+              email,
+              hashedPassword,
+              role,
+              phone,
+              address,
+            ],
             (err, results) => {
               if (err) {
                 return res.status(500).json({
@@ -113,14 +129,30 @@ const CreateUser = (req, res) => {
             },
           );
         } else if (role === "teacher") {
-          const { department, phone } = req.body;
+          const { department, phone, address } = req.body;
           const sql_teacher_first = `INSERT INTO
-              users (first_name, last_name, email, password_hash, role)
+              users (
+              first_name,
+              last_name,
+              email,
+              password_hash,
+              role,
+              phone,
+              address
+              )
               VALUES
-              (?, ?, ?, ?, ?)`;
+              (?, ?, ?, ?, ?, ?, ?)`;
           db.query(
             sql_teacher_first,
-            [first_name, last_name, email, hashedPassword, role],
+            [
+              first_name,
+              last_name,
+              email,
+              hashedPassword,
+              role,
+              phone,
+              address,
+            ],
             (err, results) => {
               if (err) {
                 return res.status(500).json({
@@ -138,10 +170,11 @@ const CreateUser = (req, res) => {
                     password,
                     department,
                     phone,
+                    address,
                     hire_date
                     )
                     VALUES
-                    (?, ?, ?, ?, ?, ?, ?, ?)`;
+                    (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
                 const hire_date =
                   new Date().getFullYear() +
                   "-" +
@@ -158,6 +191,7 @@ const CreateUser = (req, res) => {
                     hashedPassword,
                     department,
                     phone,
+                    address,
                     hire_date,
                   ],
                   (err, results) => {
@@ -179,13 +213,30 @@ const CreateUser = (req, res) => {
             },
           );
         } else if (role === "admin") {
+          const { phone, address } = req.body;
           const sql2 = `INSERT INTO
-              users (first_name, last_name, email, password_hash, role)
+              users (
+              first_name,
+              last_name,
+              email,
+              password_hash,
+              role,
+              phone,
+              address
+              )
               VALUES
-              (?, ?, ?, ?, ?)`;
+              (?, ?, ?, ?, ?, ?, ?)`;
           db.query(
             sql2,
-            [first_name, last_name, email, hashedPassword, role],
+            [
+              first_name,
+              last_name,
+              email,
+              hashedPassword,
+              role,
+              phone,
+              address,
+            ],
             (err, results) => {
               if (err) {
                 return res.status(500).json({

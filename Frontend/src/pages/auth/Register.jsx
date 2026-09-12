@@ -26,7 +26,7 @@ const Register = () => {
 
     toast.dismiss(); // Dismiss any existing toasts
 
-    if (!firstName || !lastName || !email || !password || !phone) {
+    if (!firstName || !lastName || !email || !password || !phone || !address) {
       toast.error("All fields are required.");
       return;
     }
