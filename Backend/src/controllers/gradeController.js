@@ -70,39 +70,50 @@ const Add_Grade = async (req, res) => {
         message: "All required fields are required",
       });
     }
+    const course_sql = `SELECT
+        teacher_id
+        FROM
+        courses
+        WHERE
+        id = ?`;
+    db.query(course_sql, [course_id], (err, result) => {
+      if (err) {
+        console.error("Error fetching course:", err);
+        return res.status(500).json({ error: "Failed to fetch course" });
+      } else {
+        const teacherId = result[0].teacher_id;
+        const validExamTypes = [
+          "assignment",
+          "quiz",
+          "project",
+          "midterm",
+          "final",
+        ];
 
-    const validExamTypes = [
-      "assignment",
-      "quiz",
-      "project",
-      "midterm",
-      "final",
-    ];
+        if (!validExamTypes.includes(exam_type)) {
+          return res.status(400).json({
+            success: false,
+            message: "Invalid exam type",
+          });
+        }
 
-    if (!validExamTypes.includes(exam_type)) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid exam type",
-      });
-    }
+        const score = Number(numeric_grade);
 
-    const score = Number(numeric_grade);
+        if (Number.isNaN(score)) {
+          return res.status(400).json({
+            success: false,
+            message: "Numeric grade must be a valid number",
+          });
+        }
 
-    if (Number.isNaN(score)) {
-      return res.status(400).json({
-        success: false,
-        message: "Numeric grade must be a valid number",
-      });
-    }
+        if (score < 0 || score > 100) {
+          return res.status(400).json({
+            success: false,
+            message: "Numeric grade must be between 0 and 100",
+          });
+        }
 
-    if (score < 0 || score > 100) {
-      return res.status(400).json({
-        success: false,
-        message: "Numeric grade must be between 0 and 100",
-      });
-    }
-
-    const checkSql = `
+        const checkSql = `
       SELECT *
       FROM grades
       WHERE student_id = ?
@@ -112,136 +123,138 @@ const Add_Grade = async (req, res) => {
       LIMIT 1
     `;
 
-    db.query(
-      checkSql,
-      [Number(student_id), Number(course_id), semester, academic_year],
-      (checkErr, rows) => {
-        if (checkErr) {
-          console.error("Error checking existing grade:", checkErr);
+        db.query(
+          checkSql,
+          [Number(student_id), Number(course_id), semester, academic_year],
+          (checkErr, rows) => {
+            if (checkErr) {
+              console.error("Error checking existing grade:", checkErr);
 
-          return res.status(500).json({
-            success: false,
-            message: "Failed to check existing grade",
-            error: checkErr.message,
-          });
-        }
+              return res.status(500).json({
+                success: false,
+                message: "Failed to check existing grade",
+                error: checkErr.message,
+              });
+            }
 
-        if (rows.length === 0) {
-          const column = exam_type;
+            if (rows.length === 0) {
+              const column = exam_type;
 
-          const insertSql = `
+              const insertSql = `
             INSERT INTO grades (
               student_id,
               course_id,
+              teacher_id,
               ${column},
               semester,
               academic_year,
               recorded_by
             )
-            VALUES (?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
           `;
 
-          db.query(
-            insertSql,
-            [
-              Number(student_id),
-              Number(course_id),
-              score,
-              semester,
-              academic_year,
-              recorded_by ? Number(recorded_by) : null,
-            ],
-            (insertErr, result) => {
-              if (insertErr) {
-                console.error("Error inserting grade:", insertErr);
+              db.query(
+                insertSql,
+                [
+                  Number(student_id),
+                  Number(course_id),
+                  Number(teacherId),
+                  score,
+                  semester,
+                  academic_year,
+                  recorded_by ? Number(recorded_by) : null,
+                ],
+                (insertErr, result) => {
+                  if (insertErr) {
+                    console.error("Error inserting grade:", insertErr);
 
-                return res.status(500).json({
-                  success: false,
-                  message: "Failed to add grade",
-                  error: insertErr.message,
-                });
-              }
+                    return res.status(500).json({
+                      success: false,
+                      message: "Failed to add grade",
+                      error: insertErr.message,
+                    });
+                  }
 
-              return res.status(201).json({
-                success: true,
-                message: `${exam_type} grade added successfully`,
-                gradeId: result.insertId,
-              });
-            },
-          );
+                  return res.status(201).json({
+                    success: true,
+                    message: `${exam_type} grade added successfully`,
+                    gradeId: result.insertId,
+                  });
+                },
+              );
 
-          return;
-        }
+              return;
+            }
 
-        const existingGrade = rows[0];
+            const existingGrade = rows[0];
 
-        const gradeId = existingGrade.id;
+            const gradeId = existingGrade.id;
 
-        const updateSql = `
+            const updateSql = `
           UPDATE grades
           SET ${exam_type} = ?,
               recorded_by = ?
           WHERE id = ?
         `;
 
-        db.query(
-          updateSql,
-          [score, recorded_by ? Number(recorded_by) : null, gradeId],
-          (updateErr) => {
-            if (updateErr) {
-              console.error("Error updating grade:", updateErr);
+            db.query(
+              updateSql,
+              [score, recorded_by ? Number(recorded_by) : null, gradeId],
+              (updateErr) => {
+                if (updateErr) {
+                  console.error("Error updating grade:", updateErr);
 
-              return res.status(500).json({
-                success: false,
-                message: "Failed to update grade",
-                error: updateErr.message,
-              });
-            }
+                  return res.status(500).json({
+                    success: false,
+                    message: "Failed to update grade",
+                    error: updateErr.message,
+                  });
+                }
 
-            const selectSql = `
+                const selectSql = `
               SELECT *
               FROM grades
               WHERE id = ?
             `;
 
-            db.query(selectSql, [gradeId], (selectErr, updatedRows) => {
-              if (selectErr) {
-                console.error("Error fetching updated grade:", selectErr);
+                db.query(selectSql, [gradeId], (selectErr, updatedRows) => {
+                  if (selectErr) {
+                    console.error("Error fetching updated grade:", selectErr);
 
-                return res.status(500).json({
-                  success: false,
-                  message: "Grade saved but failed to calculate overall",
-                  error: selectErr.message,
-                });
-              }
+                    return res.status(500).json({
+                      success: false,
+                      message: "Grade saved but failed to calculate overall",
+                      error: selectErr.message,
+                    });
+                  }
 
-              const updatedGrade = updatedRows[0];
+                  const updatedGrade = updatedRows[0];
 
-              const overall = calculateOverall({
-                assignment: updatedGrade.assignment,
+                  const overall = calculateOverall({
+                    assignment: updatedGrade.assignment,
 
-                quiz: updatedGrade.quiz,
+                    quiz: updatedGrade.quiz,
 
-                project: updatedGrade.project,
+                    project: updatedGrade.project,
 
-                midterm: updatedGrade.midterm,
+                    midterm: updatedGrade.midterm,
 
-                final: updatedGrade.final,
-              });
+                    final: updatedGrade.final,
+                  });
 
-              if (overall === null) {
-                return res.status(200).json({
-                  success: true,
-                  message: `${exam_type} grade saved successfully`,
-                  gradeId,
-                  overall_score: null,
-                  grade: null,
-                });
-              }
+                  if (overall === null) {
+                    return res.status(200).json({
+                      success: true,
+                      message: `${exam_type} grade saved successfully`,
+                      gradeId,
+                      overall_score: null,
+                      grade: null,
+                    });
+                  }
 
-              const letterGrade = calculateLetterGrade(overall);
+                  const letterGrade = calculateLetterGrade(overall);
 
-              const overallSql = `
+                  const overallSql = `
                   UPDATE grades
                   SET
                     overall_score = ?,
@@ -249,38 +262,44 @@ const Add_Grade = async (req, res) => {
                   WHERE id = ?
                 `;
 
-              db.query(
-                overallSql,
-                [overall, letterGrade, gradeId],
-                (overallErr) => {
-                  if (overallErr) {
-                    console.error("Error saving overall grade:", overallErr);
+                  db.query(
+                    overallSql,
+                    [overall, letterGrade, gradeId],
+                    (overallErr) => {
+                      if (overallErr) {
+                        console.error(
+                          "Error saving overall grade:",
+                          overallErr,
+                        );
 
-                    return res.status(500).json({
-                      success: false,
-                      message: "Scores saved but failed to save overall grade",
-                      error: overallErr.message,
-                    });
-                  }
+                        return res.status(500).json({
+                          success: false,
+                          message:
+                            "Scores saved but failed to save overall grade",
+                          error: overallErr.message,
+                        });
+                      }
 
-                  return res.status(200).json({
-                    success: true,
+                      return res.status(200).json({
+                        success: true,
 
-                    message: `${exam_type} grade saved successfully`,
+                        message: `${exam_type} grade saved successfully`,
 
-                    gradeId,
+                        gradeId,
 
-                    overall_score: overall,
+                        overall_score: overall,
 
-                    grade: letterGrade,
-                  });
-                },
-              );
-            });
+                        grade: letterGrade,
+                      });
+                    },
+                  );
+                });
+              },
+            );
           },
         );
-      },
-    );
+      }
+    });
   } catch (error) {
     console.error("Error adding grade:", error);
 
@@ -300,6 +319,7 @@ const Fetch_Grade_All = (req, res) => {
   try {
     if (userRole === "admin") {
       const fetch_sql = `SELECT
+          g.id,
           s.first_name,
           s.last_name,
           c.course_name,
@@ -351,9 +371,10 @@ const Fetch_Grade_All = (req, res) => {
           FROM
           grades g
           LEFT JOIN courses c ON g.course_id = c.id 
+          LEFT JOIN teachers t ON t.id = g.teacher_id 
           LEFT JOIN students s ON g.student_id = s.id
           WHERE
-          g.recorded_by = ?`;
+          g.teacher_id = ?`;
       db.query(fetch_sql, [userId], (err, results) => {
         if (err) {
           console.error("Error fetching grade:", err);
@@ -372,7 +393,8 @@ const Fetch_Grade_All = (req, res) => {
       });
     } else {
       const fetch_sql = `SELECT
-         s.first_name,
+          g.id,
+          s.first_name,
           s.last_name,
           c.course_name,
           g.student_id,
@@ -422,7 +444,8 @@ const Fetch_Grade_By_Course = (req, res) => {
   try {
     if (userRole === "admin" || userRole === "teacher") {
       const course_sql = `SELECT
-            s.first_name,
+          g.id,
+          s.first_name,
           s.last_name,
           c.course_name,
           g.student_id,
@@ -459,6 +482,7 @@ const Fetch_Grade_By_Course = (req, res) => {
       });
     } else {
       const course_sql = `SELECT
+          g.id,
           s.first_name,
           s.last_name,
           c.course_name,
@@ -510,6 +534,7 @@ const Fetch_Grade_By_Student = (req, res) => {
   try {
     if (userRole === "admin") {
       const student_sql = `SELECT
+          g.id,
           s.first_name,
           s.last_name,
           c.course_name,
@@ -547,7 +572,8 @@ const Fetch_Grade_By_Student = (req, res) => {
       });
     } else if (userRole === "teacher") {
       const student_sql = `SELECT
-        s.first_name,
+          g.id,
+          s.first_name,
           s.last_name,
           c.course_name,
           g.student_id,
@@ -585,6 +611,7 @@ const Fetch_Grade_By_Student = (req, res) => {
       });
     } else if (userRole === "student") {
       const student_sql = `SELECT
+          g.id,
           s.first_name,
           s.last_name,
           c.course_name,
@@ -633,18 +660,19 @@ const Fetch_Grade_By_Both = (req, res) => {
   const { courseId, studentId } = req.params;
   try {
     const grade_sql = `SELECT
-         s.first_name,
-          s.last_name,
-          c.course_name,
-          g.student_id,
-          g.assignment,
-          g.quiz,
-          g.project,
-          g.midterm,
-          g.final,
-          g.grade,
-          g.overall_score,
-          g.semester
+        g.id,
+        s.first_name,
+        s.last_name,
+        c.course_name,
+        g.student_id,
+        g.assignment,
+        g.quiz,
+        g.project,
+        g.midterm,
+        g.final,
+        g.grade,
+        g.overall_score,
+        g.semester
         FROM
         grades g
         LEFT JOIN students s ON g.student_id = s.id

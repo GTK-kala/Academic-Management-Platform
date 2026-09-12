@@ -312,11 +312,7 @@ const Grades = () => {
         recorded_by: Number(storedUser.userId),
       };
 
-      console.log("Sending grade:", data);
-
       const response = await Add_Grade(data, storedUser.role);
-
-      console.log("Grade response:", response);
 
       if (response?.success) {
         if (
