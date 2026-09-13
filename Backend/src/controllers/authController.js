@@ -1,6 +1,8 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import db from "../config/db.js";
+import { HashPassword, ComparePassword } from "../utils/hashPassword.js";
+import { GenerateToken } from "../utils/generateToken.js";
 
 ////////////////// Create User Logic ///////////////
 
@@ -317,6 +319,9 @@ const LoginUser = (req, res) => {
           userId: user.id,
           role: user.role,
           email: user.email,
+        };
+        const expiresIn = {
+          expiresIn: "8h",
         };
 
         const token = jwt.sign(tokenPayload, process.env.JWT_SECRET, {
