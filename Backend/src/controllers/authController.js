@@ -1,8 +1,8 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import db from "../config/db.js";
-import { HashPassword, ComparePassword } from "../utils/hashPassword.js";
 import { GenerateToken } from "../utils/generateToken.js";
+import { HashPassword, ComparePassword } from "../utils/hashPassword.js";
 
 ////////////////// Create User Logic ///////////////
 
@@ -28,7 +28,7 @@ const CreateUser = (req, res) => {
         });
       } else if (results.length === 0) {
         // Hash the password
-        const hashedPassword = bcrypt.hashSync(password, 10);
+        const hashedPassword = HashPassword(password);
         if (role === "student") {
           const { date_of_birth, gender, phone, address } = req.body;
           const sql_student_first = `INSERT INTO
@@ -292,41 +292,14 @@ const LoginUser = (req, res) => {
 
       const user = results[0];
 
-      bcrypt.compare(password, user.password_hash, (err, isMatch) => {
-        if (err) {
-          return res.status(500).json({
-            message: "Failed to compare passwords",
-            error: err.message,
-          });
-        }
-
-        if (!isMatch) {
-          return res.status(400).json({
-            message: "Invalid email or password",
-          });
-        }
-
-        // const isProduction = process.env.NODE_ENV === "production";
-        const cookieOptions = {
-          httpOnly: true,
-          secure: true,
-          sameSite: "None",
-          maxAge: 8 * 60 * 60 * 1000,
-          path: "/",
-        };
-
-        const tokenPayload = {
-          userId: user.id,
-          role: user.role,
-          email: user.email,
-        };
-        const expiresIn = {
-          expiresIn: "8h",
-        };
-
-        const token = jwt.sign(tokenPayload, process.env.JWT_SECRET, {
-          expiresIn: "8h",
+      const value = (password, user.password_hash);
+      if (!value) {
+        console.error("Login error:");
+        res.status(500).json({
+          message: "Failed to login user",
         });
+      } else {
+        const token = GenerateToken(user);
 
         // Handle different roles
         if (user.role === "student") {
@@ -345,12 +318,15 @@ const LoginUser = (req, res) => {
             }
 
             const studentData = studentResults[0];
-            res.status(200).cookie("token", token, cookieOptions).json({
-              message: "Login successful",
-              userId: studentData.id,
-              role: user.role,
-              email: user.email,
-            });
+            res
+              .status(200)
+              .cookie("token", token.token, token.cookieOptions)
+              .json({
+                message: "Login successful",
+                userId: studentData.id,
+                role: user.role,
+                email: user.email,
+              });
           });
         } else if (user.role === "teacher") {
           const sql_teacher = `SELECT
@@ -370,7 +346,7 @@ const LoginUser = (req, res) => {
             const teacherData = teacherResults[0];
             res
               .status(200)
-              .cookie("token", token, cookieOptions)
+              .cookie("token", token.token, token.cookieOptions)
               .json({
                 message: "Login successful",
                 userId: teacherData.id,
@@ -381,18 +357,21 @@ const LoginUser = (req, res) => {
               });
           });
         } else if (user.role === "admin") {
-          res.status(200).cookie("token", token, cookieOptions).json({
-            message: "Login successful",
-            userId: user.id,
-            role: user.role,
-            email: user.email,
-          });
+          res
+            .status(200)
+            .cookie("token", token.token, token.cookieOptions)
+            .json({
+              message: "Login successful",
+              userId: user.id,
+              role: user.role,
+              email: user.email,
+            });
         } else {
           return res.status(400).json({
             message: "Invalid user role",
           });
         }
-      });
+      }
     });
   } catch (error) {
     console.error("Login error:", error);
