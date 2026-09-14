@@ -246,7 +246,7 @@ const Attendance = () => {
 
         const newStatus = attendanceForm[studentId];
 
-        return oldStatus !== newStatus;
+        return oldStatus !== newStatus || oldStatus === newStatus;
       });
 
       if (changedStudents.length === 0) {
@@ -272,6 +272,11 @@ const Attendance = () => {
 
         // ONE request for this student
         const set_attendance = await Add_Attendance(attendanceData, user?.role);
+        if (set_attendance?.error) {
+          toast.error("Failed to add attendance");
+        } else {
+          toast.success("Student attendance added");
+        }
       }
 
       setOriginalAttendance((prev) => {

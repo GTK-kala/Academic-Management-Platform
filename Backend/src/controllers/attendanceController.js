@@ -176,10 +176,9 @@ const Add_Attendances = (req, res) => {
         (err, results) => {
           if (err) {
             return res.status(500).json({
-              message: "Failed to add attendance",
-              error: err.message,
+              error: "Failed to add attendance",
             });
-          } else {
+          } else if (results.affectedRows >= 1) {
             res.status(201).json({
               message: "Student attendance added",
               userId: results.insertId,
@@ -189,12 +188,11 @@ const Add_Attendances = (req, res) => {
       );
     } else {
       return res.status(401).json({
-        message: "Failed to add attendance",
+        error: "Failed to add attendance",
       });
     }
   } catch (error) {
     console.error("Error fetching attendance:", error);
-
     return res.status(500).json({
       error: "Internal server error",
     });

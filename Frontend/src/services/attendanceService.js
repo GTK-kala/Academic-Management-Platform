@@ -52,14 +52,17 @@ export const Get_Attendances = async (courseId, userRole, userId) => {
 
 export const Add_Attendance = async (attendanceData, userRole) => {
   try {
-    const res = fetch(`${BASE_URL}/attendances/add?userRole=${userRole}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+    const res = await fetch(
+      `${BASE_URL}/attendances/add?userRole=${userRole}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(attendanceData),
+        credentials: "include",
       },
-      body: JSON.stringify(attendanceData),
-      credentials: "include",
-    });
+    );
     if (!res.ok) {
       throw new Error("Failed to Add Attendance");
     } else {
