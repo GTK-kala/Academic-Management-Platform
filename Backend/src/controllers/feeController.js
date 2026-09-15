@@ -1,6 +1,6 @@
 import db from "../config/db.js";
 
-const Get_Fee_Structure = (req, res) => {
+const Get_Fee_Structures = (req, res) => {
   const { userId, userRole } = req.query;
   try {
     if (userRole === "admin") {
@@ -348,8 +348,8 @@ const Payed_Fee_Structure = (req, res) => {
 };
 
 export {
-  Get_Fee_Structure,
   Add_Fee_Structure,
   Pay_Fee_Structure,
+  Get_Fee_Structures,
   Payed_Fee_Structure,
 };

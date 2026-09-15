@@ -19,10 +19,11 @@ import {
   Add_Fee_Structure,
 } from "../../services/feeService";
 import toast from "react-hot-toast";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 const FeeManagement = () => {
   const { user } = useAuth();
+  const { id } = useParams();
 
   // State management
   const [feeStructures, setFeeStructures] = useState([]);
@@ -61,7 +62,7 @@ const FeeManagement = () => {
   // Load initial data
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
-    fetchFeeStructures(user?.userId, user?.role);
+    fetchFeeStructures(user?.userId, user?.role, id);
     fetchCourses();
   }, []);
 
@@ -71,10 +72,10 @@ const FeeManagement = () => {
   }, [searchTerm, filterStatus, selectedCourse, feeStructures]);
 
   // Mock data for demonstration - Replace with API call
-  const fetchFeeStructures = async (userId, role) => {
+  const fetchFeeStructures = async (userId, role, id) => {
     setLoading(true);
     try {
-      const FeeData = await Get_Fee_Structure(userId, role);
+      const FeeData = await Get_Fee_Structure(userId, role, id);
       const FeeStructures = FeeData?.fee_structure || [];
       setFeeStructures(FeeStructures);
       setFilteredStructures(FeeStructures);
