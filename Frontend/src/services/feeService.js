@@ -27,7 +27,6 @@ export const Get_Fee_Structures = async (userId, role) => {
 
 export const Get_Fee_Structure = async (userId, role, courseId) => {
   try {
-    console.log(userId, role, courseId);
     const response = await fetch(
       `${BASE_URL}/fees/structure/${courseId}?userId=${userId}&userRole=${role}`,
       {

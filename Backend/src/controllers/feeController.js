@@ -120,6 +120,127 @@ const Get_Fee_Structures = (req, res) => {
   }
 };
 
+const Get_Fee_Structure = (req, res) => {
+  const { id } = req.params;
+  const { userId, userRole } = req.query;
+  try {
+    if (userRole === "admin") {
+      const fee_sql = `SELECT
+          f.id,
+          f.amount,
+          f.course_id,
+          f.fee_name,
+          c.course_name,
+          c.course_code,
+          COALESCE(e.total_students, 0) AS total_students,
+          COALESCE(e.total_students * f.amount, 0) AS paid_amount,
+          COALESCE(e.total_students * f.amount, 0) AS total_amount,
+          COALESCE(p.paid_students, 0) AS paid_students,
+          COALESCE(p.paid_amount, 0) AS paid_amount,
+          CASE
+          WHEN COALESCE(p.paid_amount, 0) >= COALESCE(e.total_students * f.amount, 0)
+          AND COALESCE(e.total_students, 0) > 0 THEN 'paid'
+          WHEN COALESCE(p.paid_amount, 0) > 0 THEN 'partial'
+          ELSE 'pending'
+          END AS payment_status
+          FROM
+          fee_structure f
+          LEFT JOIN courses c ON f.course_id = c.id
+          LEFT JOIN (
+          SELECT
+          course_id,
+          COUNT(DISTINCT student_id) AS total_students
+          FROM
+          enrollments
+          GROUP BY
+          course_id
+          ) e ON f.course_id = e.course_id
+          LEFT JOIN (
+          SELECT
+          fee_structure_id,
+          COUNT(DISTINCT student_id) AS paid_students,
+          SUM(amount_paid) AS paid_amount
+          FROM
+          fee_payments
+          GROUP BY
+          fee_structure_id
+          ) p ON f.id = p.fee_structure_id WHERE f.course_id = ?`;
+      db.query(fee_sql, [id], (err, fee_result) => {
+        if (err) {
+          console.error("Error fetching fee structures:", err);
+          return res.status(500).json({ error: "Internal server error" });
+        }
+        res.status(200).json({
+          message: "Fee structures fetched successfully",
+          fee_structure: fee_result,
+        });
+      });
+    } else if (userRole === "student") {
+      const fee_sql = `SELECT
+          f.*,
+          c.course_name,
+          c.course_code,
+          1 AS total_students,
+          f.amount AS total_amount,
+          COALESCE(s.paid_students, 0) AS paid_students,
+          COALESCE(p.student_paid_amount, 0) AS paid_amount,
+          COALESCE(p.payment_status, 'pending') AS payment_status
+          FROM
+          fee_structure f
+          LEFT JOIN courses c ON f.course_id = c.id
+          -- Payments made by ALL students for this fee
+          LEFT JOIN (
+          SELECT
+          fee_structure_id,
+          COUNT(DISTINCT student_id) AS paid_students,
+          SUM(amount_paid) AS paid_amount
+          FROM
+          fee_payments
+          WHERE
+          student_id = ?
+          GROUP BY
+          fee_structure_id
+          ) s ON f.id = s.fee_structure_id
+          -- Payment information for ONLY the current student
+          LEFT JOIN (
+          SELECT
+          fee_structure_id,
+          SUM(amount_paid) AS student_paid_amount,
+          MAX(status) AS payment_status
+          FROM
+          fee_payments
+          WHERE
+          student_id = ?
+          GROUP BY
+          fee_structure_id
+          ) p ON f.id = p.fee_structure_id
+          WHERE
+          EXISTS (
+          SELECT
+          1
+          FROM
+          enrollments e
+          WHERE
+          e.course_id = f.course_id
+          AND e.student_id = ?
+          )`;
+      db.query(fee_sql, [userId, userId, userId], (err, fee_result) => {
+        if (err) {
+          console.error("Error fetching fee structures:", err);
+          return res.status(500).json({ error: "Internal server error" });
+        }
+        res.status(200).json({
+          message: "Fee structures fetched successfully",
+          fee_structure: fee_result,
+        });
+      });
+    }
+  } catch (error) {
+    console.error("Error fetching fee structures:", error);
+    res.status(500).json({ error: "Failed to fetch fee structures" });
+  }
+};
+
 const Add_Fee_Structure = (req, res) => {
   const { course_id, fee_name, amount, due_date, academic_session } = req.body;
 
@@ -350,6 +471,7 @@ const Payed_Fee_Structure = (req, res) => {
 export {
   Add_Fee_Structure,
   Pay_Fee_Structure,
+  Get_Fee_Structure,
   Get_Fee_Structures,
   Payed_Fee_Structure,
 };
