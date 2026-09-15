@@ -21,10 +21,12 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    setUser(null);
-    localStorage.removeItem("id");
-    localStorage.removeItem("user");
-    localStorage.removeItem("teacherId");
+    if (window.confirm("Are you sure you want to logout ?")) {
+      setUser(null);
+      localStorage.removeItem("id");
+      localStorage.removeItem("user");
+      localStorage.removeItem("teacherId");
+    }
   };
 
   return (
