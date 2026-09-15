@@ -340,7 +340,7 @@ const CourseDetail = () => {
                 Fee structures for this course
               </p>
               <Link
-                to="/fees"
+                to={`/fees/${id}`}
                 className="inline-block mt-2 text-primary hover:underline"
               >
                 Go to Fees

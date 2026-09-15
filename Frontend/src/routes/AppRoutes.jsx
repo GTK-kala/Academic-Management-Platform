@@ -28,6 +28,7 @@ import CourseDetail from "../pages/courses/CourseDetail";
 
 // Fee Pages
 import FeeManagement from "../pages/fees/FeeManagement";
+import FeeManagements from "../pages/fees/FeeManagements";
 import PaymentHistory from "../pages/fees/PaymentHistory";
 
 // Academic Pages
@@ -192,6 +193,17 @@ const AppRoutes = () => {
 
         <Route
           path="/fees"
+          element={
+            <ProtectedRoute roles={["admin", "student"]}>
+              <FeeManagements />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Fee management Individual - Admin and Student */}
+
+        <Route
+          path="/fees/:id"
           element={
             <ProtectedRoute roles={["admin", "student"]}>
               <FeeManagement />

@@ -3,12 +3,18 @@ import {
   FiDollarSign,
   FiPlus,
   FiSearch,
+  FiDownload,
   FiEye,
   FiCreditCard,
   FiCheckCircle,
+  FiClock,
   FiAlertCircle,
   FiTrendingUp,
   FiTrendingDown,
+  FiFilter,
+  FiCalendar,
+  FiBook,
+  FiUser,
 } from "react-icons/fi";
 import Button from "../../components/common/Button";
 import { useAuth } from "../../context/AuthContext";
@@ -21,7 +27,7 @@ import {
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 
-const FeeManagement = () => {
+const FeeManagements = () => {
   const { user } = useAuth();
 
   // State management
@@ -777,4 +783,4 @@ const FeeManagement = () => {
   );
 };
 
-export default FeeManagement;
+export default FeeManagements;
