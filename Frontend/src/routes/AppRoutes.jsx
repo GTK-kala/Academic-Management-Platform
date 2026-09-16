@@ -36,6 +36,7 @@ import Grade from "../pages/academics/Grade";
 import Grades from "../pages/academics/Grades";
 import Schedule from "../pages/academics/Schedule";
 import Attendance from "../pages/academics/Attendance";
+import Attendances from "../pages/academics/Attendances";
 
 // Settings Pages
 import ProfileSettings from "../pages/settings/ProfileSettings";
@@ -228,10 +229,19 @@ const AppRoutes = () => {
         {/* Attendance - accessible by all authenticated users */}
 
         <Route
-          path="/attendance"
+          path="/attendance/:id"
           element={
             <ProtectedRoute roles={["admin", "teacher", "student"]}>
               <Attendance />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/attendance"
+          element={
+            <ProtectedRoute roles={["admin", "teacher", "student"]}>
+              <Attendances />
             </ProtectedRoute>
           }
         />

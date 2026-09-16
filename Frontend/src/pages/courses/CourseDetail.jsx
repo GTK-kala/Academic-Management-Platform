@@ -310,7 +310,7 @@ const CourseDetail = () => {
                 Attendance records for this course
               </p>
               <Link
-                to="/attendance"
+                to={`/attendance/${id}`}
                 className="inline-block mt-2 text-primary hover:underline"
               >
                 Go to Attendance
