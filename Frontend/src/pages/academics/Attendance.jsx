@@ -1,4 +1,5 @@
 import toast from "react-hot-toast";
+import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 
 import {
@@ -17,10 +18,11 @@ import { Get_Courses, Enrolled_Courses } from "../../services/courseService";
 
 import {
   Add_Attendance,
-  Get_Attendances,
+  Get_Attendance,
 } from "../../services/attendanceService";
 
 const Attendance = () => {
+  const { id } = useParams();
   const { user } = useAuth();
 
   // ========================================
@@ -103,15 +105,15 @@ const Attendance = () => {
 
       try {
         if (selectedCourse === "all" && storedUser.role) {
-          const res = await Get_Attendances(
-            selectedCourse,
+          const res = await Get_Attendance(
+            id,
             storedUser?.role,
             storedUser?.userId,
           );
 
           setAttendanceRecords(res?.attendance || []);
         } else if (selectedCourse !== "all" && storedUser?.role) {
-          const res = await Get_Attendances(
+          const res = await Get_Attendance(
             selectedCourse,
             storedUser?.role,
             storedUser?.userId,
