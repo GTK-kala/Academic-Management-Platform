@@ -325,7 +325,7 @@ const CourseDetail = () => {
                 Grade records for this course
               </p>
               <Link
-                to="/grades"
+                to={`/grades/${id}`}
                 className="inline-block mt-2 text-primary hover:underline"
               >
                 Go to Grades

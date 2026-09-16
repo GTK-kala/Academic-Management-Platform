@@ -32,6 +32,7 @@ import FeeManagements from "../pages/fees/FeeManagements";
 import PaymentHistory from "../pages/fees/PaymentHistory";
 
 // Academic Pages
+import Grade from "../pages/academics/Grade";
 import Grades from "../pages/academics/Grades";
 import Schedule from "../pages/academics/Schedule";
 import Attendance from "../pages/academics/Attendance";
@@ -242,6 +243,15 @@ const AppRoutes = () => {
           element={
             <ProtectedRoute roles={["admin", "teacher", "student"]}>
               <Grades />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/grades/:id"
+          element={
+            <ProtectedRoute roles={["admin", "teacher", "student"]}>
+              <Grade />
             </ProtectedRoute>
           }
         />

@@ -51,6 +51,30 @@ export const Fetch_ALL_Grades = async (userId, userRole) => {
   }
 };
 
+export const Fetch_ALL_Grade = async (userId, userRole, courseId) => {
+  try {
+    const res = await fetch(
+      `${BASE_URL}/grades/grade/${courseId}?userRole=${userRole}&userId=${userId}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      },
+    );
+    if (!res.ok) {
+      throw new Error("Failed to add grade");
+    } else {
+      const data = await res.json();
+      return data;
+    }
+  } catch (error) {
+    console.error("Error adding grade:", error);
+    throw error;
+  }
+};
+
 export const Fetch_Grade_By_Student = async (studentId, userRole, userId) => {
   try {
     if (userRole === "admin") {
