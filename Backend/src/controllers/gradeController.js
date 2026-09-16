@@ -436,6 +436,134 @@ const Fetch_Grade_All = (req, res) => {
   }
 };
 
+// Fetch one Grade
+const Fetch_Grade_One = (req, res) => {
+  const { courseId } = req.params;
+  const { userRole, userId } = req.query;
+  try {
+    if (userRole === "admin") {
+      const fetch_sql = `SELECT
+          g.id,
+          s.first_name,
+          s.last_name,
+          c.course_name,
+          g.student_id,
+          g.assignment,
+          g.quiz,
+          g.project,
+          g.midterm,
+          g.final,
+          g.grade,
+          g.overall_score,
+          g.semester
+          FROM
+          grades g
+          LEFT JOIN students s ON g.student_id = s.id
+          LEFT JOIN teachers t ON g.recorded_by = t.id
+          LEFT JOIN courses c ON g.course_id = c.id
+          WHERE
+          g.course_id = ?`;
+      db.query(fetch_sql, [courseId], (err, results) => {
+        if (err) {
+          console.error("Error fetching grade:", err);
+          return res.status(500).json({ error: "Failed to fetch grade" });
+        } else if (results.length > 0) {
+          res.status(201).json({
+            message: "Grade fetched successfully",
+            grades: results,
+          });
+        } else {
+          res.status(201).json({
+            message: "Error fetching grade",
+            grades: [],
+          });
+        }
+      });
+    } else if (userRole === "teacher") {
+      const fetch_sql = `SELECT
+          g.id,
+          s.first_name,
+          s.last_name,
+          c.course_name,
+          g.student_id,
+          g.assignment,
+          g.quiz,
+          g.project,
+          g.midterm,
+          g.final,
+          g.grade,
+          g.overall_score,
+          g.semester
+          FROM
+          grades g
+          LEFT JOIN courses c ON g.course_id = c.id
+          LEFT JOIN teachers t ON t.id = g.teacher_id
+          LEFT JOIN students s ON g.student_id = s.id
+          WHERE
+          g.teacher_id = ?
+          AND g.course_id = ?`;
+      db.query(fetch_sql, [userId, courseId], (err, results) => {
+        if (err) {
+          console.error("Error fetching grade:", err);
+          return res.status(500).json({ error: "Failed to fetch grade" });
+        } else if (results.length > 0) {
+          res.status(201).json({
+            message: "Grade fetched successfully",
+            grades: results,
+          });
+        } else {
+          res.status(201).json({
+            message: "Error fetching grade",
+            grades: [],
+          });
+        }
+      });
+    } else {
+      const fetch_sql = `SELECT
+          g.id,
+          s.first_name,
+          s.last_name,
+          c.course_name,
+          g.student_id,
+          g.assignment,
+          g.quiz,
+          g.project,
+          g.midterm,
+          g.final,
+          g.grade,
+          g.overall_score,
+          g.semester
+          FROM
+          grades g
+          LEFT JOIN students s ON g.student_id = s.id
+          LEFT JOIN teachers t ON g.recorded_by = t.id
+          LEFT JOIN courses c ON g.course_id = c.id
+          WHERE
+          g.student_id = ?
+          AND g.course_id = ?`;
+      db.query(fetch_sql, [userId, courseId], (err, results) => {
+        if (err) {
+          console.error("Error fetching grade:", err);
+          return res.status(500).json({ error: "Failed to fetch grade" });
+        } else if (results.length > 0) {
+          res.status(201).json({
+            message: "Grade fetched successfully",
+            grades: results,
+          });
+        } else {
+          res.status(201).json({
+            message: "Error fetching grade",
+            grades: [],
+          });
+        }
+      });
+    }
+  } catch (error) {
+    console.error("Error fetching grade:", error);
+    res.status(500).json({ error: "Failed to fetch grade" });
+  }
+};
+
 // Fetch Grade by Course Id
 
 const Fetch_Grade_By_Course = (req, res) => {
@@ -706,6 +834,7 @@ const Fetch_Grade_By_Both = (req, res) => {
 export {
   Add_Grade,
   Fetch_Grade_All,
+  Fetch_Grade_One,
   Fetch_Grade_By_Course,
   Fetch_Grade_By_Student,
   Fetch_Grade_By_Both,
