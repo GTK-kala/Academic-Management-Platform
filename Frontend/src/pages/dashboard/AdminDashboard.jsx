@@ -12,7 +12,7 @@ import { useState, useEffect } from "react";
 import Button from "../../components/common/Button";
 import { Get_Courses } from "../../services/courseService";
 import { Get_Fee_Structures } from "../../services/feeService";
-import { fetchRecentStudents } from "../../services/studentService";
+import { Fetch_Students } from "../../services/studentService";
 
 const AdminDashboard = () => {
   const [stats, setStats] = useState(null);
@@ -26,7 +26,7 @@ const AdminDashboard = () => {
       const user = JSON.parse(localStorage.getItem("user"));
       const courses = await Get_Courses(user?.role, user?.userId);
       const feeRes = await Get_Fee_Structures(user?.userId, user?.role);
-      const response = await fetchRecentStudents(user?.userId, user?.role);
+      const response = await Fetch_Students(user?.userId, user?.role);
       const fee = feeRes.fee_structure;
       let collectedFee = fee.reduce((sum, f) => sum + Number(f.paid_amount), 0);
       let totalFee = fee.reduce((sum, f) => sum + Number(f.total_amount), 0);

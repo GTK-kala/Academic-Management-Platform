@@ -2,7 +2,7 @@ import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Button from "../../components/common/Button";
-import { fetchRecentStudents } from "../../services/studentService";
+import { Fetch_Students } from "../../services/studentService";
 import { FiPlus, FiSearch, FiEdit2, FiTrash2 } from "react-icons/fi";
 
 const StudentList = () => {
@@ -14,7 +14,7 @@ const StudentList = () => {
   const fetchStudents = async () => {
     try {
       const user = JSON.parse(localStorage.getItem("user"));
-      const response = await fetchRecentStudents(user?.userId, user?.role);
+      const response = await Fetch_Students(user?.userId, user?.role);
       setStudents(response.students || []);
     } catch (err) {
       console.error(err);

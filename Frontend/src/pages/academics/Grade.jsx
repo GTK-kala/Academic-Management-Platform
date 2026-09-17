@@ -22,7 +22,7 @@ import {
 
 import { Get_Courses, Enrolled_Courses } from "../../services/courseService";
 
-import { fetchRecentStudents } from "../../services/studentService";
+import { Fetch_Students } from "../../services/studentService";
 
 import { useAuth } from "../../context/AuthContext";
 
@@ -112,7 +112,7 @@ const Grade = () => {
         }
 
         if (storedUser.role !== "student") {
-          const response = await fetchRecentStudents(
+          const response = await Fetch_Students(
             storedUser.userId,
             storedUser.role,
           );

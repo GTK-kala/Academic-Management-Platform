@@ -24,7 +24,7 @@ export const Add_Student = async (studentData) => {
   }
 };
 
-export const fetchRecentStudents = async (userId, userRole) => {
+export const Fetch_Students = async (userId, userRole) => {
   try {
     const res = await fetch(
       `${BASE_URL}/students/all/${userId}?userRole=${userRole}`,
