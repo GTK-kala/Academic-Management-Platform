@@ -43,7 +43,7 @@ export const Get_Courses = async (role, userId) => {
   }
 };
 
-export const Get_Course = async (courseId) => {
+export const Fetch_Course = async (courseId) => {
   try {
     const res = await fetch(`${BASE_URL}/courses/detail/${courseId}`, {
       method: "GET",

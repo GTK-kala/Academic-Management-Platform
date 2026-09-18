@@ -12,7 +12,7 @@ import {
 } from "react-icons/fi";
 import api from "../../services/api";
 import Button from "../../components/common/Button";
-import { Get_Course, Enrolled_Courses } from "../../services/courseService";
+import { Fetch_Course, Enrolled_Courses } from "../../services/courseService";
 import { useAuth } from "../../context/AuthContext";
 import { Get_Attendances } from "../../services/attendanceService";
 import { useParams, useNavigate, Link } from "react-router-dom";
@@ -32,7 +32,7 @@ const CourseDetail = () => {
       try {
         // Fetch course details
         const user = JSON.parse(localStorage.getItem("user"));
-        const courseRes = await Get_Course(id);
+        const courseRes = await Fetch_Course(id);
         const courseData = courseRes?.course || null;
         setCourse(courseData);
 
