@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { FiBook, FiUsers, FiCalendar, FiBarChart2 } from "react-icons/fi";
-import { Get_Courses, Enrolled_Courses } from "../../services/courseService";
+import { Fetch_Courses, Enrolled_Courses } from "../../services/courseService";
 
 const TeacherDashboard = () => {
   const { user } = useAuth();
@@ -16,7 +16,7 @@ const TeacherDashboard = () => {
     const fetchData = async () => {
       try {
         const user = JSON.parse(localStorage.getItem("user"));
-        const coursesRes = await Get_Courses(user?.userId);
+        const coursesRes = await Fetch_Courses(user?.userId);
         const courses = coursesRes.courses || [];
         // Filter courses assigned to this teacher (in real app, use teacher_id)
         const assignedCourses = courses.filter(

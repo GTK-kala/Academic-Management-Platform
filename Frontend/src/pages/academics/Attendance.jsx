@@ -14,7 +14,7 @@ import {
 import { useAuth } from "../../context/AuthContext";
 import Button from "../../components/common/Button";
 
-import { Get_Courses, Enrolled_Courses } from "../../services/courseService";
+import { Fetch_Courses, Enrolled_Courses } from "../../services/courseService";
 
 import {
   Add_Attendance,
@@ -60,7 +60,7 @@ const Attendance = () => {
       const storedUser = JSON.parse(localStorage.getItem("user"));
 
       try {
-        const res = await Get_Courses(storedUser?.role, storedUser?.userId);
+        const res = await Fetch_Courses(storedUser?.role, storedUser?.userId);
 
         const courseData = res?.courses || [];
 

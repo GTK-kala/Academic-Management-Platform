@@ -12,7 +12,7 @@ import api from "../../services/api";
 import Button from "../../components/common/Button";
 import { useAuth } from "../../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
-import { Get_Courses, Enroll_Course } from "../../services/courseService";
+import { Fetch_Courses, Enroll_Course } from "../../services/courseService";
 import { Enrolled_Courses } from "../../services/courseService";
 
 const CourseList = () => {
@@ -30,7 +30,7 @@ const CourseList = () => {
       const user = JSON.parse(localStorage.getItem("user"));
       try {
         // Fetch all courses
-        const coursesRes = await Get_Courses(user.role, user.userId);
+        const coursesRes = await Fetch_Courses(user.role, user.userId);
         let courseData = coursesRes?.courses || [];
 
         if (user.role === "teacher") {

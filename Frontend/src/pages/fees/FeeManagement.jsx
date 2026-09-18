@@ -12,7 +12,7 @@ import {
 } from "react-icons/fi";
 import Button from "../../components/common/Button";
 import { useAuth } from "../../context/AuthContext";
-import { Get_Courses } from "../../services/courseService";
+import { Fetch_Courses } from "../../services/courseService";
 import {
   Pay_Fee_Structure,
   Get_Fee_Structure,
@@ -89,7 +89,7 @@ const FeeManagement = () => {
 
   const fetchCourses = async () => {
     try {
-      const CourseData = await Get_Courses();
+      const CourseData = await Fetch_Courses();
       const courses = CourseData.courses || [];
       setCourses(courses);
     } catch (error) {

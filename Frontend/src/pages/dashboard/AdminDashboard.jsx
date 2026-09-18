@@ -10,7 +10,7 @@ import {
 } from "react-icons/fi";
 import { useState, useEffect } from "react";
 import Button from "../../components/common/Button";
-import { Get_Courses } from "../../services/courseService";
+import { Fetch_Courses } from "../../services/courseService";
 import { Get_Fee_Structures } from "../../services/feeService";
 import { Fetch_Students } from "../../services/studentService";
 
@@ -24,7 +24,7 @@ const AdminDashboard = () => {
   const fetchData = async () => {
     try {
       const user = JSON.parse(localStorage.getItem("user"));
-      const courses = await Get_Courses(user?.role, user?.userId);
+      const courses = await Fetch_Courses(user?.role, user?.userId);
       const feeRes = await Get_Fee_Structures(user?.userId, user?.role);
       const response = await Fetch_Students(user?.userId, user?.role);
       const fee = feeRes.fee_structure;

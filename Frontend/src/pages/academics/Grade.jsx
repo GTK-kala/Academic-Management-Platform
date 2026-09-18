@@ -20,7 +20,7 @@ import {
   Fetch_Grade_By_Student,
 } from "../../services/gradeService";
 
-import { Get_Courses, Enrolled_Courses } from "../../services/courseService";
+import { Fetch_Courses, Enrolled_Courses } from "../../services/courseService";
 
 import { Fetch_Students } from "../../services/studentService";
 
@@ -92,14 +92,14 @@ const Grade = () => {
 
           setCourses(response?.enrollments || []);
         } else if (storedUser?.role === "admin") {
-          const response = await Get_Courses(
+          const response = await Fetch_Courses(
             storedUser.role,
             storedUser.userId,
           );
 
           setCourses(response?.courses || []);
         } else if (storedUser?.role === "teacher") {
-          const response = await Get_Courses(
+          const response = await Fetch_Courses(
             storedUser.role,
             storedUser.userId,
           );

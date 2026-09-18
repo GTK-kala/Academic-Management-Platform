@@ -22,7 +22,7 @@ export const Add_Course = async (courseData) => {
   }
 };
 
-export const Get_Courses = async (role, userId) => {
+export const Fetch_Courses = async (role, userId) => {
   try {
     const res = await fetch(`${BASE_URL}/courses/list/${userId}`, {
       method: "GET",
