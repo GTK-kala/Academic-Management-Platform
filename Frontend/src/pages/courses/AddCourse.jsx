@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import Button from "../../components/common/Button";
 import { FiArrowLeft, FiSave, FiX } from "react-icons/fi";
 import { Add_Course } from "../../services/courseService";
-import { Get_Teachers } from "../../services/teacherService";
+import { Fetch_Teachers } from "../../services/teacherService";
 import { Fetch_Course, Edit_Course } from "../../services/courseService";
 import { useNavigate, useParams, Link } from "react-router-dom";
 
@@ -36,7 +36,7 @@ const AddCourse = () => {
     const fetchInitialData = async () => {
       try {
         // Fetch teachers
-        const teachersRes = await Get_Teachers();
+        const teachersRes = await Fetch_Teachers();
         setTeachers(teachersRes?.teachers || []);
 
         // If editing, fetch course data

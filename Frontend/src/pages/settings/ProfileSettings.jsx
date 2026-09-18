@@ -23,7 +23,7 @@ import {
 } from "react-icons/fi";
 import api from "../../services/api";
 import {
-  Get_User,
+  Fetch_User,
   Update_Profile,
   Update_Password,
 } from "../../services/userService";
@@ -94,7 +94,7 @@ const ProfileSettings = () => {
       const user = JSON.parse(localStorage.getItem("user"));
       try {
         // Fetch user profile data
-        const response = await Get_User(user?.userId, user?.role);
+        const response = await Fetch_User(user?.userId, user?.role);
         const userData = response?.user || response.data;
 
         setProfileForm({

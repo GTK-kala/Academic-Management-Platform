@@ -1,6 +1,6 @@
 const BASE_URL = import.meta.env.VITE_API_URL;
 
-export const Get_Teachers = async () => {
+export const Fetch_Teachers = async () => {
   try {
     const res = await fetch(`${BASE_URL}/teachers/all`, {
       method: "GET",
