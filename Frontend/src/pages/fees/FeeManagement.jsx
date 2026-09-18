@@ -15,8 +15,8 @@ import { useAuth } from "../../context/AuthContext";
 import { Fetch_Courses } from "../../services/courseService";
 import {
   Pay_Fee_Structure,
-  Get_Fee_Structure,
   Add_Fee_Structure,
+  Fetch_Fee_Structure,
 } from "../../services/feeService";
 import toast from "react-hot-toast";
 import { Link, useParams } from "react-router-dom";
@@ -75,7 +75,7 @@ const FeeManagement = () => {
   const fetchFeeStructures = async (userId, role, id) => {
     setLoading(true);
     try {
-      const FeeData = await Get_Fee_Structure(userId, role, id);
+      const FeeData = await Fetch_Fee_Structure(userId, role, id);
       const FeeStructures = FeeData?.fee_structure || [];
       setFeeStructures(FeeStructures);
       setFilteredStructures(FeeStructures);

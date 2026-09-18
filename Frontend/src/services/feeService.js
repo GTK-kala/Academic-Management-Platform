@@ -1,6 +1,6 @@
 const BASE_URL = import.meta.env.VITE_API_URL;
 
-export const Get_Fee_Structures = async (userId, role) => {
+export const Fetch_Fee_Structures = async (userId, role) => {
   try {
     const response = await fetch(
       `${BASE_URL}/fees/structure?userId=${userId}&userRole=${role}`,
@@ -25,7 +25,7 @@ export const Get_Fee_Structures = async (userId, role) => {
   }
 };
 
-export const Get_Fee_Structure = async (userId, role, courseId) => {
+export const Fetch_Fee_Structure = async (userId, role, courseId) => {
   try {
     const response = await fetch(
       `${BASE_URL}/fees/structure/${courseId}?userId=${userId}&userRole=${role}`,

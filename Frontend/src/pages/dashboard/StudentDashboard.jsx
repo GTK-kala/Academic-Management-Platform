@@ -10,7 +10,7 @@ import {
   FiBarChart2,
   FiClock,
 } from "react-icons/fi";
-import { Get_Fee_Structure } from "../../services/feeService";
+import { Fetch_Fee_Structure } from "../../services/feeService";
 import { Fetch_ALL_Grades } from "../../services/gradeService";
 
 const StudentDashboard = () => {
@@ -39,7 +39,7 @@ const StudentDashboard = () => {
         setRecentGrades(gradesRes?.grades?.slice(0, 5) || []);
 
         // Fetch fee payments
-        const feesRes = await Get_Fee_Structure(user?.userId, user?.role);
+        const feesRes = await Fetch_Fee_Structure(user?.userId, user?.role);
         const payments = feesRes?.fee_structure || [];
 
         setFeeSummary({

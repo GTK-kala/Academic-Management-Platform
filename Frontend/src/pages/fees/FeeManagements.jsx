@@ -22,7 +22,7 @@ import { Fetch_Courses } from "../../services/courseService";
 import {
   Pay_Fee_Structure,
   Add_Fee_Structure,
-  Get_Fee_Structures,
+  Fetch_Fee_Structures,
 } from "../../services/feeService";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
@@ -80,7 +80,7 @@ const FeeManagements = () => {
   const fetchFeeStructures = async (userId, role) => {
     setLoading(true);
     try {
-      const FeeData = await Get_Fee_Structures(userId, role);
+      const FeeData = await Fetch_Fee_Structures(userId, role);
       const FeeStructures = FeeData?.fee_structure || [];
       setFeeStructures(FeeStructures);
       setFilteredStructures(FeeStructures);
