@@ -1,6 +1,6 @@
 const BASE_URL = import.meta.env.VITE_API_URL;
 
-export const Get_Attendances = async (courseId, userRole, userId) => {
+export const Fetch_Attendances = async (courseId, userRole, userId) => {
   try {
     if (
       (userRole === "admin" && courseId === "all") ||
@@ -50,7 +50,7 @@ export const Get_Attendances = async (courseId, userRole, userId) => {
   }
 };
 
-export const Get_Attendance = async (courseId, userRole, userId) => {
+export const Fetch_Attendance = async (courseId, userRole, userId) => {
   try {
     if (
       (userRole === "admin" && courseId === "all") ||

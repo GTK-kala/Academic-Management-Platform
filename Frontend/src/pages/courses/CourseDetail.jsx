@@ -14,7 +14,7 @@ import api from "../../services/api";
 import Button from "../../components/common/Button";
 import { Fetch_Course, Enrolled_Courses } from "../../services/courseService";
 import { useAuth } from "../../context/AuthContext";
-import { Get_Attendances } from "../../services/attendanceService";
+import { Fetch_Attendances } from "../../services/attendanceService";
 import { useParams, useNavigate, Link } from "react-router-dom";
 
 const CourseDetail = () => {
@@ -46,7 +46,7 @@ const CourseDetail = () => {
         setEnrolledStudents(enrollments);
 
         // Fetch attendance stats
-        const attendanceRes = await Get_Attendances(
+        const attendanceRes = await Fetch_Attendances(
           courseData?.id,
           user?.role,
           user?.userId,

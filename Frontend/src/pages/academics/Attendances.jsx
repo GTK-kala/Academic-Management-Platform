@@ -17,7 +17,7 @@ import { Fetch_Courses, Enrolled_Courses } from "../../services/courseService";
 
 import {
   Add_Attendance,
-  Get_Attendances,
+  Fetch_Attendances,
 } from "../../services/attendanceService";
 
 const Attendances = () => {
@@ -103,7 +103,7 @@ const Attendances = () => {
 
       try {
         if (selectedCourse === "all" && storedUser.role) {
-          const res = await Get_Attendances(
+          const res = await Fetch_Attendances(
             selectedCourse,
             storedUser?.role,
             storedUser?.userId,
@@ -111,7 +111,7 @@ const Attendances = () => {
 
           setAttendanceRecords(res?.attendance || []);
         } else if (selectedCourse !== "all" && storedUser?.role) {
-          const res = await Get_Attendances(
+          const res = await Fetch_Attendances(
             selectedCourse,
             storedUser?.role,
             storedUser?.userId,
