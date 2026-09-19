@@ -13,6 +13,7 @@ import Button from "../../components/common/Button";
 import { Fetch_Courses } from "../../services/courseService";
 import { Fetch_Fee_Structures } from "../../services/feeService";
 import { Fetch_Students } from "../../services/studentService";
+import { Fetch_Attendances } from "../../services/attendanceService";
 
 const AdminDashboard = () => {
   const [stats, setStats] = useState(null);

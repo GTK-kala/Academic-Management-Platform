@@ -1,6 +1,6 @@
 import api from "../../services/api";
 import { Link } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { Enrolled_Courses } from "../../services/courseService";
 import {
@@ -10,6 +10,7 @@ import {
   FiBarChart2,
   FiClock,
 } from "react-icons/fi";
+import { Fetch_Attendances } from "../../services/attendanceService";
 import { Fetch_Fee_Structure } from "../../services/feeService";
 import { Fetch_ALL_Grades } from "../../services/gradeService";
 
@@ -18,6 +19,7 @@ const StudentDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [attendanceStats, setAttendanceStats] = useState({
     present: 0,
+    excused: 0,
     absent: 0,
     late: 0,
   });
@@ -54,13 +56,18 @@ const StudentDashboard = () => {
         });
 
         // Attendance stats (simplified)
-        // const attendanceRes = await api.get("/attendance");
-        // const records = attendanceRes.data?.attendance || [];
-        // setAttendanceStats({
-        //   present: records.filter((r) => r.status === "present").length,
-        //   absent: records.filter((r) => r.status === "absent").length,
-        //   late: records.filter((r) => r.status === "late").length,
-        // });
+        const attendanceRes = await Fetch_Attendances(
+          "all",
+          user?.role,
+          user?.userId,
+        );
+        const records = attendanceRes?.attendance || [];
+        setAttendanceStats({
+          present: records.filter((r) => r.status === "present").length,
+          absent: records.filter((r) => r.status === "absent").length,
+          late: records.filter((r) => r.status === "late").length,
+          excused: records.filter((r) => r.status === "excused").length,
+        });
       } catch (error) {
         console.error("Failed to load dashboard:", error);
       } finally {
