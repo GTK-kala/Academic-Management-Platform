@@ -313,7 +313,7 @@ const Add_Grade = async (req, res) => {
 
 // Fetch All Grade
 
-const Fetch_Grade_All = (req, res) => {
+const Get_Grade_All = (req, res) => {
   const { userId } = req.params;
   const { userRole } = req.query;
   try {
@@ -437,7 +437,7 @@ const Fetch_Grade_All = (req, res) => {
 };
 
 // Fetch one Grade
-const Fetch_Grade_One = (req, res) => {
+const Get_Grade_One = (req, res) => {
   const { courseId } = req.params;
   const { userRole, userId } = req.query;
   try {
@@ -566,7 +566,7 @@ const Fetch_Grade_One = (req, res) => {
 
 // Fetch Grade by Course Id
 
-const Fetch_Grade_By_Course = (req, res) => {
+const Get_Grade_By_Course = (req, res) => {
   const { courseId } = req.params;
   const { userRole, userId } = req.query;
   try {
@@ -656,7 +656,7 @@ const Fetch_Grade_By_Course = (req, res) => {
 
 // Fetch Grade by Student Id
 
-const Fetch_Grade_By_Student = (req, res) => {
+const Get_Grade_By_Student = (req, res) => {
   const { studentId } = req.params;
   const { userRole, userId } = req.query;
   try {
@@ -784,7 +784,7 @@ const Fetch_Grade_By_Student = (req, res) => {
 
 // Fetch Grade By Both Student and Course Id
 
-const Fetch_Grade_By_Both = (req, res) => {
+const Get_Grade_By_Both = (req, res) => {
   const { courseId, studentId } = req.params;
   try {
     const grade_sql = `SELECT
@@ -833,9 +833,9 @@ const Fetch_Grade_By_Both = (req, res) => {
 
 export {
   Add_Grade,
-  Fetch_Grade_All,
-  Fetch_Grade_One,
-  Fetch_Grade_By_Course,
-  Fetch_Grade_By_Student,
-  Fetch_Grade_By_Both,
+  Get_Grade_All,
+  Get_Grade_One,
+  Get_Grade_By_Both,
+  Get_Grade_By_Course,
+  Get_Grade_By_Student,
 };
