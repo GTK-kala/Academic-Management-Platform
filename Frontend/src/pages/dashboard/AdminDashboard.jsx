@@ -21,6 +21,12 @@ const AdminDashboard = () => {
   const [courses, setCourses] = useState([]);
   const [collectionRate, setCollectionRate] = useState(0);
   const [recentStudents, setRecentStudents] = useState([]);
+  const [attendanceStats, setAttendanceStats] = useState({
+    present: 0,
+    excused: 0,
+    absent: 0,
+    late: 0,
+  });
 
   const fetchData = async () => {
     try {
@@ -28,9 +34,17 @@ const AdminDashboard = () => {
       const courses = await Fetch_Courses(user?.role, user?.userId);
       const feeRes = await Fetch_Fee_Structures(user?.userId, user?.role);
       const response = await Fetch_Students(user?.userId, user?.role);
+      const attRes = Fetch_Attendances("all", user?.role, user?.userId);
       const fee = feeRes.fee_structure;
       let collectedFee = fee.reduce((sum, f) => sum + Number(f.paid_amount), 0);
       let totalFee = fee.reduce((sum, f) => sum + Number(f.total_amount), 0);
+      const records = attRes?.attendance || [];
+      setAttendanceStats({
+        present: records.filter((r) => r.status === "present").length,
+        absent: records.filter((r) => r.status === "absent").length,
+        late: records.filter((r) => r.status === "late").length,
+        excused: records.filter((r) => r.status === "excused").length,
+      });
       if (collectedFee) {
         const rate = Math.round(
           (Number(collectedFee) * 100) / Number(totalFee),
@@ -71,7 +85,15 @@ const AdminDashboard = () => {
     },
     {
       title: "Attendance Rate",
-      value: stats?.attendanceRate || "0%",
+      value: `${
+        attendanceStats.present + attendanceStats.absent > 0
+          ? Math.round(
+              (attendanceStats.present /
+                (attendanceStats.present + attendanceStats.absent)) *
+                100,
+            )
+          : 0
+      }%`,
       icon: FiTrendingUp,
       change: "+1.2%",
     },
