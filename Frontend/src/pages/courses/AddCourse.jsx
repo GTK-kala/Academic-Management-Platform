@@ -1,11 +1,10 @@
-import api from "../../services/api";
 import { useState, useEffect } from "react";
 import Button from "../../components/common/Button";
 import { FiArrowLeft, FiSave, FiX } from "react-icons/fi";
 import { Add_Course } from "../../services/courseService";
 import { Fetch_Teachers } from "../../services/teacherService";
-import { Fetch_Course, Edit_Course } from "../../services/courseService";
 import { useNavigate, useParams, Link } from "react-router-dom";
+import { Fetch_Course, Edit_Course } from "../../services/courseService";
 
 const AddCourse = () => {
   const navigate = useNavigate();

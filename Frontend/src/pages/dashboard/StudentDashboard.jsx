@@ -1,6 +1,5 @@
-import api from "../../services/api";
 import { Link } from "react-router-dom";
-import { useState, useEffect, use } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { Enrolled_Courses } from "../../services/courseService";
 import {
@@ -10,9 +9,9 @@ import {
   FiBarChart2,
   FiClock,
 } from "react-icons/fi";
-import { Fetch_Attendances } from "../../services/attendanceService";
-import { Fetch_Fee_Structure } from "../../services/feeService";
 import { Fetch_ALL_Grades } from "../../services/gradeService";
+import { Fetch_Fee_Structure } from "../../services/feeService";
+import { Fetch_Attendances } from "../../services/attendanceService";
 
 const StudentDashboard = () => {
   const { user } = useAuth();

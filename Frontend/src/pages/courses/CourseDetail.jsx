@@ -12,10 +12,10 @@ import {
 } from "react-icons/fi";
 import api from "../../services/api";
 import Button from "../../components/common/Button";
-import { Fetch_Course, Enrolled_Courses } from "../../services/courseService";
 import { useAuth } from "../../context/AuthContext";
-import { Fetch_Attendances } from "../../services/attendanceService";
 import { useParams, useNavigate, Link } from "react-router-dom";
+import { Fetch_Attendances } from "../../services/attendanceService";
+import { Fetch_Course, Enrolled_Courses } from "../../services/courseService";
 
 const CourseDetail = () => {
   const { id } = useParams();

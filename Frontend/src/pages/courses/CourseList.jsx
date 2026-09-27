@@ -8,12 +8,11 @@ import {
   FiArrowRight,
 } from "react-icons/fi";
 import toast from "react-hot-toast";
-import api from "../../services/api";
 import Button from "../../components/common/Button";
 import { useAuth } from "../../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
-import { Fetch_Courses, Enroll_Course } from "../../services/courseService";
 import { Enrolled_Courses } from "../../services/courseService";
+import { Fetch_Courses, Enroll_Course } from "../../services/courseService";
 
 const CourseList = () => {
   const { user } = useAuth();
