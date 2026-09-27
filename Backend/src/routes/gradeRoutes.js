@@ -23,7 +23,7 @@ GradeRouters.get(
   VerifyToken,
   Get_Grade_By_Both,
 );
-GradeRouters.get("/grade/:courseId", VerifyToken, Get_Grade_One);
 GradeRouters.get("/grade/:userId", VerifyToken, Get_Grade_All);
+GradeRouters.get("/grade/course/:courseId", VerifyToken, Get_Grade_One);
 
 export default GradeRouters;

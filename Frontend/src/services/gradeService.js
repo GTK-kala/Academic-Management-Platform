@@ -54,7 +54,7 @@ export const Fetch_ALL_Grades = async (userId, userRole) => {
 export const Fetch_ALL_Grade = async (userId, userRole, courseId) => {
   try {
     const res = await fetch(
-      `${BASE_URL}/grades/grade/${courseId}?userRole=${userRole}&userId=${userId}`,
+      `${BASE_URL}/grades/grade/course/${courseId}?userRole=${userRole}&userId=${userId}`,
       {
         method: "GET",
         headers: {
