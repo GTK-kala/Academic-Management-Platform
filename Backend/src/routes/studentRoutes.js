@@ -4,6 +4,7 @@ import {
   Get_Student,
   Get_Students,
   Edit_Student,
+  Delete_Student,
 } from "../controllers/studentController.js";
 import { VerifyToken, VerifyUser } from "../middleware/authMiddleware.js";
 
@@ -13,5 +14,6 @@ StudentRouters.get("/all/:userId", VerifyToken, Get_Students);
 StudentRouters.put("/edit/:studentId", VerifyToken, VerifyUser, Edit_Student);
 StudentRouters.get("/student/:studentId", VerifyToken, Get_Student);
 StudentRouters.post("/add", VerifyToken, VerifyUser, Add_Student);
+StudentRouters.delete("/delete", VerifyToken, VerifyUser, Delete_Student);
 
 export default StudentRouters;

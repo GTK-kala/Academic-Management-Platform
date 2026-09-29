@@ -96,3 +96,25 @@ export const Edit_Student = async (studentId, studentData) => {
     throw error;
   }
 };
+
+export const Delete_Student = async (studentId, userRole) => {
+  try {
+    const res = await fetch(`${BASE_URL}/students/delete/${studentId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    });
+    if (!res.ok) {
+      const errorData = await res.json();
+      toast.error(errorData.message || "Failed to delete student");
+    } else {
+      const data = await res.json();
+      toast.success(data.message || "Student deleted successfully");
+    }
+  } catch (error) {
+    console.error("API request failed:", error);
+    throw error;
+  }
+};

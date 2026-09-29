@@ -285,4 +285,36 @@ const Edit_Student = (req, res) => {
   }
 };
 
-export { Add_Student, Get_Students, Get_Student, Edit_Student };
+const Delete_Student = (req, res) => {
+  const { studentId, userRole } = req.query;
+  try {
+    if (userRole === "admin") {
+      const delete_sql = `DELETE FROM users
+          WHERE
+              id = ?
+              AND role = "student"`;
+      db.query(delete_sql, [studentId], (err, result) => {
+        if (err) {
+          return res.status(500).json({
+            message: err,
+          });
+        } else {
+          return res.status(200).json({
+            message: "student  deleted !!!",
+          });
+        }
+      });
+    } else {
+      res.status(403).json({
+        message: "unauthorized access!!!",
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to edit student",
+      error: error.message,
+    });
+  }
+};
+
+export { Add_Student, Get_Students, Get_Student, Edit_Student, Delete_Student };
