@@ -22,6 +22,7 @@ import Button from "../../components/common/Button";
 import { useAuth } from "../../context/AuthContext";
 import { Payed_Fee_Structure } from "../../services/feeService";
 import { Fetch_Student } from "../../services/studentService";
+import { Delete_Student } from "../../services/studentService";
 import { Enrolled_Courses } from "../../services/courseService";
 import { Fetch_Attendances } from "../../services/attendanceService";
 import { Fetch_Grade_By_Student } from "../../services/gradeService";
@@ -90,11 +91,11 @@ const StudentProfile = () => {
   }, [id]);
 
   // Handle student deletion
-  const handleDelete = async () => {
+  const handleDelete = async (id) => {
     setDeleteLoading(true);
+    const user = JSON.parse(localStorage.getItem("user"));
     try {
-      await api.delete(`/students/${id}`);
-      navigate("/students");
+      const response = await Delete_Student(id, user?.role);
     } catch (err) {
       console.error("Failed to delete student:", err);
       alert("Failed to delete student: " + err.message);
@@ -791,7 +792,7 @@ const StudentProfile = () => {
                 </Button>
                 <Button
                   variant="danger"
-                  onClick={handleDelete}
+                  onClick={() => handleDelete(id)}
                   disabled={deleteLoading}
                 >
                   {deleteLoading ? "Deleting..." : "Delete Student"}

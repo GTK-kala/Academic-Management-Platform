@@ -30,12 +30,12 @@ const StudentList = () => {
 
   const handleDelete = async (id) => {
     const user = JSON.parse(localStorage.getItem("user"));
-    if (!window.confirm("Delete this student?")) return;
+    if (!window.confirm("remove this student ")) return;
     try {
       const response = await Delete_Student(id, user?.role);
       setStudents(students.filter((s) => s.id !== id));
     } catch (err) {
-      toast.error("Delete failed: " + err.message);
+      toast.error("Failed to delete student");
     }
   };
 

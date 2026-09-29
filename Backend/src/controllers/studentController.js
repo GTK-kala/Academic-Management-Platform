@@ -290,18 +290,37 @@ const Delete_Student = (req, res) => {
   const { studentId } = req.params;
   try {
     if (userRole === "admin") {
-      const delete_sql = `DELETE FROM students
-          WHERE
-              id = ?
-              AND role = "student"`;
-      db.query(delete_sql, [studentId], (err, result) => {
+      const select_sql = `SELECT
+       *
+           FROM
+               students
+           WHERE
+               id = ?`;
+      db.query(select_sql, [studentId], (err, result) => {
         if (err) {
           return res.status(500).json({
             message: err,
           });
-        } else if (result.affectedRows > 0) {
-          return res.status(200).json({
-            message: "student  deleted !!!",
+        } else if (result.length === 1) {
+          const student_id = result.id;
+          const delete_sql = `DELETE FROM students
+              WHERE
+                  id = ?
+                  AND role = "student"`;
+          db.query(delete_sql, [studentId], (err, result) => {
+            if (err) {
+              return res.status(500).json({
+                message: err,
+              });
+            } else if (result.affectedRows > 0) {
+              return res.status(200).json({
+                message: "student  deleted !!!",
+              });
+            }
+          });
+        } else {
+          return res.status(400).json({
+            message: "student not found!!!",
           });
         }
       });

@@ -98,7 +98,6 @@ export const Edit_Student = async (studentId, studentData) => {
 };
 
 export const Delete_Student = async (studentId, userRole) => {
-  console.log(studentId, userRole);
   try {
     const res = await fetch(
       `${BASE_URL}/students/delete/${studentId}?userRole=${userRole}`,
