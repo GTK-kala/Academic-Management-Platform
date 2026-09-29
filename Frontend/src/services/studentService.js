@@ -98,14 +98,18 @@ export const Edit_Student = async (studentId, studentData) => {
 };
 
 export const Delete_Student = async (studentId, userRole) => {
+  console.log(studentId, userRole);
   try {
-    const res = await fetch(`${BASE_URL}/students/delete/${studentId}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
+    const res = await fetch(
+      `${BASE_URL}/students/delete/${studentId}?userRole=${userRole}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
       },
-      credentials: "include",
-    });
+    );
     if (!res.ok) {
       const errorData = await res.json();
       toast.error(errorData.message || "Failed to delete student");

@@ -286,10 +286,11 @@ const Edit_Student = (req, res) => {
 };
 
 const Delete_Student = (req, res) => {
-  const { studentId, userRole } = req.query;
+  const { userRole } = req.query;
+  const { studentId } = req.params;
   try {
     if (userRole === "admin") {
-      const delete_sql = `DELETE FROM users
+      const delete_sql = `DELETE FROM students
           WHERE
               id = ?
               AND role = "student"`;
@@ -298,7 +299,7 @@ const Delete_Student = (req, res) => {
           return res.status(500).json({
             message: err,
           });
-        } else {
+        } else if (result.affectedRows > 0) {
           return res.status(200).json({
             message: "student  deleted !!!",
           });

@@ -2,8 +2,8 @@ import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Button from "../../components/common/Button";
-import { Fetch_Students } from "../../services/studentService";
 import { FiPlus, FiSearch, FiEdit2, FiTrash2 } from "react-icons/fi";
+import { Fetch_Students, Delete_Student } from "../../services/studentService";
 
 const StudentList = () => {
   const [students, setStudents] = useState([]);
@@ -29,9 +29,10 @@ const StudentList = () => {
   }, []);
 
   const handleDelete = async (id) => {
+    const user = JSON.parse(localStorage.getItem("user"));
     if (!window.confirm("Delete this student?")) return;
     try {
-      const response = await fetchRecentStudents();
+      const response = await Delete_Student(id, user?.role);
       setStudents(students.filter((s) => s.id !== id));
     } catch (err) {
       toast.error("Delete failed: " + err.message);
