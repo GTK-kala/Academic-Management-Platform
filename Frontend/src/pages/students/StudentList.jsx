@@ -6,10 +6,13 @@ import { FiPlus, FiSearch, FiEdit2, FiTrash2 } from "react-icons/fi";
 import { Fetch_Students, Delete_Student } from "../../services/studentService";
 
 const StudentList = () => {
+  const [student, setStudent] = useState([]);
+  const [deleteId, setDeleteId] = useState(0);
   const [students, setStudents] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
-  const [deleteId, setDeleteId] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   const fetchStudents = async () => {
     try {
@@ -28,14 +31,18 @@ const StudentList = () => {
     fetchStudents();
   }, []);
 
-  const handleDelete = async (id) => {
+  const handleDelete = async () => {
+    setDeleteLoading(true);
     const user = JSON.parse(localStorage.getItem("user"));
-    if (!window.confirm("remove this student ")) return;
     try {
-      const response = await Delete_Student(id, user?.role);
-      setStudents(students.filter((s) => s.id !== id));
+      const res = await Delete_Student(deleteId, user?.role);
+      setStudents(students.filter((s) => s.id !== deleteId));
     } catch (err) {
       toast.error("Failed to delete student");
+      setShowDeleteModal(false);
+    } finally {
+      setDeleteLoading(false);
+      setShowDeleteModal(false);
     }
   };
 
@@ -125,7 +132,9 @@ const StudentList = () => {
                         <FiEdit2 size={18} />
                       </Link>
                       <button
-                        onClick={() => handleDelete(student.id)}
+                        onClick={() => {
+                          (setDeleteId(student.id), setShowDeleteModal(true));
+                        }}
                         className="text-red-500 hover:text-red-700"
                       >
                         <FiTrash2 size={18} />
@@ -138,6 +147,45 @@ const StudentList = () => {
           </table>
         </div>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-dark-card rounded-2xl shadow-xl w-full max-w-md">
+            <div className="p-6 border-b border-gray-200 dark:border-dark-border">
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+                Delete Student
+              </h3>
+            </div>
+            <div className="p-6">
+              <p className="text-gray-600 dark:text-gray-300 mb-6">
+                Are you sure you want to delete{" "}
+                <strong>
+                  {student?.first_name} {student?.last_name}
+                </strong>
+                ? This action cannot be undone and will remove all associated
+                records.
+              </p>
+              <div className="flex gap-3 justify-end">
+                <Button
+                  variant="secondary"
+                  onClick={() => setShowDeleteModal(false)}
+                  disabled={deleteLoading}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="danger"
+                  onClick={() => handleDelete()}
+                  disabled={deleteLoading}
+                >
+                  {deleteLoading ? "Deleting..." : "Delete Student"}
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

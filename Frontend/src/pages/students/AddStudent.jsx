@@ -60,8 +60,6 @@ const AddStudent = () => {
 
       await Add_Student(formData);
 
-      toast.success("Student created successfully");
-
       navigate("/students");
     } catch (err) {
       setError(err.message || "Failed to create student.");

@@ -102,6 +102,7 @@ const StudentProfile = () => {
       setShowDeleteModal(false);
     } finally {
       setDeleteLoading(false);
+      setShowDeleteModal(false);
     }
   };
 

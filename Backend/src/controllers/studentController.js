@@ -26,12 +26,20 @@ const Add_Student = (req, res) => {
         const hashedPassword = bcrypt.hashSync(password, 10);
         const { date_of_birth, gender, phone, address } = req.body;
         const sql_student_first = `INSERT INTO
-            users (first_name, last_name, email, password_hash, role)
+            users (first_name, last_name, email, password_hash, role, phone, address)
             VALUES
-            (?, ?, ?, ?, ?)`;
+            (?, ?, ?, ?, ?, ?, ?)`;
         db.query(
           sql_student_first,
-          [first_name, last_name, email, hashedPassword, "student"],
+          [
+            first_name,
+            last_name,
+            email,
+            hashedPassword,
+            "student",
+            phone,
+            address,
+          ],
           (err, results) => {
             if (err) {
               return res.status(500).json({
@@ -301,20 +309,36 @@ const Delete_Student = (req, res) => {
           return res.status(500).json({
             message: err,
           });
-        } else if (result.length === 1) {
-          const student_id = result.id;
+        } else if (result.length > 0) {
+          const userId = result[0].user_id;
           const delete_sql = `DELETE FROM students
               WHERE
-                  id = ?
-                  AND role = "student"`;
+                  id = ?`;
           db.query(delete_sql, [studentId], (err, result) => {
             if (err) {
+              console.log(err);
               return res.status(500).json({
                 message: err,
               });
-            } else if (result.affectedRows > 0) {
-              return res.status(200).json({
-                message: "student  deleted !!!",
+            } else if (result.affectedRows === 1) {
+              const delete_sql = `DELETE FROM users
+                  WHERE
+                      id = ?`;
+              db.query(delete_sql, [userId], (err, result) => {
+                if (err) {
+                  console.log(err);
+                  return res.status(500).json({
+                    message: err,
+                  });
+                } else if (result.affectedRows === 1) {
+                  return res.status(200).json({
+                    message: "student  deleted !!!",
+                  });
+                }
+              });
+            } else {
+              return res.status(400).json({
+                message: "student not found!!!",
               });
             }
           });

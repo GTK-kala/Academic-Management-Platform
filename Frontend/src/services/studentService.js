@@ -16,7 +16,7 @@ export const Add_Student = async (studentData) => {
       toast.error(errorData.message || "Failed to add student");
     } else {
       const data = await res.json();
-      toast.success(data.message || "Student added successfully");
+      toast.success("Student added successfully");
     }
   } catch (error) {
     console.error("Error adding student:", error);
@@ -115,6 +115,7 @@ export const Delete_Student = async (studentId, userRole) => {
     } else {
       const data = await res.json();
       toast.success(data.message || "Student deleted successfully");
+      return;
     }
   } catch (error) {
     console.error("API request failed:", error);
