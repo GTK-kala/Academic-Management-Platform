@@ -43,6 +43,8 @@ const ProfileSettings = () => {
   const [profileLoading, setProfileLoading] = useState(false);
   const [passwordLoading, setPasswordLoading] = useState(false);
   const [notificationLoading, setNotificationLoading] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   // Success/Error messages
   const [successMessage, setSuccessMessage] = useState("");
@@ -270,10 +272,8 @@ const ProfileSettings = () => {
 
   // Handle logout
   const handleLogout = () => {
-    if (window.confirm("Are you sure you want to logout ?")) {
-      logout();
-      navigate("/login");
-    }
+    logout();
+    navigate("/login");
   };
 
   // Toggle password visibility
@@ -360,11 +360,11 @@ const ProfileSettings = () => {
               </div>
             </div>
             <button
-              onClick={handleLogout}
+              onClick={() => setShowDeleteModal(true)}
               className="flex items-center justify-center w-full gap-2 px-4 py-2 text-sm font-medium text-red-600 transition-colors rounded-lg bg-red-50 dark:bg-red-900/20 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30"
             >
               <FiTrash2 className="w-4 h-4" />
-              Logout
+              Log Out
             </button>
           </div>
         </div>
@@ -568,6 +568,46 @@ const ProfileSettings = () => {
                     )}
                   </Button>
                 </div>
+                {/* Delete Confirmation Modal */}
+                {showDeleteModal && (
+                  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                    <div className="bg-white dark:bg-dark-card rounded-2xl shadow-xl w-full max-w-md">
+                      <div className="p-6 border-b border-gray-200 dark:border-dark-border">
+                        <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+                          Log Out Confirmation
+                        </h3>
+                      </div>
+                      <div className="p-6">
+                        <p className="text-gray-600 dark:text-gray-300 mb-6">
+                          Are you sure you want to log out{" "}
+                          <strong>
+                            {profileForm.firstName} {profileForm.lastName} ?
+                          </strong>
+                          <span className="inline ml-1">
+                            This action cannot be undone and will remove all
+                            associated records.
+                          </span>
+                        </p>
+                        <div className="flex gap-3 justify-end">
+                          <Button
+                            variant="secondary"
+                            onClick={() => setShowDeleteModal(false)}
+                            disabled={deleteLoading}
+                          >
+                            Cancel
+                          </Button>
+                          <Button
+                            variant="danger"
+                            onClick={() => handleLogout()}
+                            disabled={deleteLoading}
+                          >
+                            {deleteLoading ? "logging out..." : "Log out"}
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </form>
             )}
 

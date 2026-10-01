@@ -296,69 +296,141 @@ const Edit_Student = (req, res) => {
 const Delete_Student = (req, res) => {
   const { userRole } = req.query;
   const { studentId } = req.params;
-  try {
-    if (userRole === "admin") {
-      const select_sql = `SELECT
-       *
-           FROM
-               students
-           WHERE
-               id = ?`;
-      db.query(select_sql, [studentId], (err, result) => {
-        if (err) {
-          return res.status(500).json({
-            message: err,
-          });
-        } else if (result.length > 0) {
-          const userId = result[0].user_id;
-          const delete_sql = `DELETE FROM students
-              WHERE
-                  id = ?`;
-          db.query(delete_sql, [studentId], (err, result) => {
-            if (err) {
-              console.log(err);
-              return res.status(500).json({
-                message: err,
-              });
-            } else if (result.affectedRows === 1) {
-              const delete_sql = `DELETE FROM users
-                  WHERE
-                      id = ?`;
-              db.query(delete_sql, [userId], (err, result) => {
-                if (err) {
-                  console.log(err);
-                  return res.status(500).json({
-                    message: err,
-                  });
-                } else if (result.affectedRows === 1) {
-                  return res.status(200).json({
-                    message: "student  deleted !!!",
-                  });
-                }
-              });
-            } else {
-              return res.status(400).json({
-                message: "student not found!!!",
-              });
-            }
-          });
-        } else {
-          return res.status(400).json({
-            message: "student not found!!!",
-          });
-        }
-      });
-    } else {
-      res.status(403).json({
-        message: "unauthorized access!!!",
-      });
-    }
-  } catch (error) {
-    res.status(500).json({
-      message: "Failed to edit student",
-      error: error.message,
+
+  if (userRole !== "admin") {
+    return res.status(403).json({
+      message: "Unauthorized access!!!",
     });
   }
+
+  // Get the student's user_id and enrolled courses
+  const select_sql = `
+      SELECT
+          s.user_id,
+          e.course_id
+      FROM
+          students s
+          LEFT JOIN enrollments e ON s.id = e.student_id
+      WHERE
+          s.id = ?
+  `;
+
+  db.query(select_sql, [studentId], (err, result) => {
+    if (err) {
+      console.error(err);
+
+      return res.status(500).json({
+        message: "Failed to find student",
+        error: err.message,
+      });
+    }
+
+    if (result.length === 0) {
+      return res.status(404).json({
+        message: "Student not found!!!",
+      });
+    }
+
+    const userId = result[0].user_id;
+
+    // Get unique course IDs
+    const courseIds = [
+      ...new Set(
+        result
+          .map((row) => row.course_id)
+          .filter((courseId) => courseId !== null),
+      ),
+    ];
+
+    // If student is enrolled in courses,
+    // decrease the count for each course
+    const updateCourseCounts = (callback) => {
+      if (courseIds.length === 0) {
+        return callback();
+      }
+
+      let completed = 0;
+
+      courseIds.forEach((courseId) => {
+        const update_sql = `
+            UPDATE courses
+            SET
+                count = GREATEST (count - 1, 0)
+            WHERE
+                id = ?
+        `;
+
+        db.query(update_sql, [courseId], (err) => {
+          if (err) {
+            return callback(err);
+          }
+
+          completed++;
+
+          if (completed === courseIds.length) {
+            callback();
+          }
+        });
+      });
+    };
+
+    updateCourseCounts((err) => {
+      if (err) {
+        console.error(err);
+
+        return res.status(500).json({
+          message: "Failed to update course enrollment count",
+          error: err.message,
+        });
+      }
+
+      // Delete student
+      const delete_student_sql = `
+          DELETE FROM students
+          WHERE
+              id = ?
+      `;
+
+      db.query(delete_student_sql, [studentId], (err, result) => {
+        if (err) {
+          console.error(err);
+
+          return res.status(500).json({
+            message: "Failed to delete student",
+            error: err.message,
+          });
+        }
+
+        if (result.affectedRows !== 1) {
+          return res.status(404).json({
+            message: "Student not found!!!",
+          });
+        }
+
+        // Delete associated user
+        const delete_user_sql = `
+            DELETE FROM users
+            WHERE
+                id = ?
+        `;
+
+        db.query(delete_user_sql, [userId], (err, result) => {
+          if (err) {
+            console.error(err);
+
+            return res.status(500).json({
+              message: "Student deleted, but user deletion failed",
+              error: err.message,
+            });
+          }
+
+          return res.status(200).json({
+            message: "Student deleted successfully!!!",
+          });
+        });
+      });
+    });
+  });
 };
 
 export { Add_Student, Get_Students, Get_Student, Edit_Student, Delete_Student };
