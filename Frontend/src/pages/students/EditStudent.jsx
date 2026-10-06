@@ -140,7 +140,7 @@ const EditStudent = () => {
             {/* FIRST NAME */}
             <div className="w-full min-w-0">
               <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                First Name *
+                First Name
               </label>
 
               <input
@@ -155,7 +155,7 @@ const EditStudent = () => {
             {/* LAST NAME */}
             <div className="w-full min-w-0">
               <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                Last Name *
+                Last Name
               </label>
 
               <input

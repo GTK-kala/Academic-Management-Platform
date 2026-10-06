@@ -132,7 +132,7 @@ const AddStudent = () => {
             {/* EMAIL */}
             <div className="w-full min-w-0">
               <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                Email
+                Email *
               </label>
 
               <input
@@ -147,7 +147,7 @@ const AddStudent = () => {
             {/* PASSWORD */}
             <div className="w-full min-w-0">
               <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                Password
+                Password *
               </label>
 
               <input
