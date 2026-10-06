@@ -282,24 +282,47 @@ const Add_Fee_Structure = (req, res) => {
 const Pay_Fee_Structure = (req, res) => {
   const { student_id, fee_structure_id, amount_paid } = req.body;
   try {
-    const student_sql = `SELECT
+    const select_sql = `SELECT
+            *
+        FROM
+            enrollments
+        WHERE
+            student_id = ?
+            AND course_id = (
+                SELECT
+                    course_id
+                FROM
+                    fee_structure
+                WHERE
+                    id = ?
+            )`;
+    db.query(select_sql, [student_id], (err, result) => {
+      if (err) {
+        console.error("Error paying fee structure:", err);
+        res.status(500).json({ error: "Failed to pay fee structure" });
+      } else if (result.length === 0) {
+        return res.status(400).json({
+          error: "Student is not enrolled in the course for this fee structure",
+        });
+      } else {
+        const student_sql = `SELECT
         *
         FROM
         fee_payments
         WHERE
         student_id = ?
         AND fee_structure_id = ?`;
-    db.query(
-      student_sql,
-      [student_id, fee_structure_id],
-      (err, student_result) => {
-        if (err) {
-          console.error("Error checking payment:", err);
-          return res.status(500).json({ error: "Internal server error" });
-        }
-        if (student_result.length > 0) {
-          // Update existing payment
-          const update_sql = `UPDATE fee_payments
+        db.query(
+          student_sql,
+          [student_id, fee_structure_id],
+          (err, student_result) => {
+            if (err) {
+              console.error("Error checking payment:", err);
+              return res.status(500).json({ error: "Internal server error" });
+            }
+            if (student_result.length > 0) {
+              // Update existing payment
+              const update_sql = `UPDATE fee_payments
               SET
               amount_paid = amount_paid + ?
               WHERE
@@ -314,38 +337,38 @@ const Pay_Fee_Structure = (req, res) => {
               id = ?
               )`;
 
-          db.query(
-            update_sql,
-            [
-              amount_paid,
-              student_id,
-              fee_structure_id,
-              amount_paid,
-              fee_structure_id,
-            ],
-            (err, update_result) => {
-              if (err) {
-                console.error("Error updating payment:", err);
+              db.query(
+                update_sql,
+                [
+                  amount_paid,
+                  student_id,
+                  fee_structure_id,
+                  amount_paid,
+                  fee_structure_id,
+                ],
+                (err, update_result) => {
+                  if (err) {
+                    console.error("Error updating payment:", err);
 
-                return res.status(500).json({
-                  error: "Internal server error",
-                });
-              }
+                    return res.status(500).json({
+                      error: "Internal server error",
+                    });
+                  }
 
-              if (update_result.affectedRows === 0) {
-                return res.status(400).json({
-                  error: "Payment exceeds the fee structure amount",
-                });
-              }
+                  if (update_result.affectedRows === 0) {
+                    return res.status(400).json({
+                      error: "Payment exceeds the fee structure amount",
+                    });
+                  }
 
-              return res.status(200).json({
-                message: "Payment updated successfully",
-              });
-            },
-          );
-        } else {
-          // Insert new payment
-          const insert_sql = `INSERT INTO
+                  return res.status(200).json({
+                    message: "Payment updated successfully",
+                  });
+                },
+              );
+            } else {
+              // Insert new payment
+              const insert_sql = `INSERT INTO
               fee_payments (
               student_id,
               fee_structure_id,
@@ -393,38 +416,42 @@ const Pay_Fee_Structure = (req, res) => {
               0
               ) + ?
               ) <= fs.amount`;
-          db.query(
-            insert_sql,
-            [
-              student_id,
-              fee_structure_id,
-              amount_paid,
-              new Date(),
-              student_id,
-              fee_structure_id,
-              amount_paid,
-              fee_structure_id,
-              student_id,
-              amount_paid,
-            ],
-            (err, insert_result) => {
-              if (err) {
-                console.error("Error inserting payment:", err);
-                return res.status(500).json({ error: "Internal server error" });
-              } else if (insert_result.affectedRows === 0) {
-                return res.status(400).json({
-                  error: "Payment exceeds the fee structure amount",
-                });
-              } else {
-                res.status(201).json({
-                  message: "Payment recorded successfully",
-                });
-              }
-            },
-          );
-        }
-      },
-    );
+              db.query(
+                insert_sql,
+                [
+                  student_id,
+                  fee_structure_id,
+                  amount_paid,
+                  new Date(),
+                  student_id,
+                  fee_structure_id,
+                  amount_paid,
+                  fee_structure_id,
+                  student_id,
+                  amount_paid,
+                ],
+                (err, insert_result) => {
+                  if (err) {
+                    console.error("Error inserting payment:", err);
+                    return res
+                      .status(500)
+                      .json({ error: "Internal server error" });
+                  } else if (insert_result.affectedRows === 0) {
+                    return res.status(400).json({
+                      error: "Payment exceeds the fee structure amount",
+                    });
+                  } else {
+                    res.status(201).json({
+                      message: "Payment recorded successfully",
+                    });
+                  }
+                },
+              );
+            }
+          },
+        );
+      }
+    });
   } catch (error) {
     console.error("Error paying fee structure:", error);
     res.status(500).json({ error: "Failed to pay fee structure" });

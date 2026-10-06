@@ -324,6 +324,8 @@ const LoginUser = (req, res) => {
               .json({
                 message: "Login successful",
                 userId: studentData.id,
+                firstName: user.first_name,
+                lastName: user.last_name,
                 role: user.role,
                 email: user.email,
               });
@@ -363,6 +365,8 @@ const LoginUser = (req, res) => {
             .json({
               message: "Login successful",
               userId: user.id,
+              firstName: user.first_name,
+              lastName: user.last_name,
               role: user.role,
               email: user.email,
             });

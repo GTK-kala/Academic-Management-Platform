@@ -1,5 +1,7 @@
-import { NavLink } from "react-router-dom";
+import { useState } from "react";
+import Button from "../../components/common/Button";
 import { useAuth } from "../../context/AuthContext";
+import { NavLink, useNavigate } from "react-router-dom";
 import {
   FiHome,
   FiUsers,
@@ -12,12 +14,16 @@ import {
 } from "react-icons/fi";
 
 const Sidebar = ({ open, setOpen }) => {
+  const navigate = useNavigate();
   const { user, logout } = useAuth();
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const userRole = user?.role;
 
   const HandleLogout = () => {
-    if (window.confirm("are want to log out !!")) return logout();
+    logout();
+    navigate("/login");
   };
 
   const navigation = [
@@ -111,7 +117,7 @@ const Sidebar = ({ open, setOpen }) => {
           <button
             className="flex items-center w-full gap-3 px-4 py-3 mt-8 text-left text-gray-700 rounded-md dark:text-gray-300 hover:bg-red-50 dark:hover:bg-red-900/20"
             onClick={() => {
-              HandleLogout();
+              setShowDeleteModal(true);
             }}
           >
             <FiLogOut className="w-5 h-5" />
@@ -119,6 +125,46 @@ const Sidebar = ({ open, setOpen }) => {
           </button>
         </nav>
       </aside>
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-dark-card rounded-2xl shadow-xl w-full max-w-md">
+            <div className="p-6 border-b border-gray-200 dark:border-dark-border">
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+                Log Out Confirmation
+              </h3>
+            </div>
+            <div className="p-6">
+              <p className="text-gray-600 dark:text-gray-300 mb-6">
+                Are you sure you want to log out{" "}
+                <strong>
+                  {user?.firstName} {user?.lastName} ?
+                </strong>
+                <span className="inline ml-1">
+                  This action cannot be undone and will remove all associated
+                  records.
+                </span>
+              </p>
+              <div className="flex gap-3 justify-end">
+                <Button
+                  variant="secondary"
+                  onClick={() => setShowDeleteModal(false)}
+                  disabled={deleteLoading}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="danger"
+                  onClick={() => HandleLogout()}
+                  disabled={deleteLoading}
+                >
+                  {deleteLoading ? "logging out..." : "Log out"}
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };
