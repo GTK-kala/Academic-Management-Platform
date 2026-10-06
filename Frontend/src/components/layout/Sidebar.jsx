@@ -17,7 +17,7 @@ const Sidebar = ({ open, setOpen }) => {
   const userRole = user?.role;
 
   const HandleLogout = () => {
-    logout();
+    if (window.confirm("are want to log out !!")) return logout();
   };
 
   const navigation = [
@@ -109,7 +109,7 @@ const Sidebar = ({ open, setOpen }) => {
 
           {/* Logout */}
           <button
-            className="flex items-center gap-3 px-4 py-3 mt-8 w-full text-left text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md"
+            className="flex items-center w-full gap-3 px-4 py-3 mt-8 text-left text-gray-700 rounded-md dark:text-gray-300 hover:bg-red-50 dark:hover:bg-red-900/20"
             onClick={() => {
               HandleLogout();
             }}
