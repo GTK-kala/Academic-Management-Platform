@@ -3,18 +3,12 @@ import {
   FiDollarSign,
   FiPlus,
   FiSearch,
-  FiDownload,
   FiEye,
   FiCreditCard,
   FiCheckCircle,
-  FiClock,
   FiAlertCircle,
   FiTrendingUp,
   FiTrendingDown,
-  FiFilter,
-  FiCalendar,
-  FiBook,
-  FiUser,
 } from "react-icons/fi";
 import Button from "../../components/common/Button";
 import { useAuth } from "../../context/AuthContext";
@@ -31,18 +25,18 @@ const FeeManagements = () => {
   const { user } = useAuth();
 
   // State management
-  const [feeStructures, setFeeStructures] = useState([]);
-  const [filteredStructures, setFilteredStructures] = useState([]);
+  const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const [feeStructures, setFeeStructures] = useState([]);
   const [filterStatus, setFilterStatus] = useState("all");
   const [selectedCourse, setSelectedCourse] = useState("all");
-  const [courses, setCourses] = useState([]);
+  const [filteredStructures, setFilteredStructures] = useState([]);
 
   // Modal states
+  const [selectedFee, setSelectedFee] = useState(null);
   const [showAddFeeModal, setShowAddFeeModal] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
-  const [selectedFee, setSelectedFee] = useState(null);
 
   // Form states
   const [feeForm, setFeeForm] = useState({
@@ -61,8 +55,8 @@ const FeeManagements = () => {
   });
 
   // Success/Error messages
-  const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   // Load initial data
   useEffect(() => {

@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import {
   FiBookOpen,
   FiUsers,
@@ -19,6 +18,7 @@ import {
   FiX,
 } from "react-icons/fi";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { useTheme } from "../../context/ThemeContext";
 
 const stats = [

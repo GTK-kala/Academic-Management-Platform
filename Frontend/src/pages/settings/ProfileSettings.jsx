@@ -1,6 +1,3 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import toast from "react-hot-toast";
 import {
   FiUser,
   FiLock,
@@ -19,14 +16,16 @@ import {
   FiAlertCircle,
   FiSmartphone,
   FiGlobe,
-  FiShield,
 } from "react-icons/fi";
-import api from "../../services/api";
 import {
   Fetch_User,
   Update_Profile,
   Update_Password,
 } from "../../services/userService";
+import api from "../../services/api";
+import toast from "react-hot-toast";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Button from "../../components/common/Button";
 import { useAuth } from "../../context/AuthContext";
 import { useTheme } from "../../context/ThemeContext";
@@ -40,15 +39,15 @@ const ProfileSettings = () => {
   const [activeTab, setActiveTab] = useState("profile");
 
   // Loading states
+  const [deleteLoading, setDeleteLoading] = useState(false);
   const [profileLoading, setProfileLoading] = useState(false);
   const [passwordLoading, setPasswordLoading] = useState(false);
-  const [notificationLoading, setNotificationLoading] = useState(false);
-  const [deleteLoading, setDeleteLoading] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [notificationLoading, setNotificationLoading] = useState(false);
 
   // Success/Error messages
-  const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   // Profile form state
   const [profileForm, setProfileForm] = useState({

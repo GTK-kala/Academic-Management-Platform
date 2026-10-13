@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import {
   FiDownload,
   FiSearch,
@@ -16,19 +15,20 @@ import {
   FiEye,
   FiPrinter,
 } from "react-icons/fi";
+import { useState, useEffect } from "react";
 import Button from "../../components/common/Button";
 import { useAuth } from "../../context/AuthContext";
 
 const PaymentHistory = () => {
   const { user } = useAuth();
 
-  // State management
   const [payments, setPayments] = useState([]);
-  const [filteredPayments, setFilteredPayments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
   const [filterMethod, setFilterMethod] = useState("all");
+  const [filteredPayments, setFilteredPayments] = useState([]);
+
   const [dateRange, setDateRange] = useState({
     startDate: "",
     endDate: "",
