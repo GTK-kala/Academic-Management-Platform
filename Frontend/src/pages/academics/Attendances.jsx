@@ -1,6 +1,5 @@
 import toast from "react-hot-toast";
 import { useState, useEffect } from "react";
-
 import {
   FiCalendar,
   FiCheck,
@@ -9,49 +8,27 @@ import {
   FiAlertCircle,
   FiDownload,
 } from "react-icons/fi";
-
-import { useAuth } from "../../context/AuthContext";
-import Button from "../../components/common/Button";
-
-import { Fetch_Courses, Enrolled_Courses } from "../../services/courseService";
-
 import {
   Add_Attendance,
   Fetch_Attendances,
 } from "../../services/attendanceService";
+import { useAuth } from "../../context/AuthContext";
+import Button from "../../components/common/Button";
+import { Fetch_Courses, Enrolled_Courses } from "../../services/courseService";
 
 const Attendances = () => {
   const { user } = useAuth();
-
-  // ========================================
-  // STATE
-  // ========================================
-
-  const [attendanceRecords, setAttendanceRecords] = useState([]);
-
   const [courses, setCourses] = useState([]);
-
-  const [selectedCourse, setSelectedCourse] = useState("all");
-
   const [selectedDate, setSelectedDate] = useState(
     new Date().toISOString().split("T")[0],
   );
-
   const [loading, setLoading] = useState(true);
-
-  const [markingAttendance, setMarkingAttendance] = useState(false);
-
   const [students, setStudents] = useState([]);
-
-  // Current attendance status
   const [attendanceForm, setAttendanceForm] = useState({});
-
-  // Original attendance status
+  const [selectedCourse, setSelectedCourse] = useState("all");
+  const [attendanceRecords, setAttendanceRecords] = useState([]);
   const [originalAttendance, setOriginalAttendance] = useState({});
-
-  // ========================================
-  // FETCH COURSES
-  // ========================================
+  const [markingAttendance, setMarkingAttendance] = useState(false);
 
   useEffect(() => {
     const fetchCourses = async () => {
@@ -91,10 +68,6 @@ const Attendances = () => {
     fetchCourses();
   }, [selectedCourse]);
 
-  // ========================================
-  // FETCH ATTENDANCE RECORDS
-  // ========================================
-
   useEffect(() => {
     const fetchAttendance = async () => {
       const storedUser = JSON.parse(localStorage.getItem("user"));
@@ -131,10 +104,6 @@ const Attendances = () => {
     fetchAttendance();
   }, [selectedCourse, selectedDate]);
 
-  // ========================================
-  // START MARKING ATTENDANCE
-  // ========================================
-
   const startMarkingAttendance = async () => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
 
@@ -161,10 +130,6 @@ const Attendances = () => {
       );
 
       setStudents(courseStudents);
-
-      // ========================================
-      // INITIALIZE ATTENDANCE
-      // ========================================
 
       const form = {};
       const original = {};
@@ -203,20 +168,12 @@ const Attendances = () => {
     }
   };
 
-  // ========================================
-  // CHANGE STUDENT STATUS
-  // ========================================
-
   const handleAttendanceChange = (studentId, status) => {
     setAttendanceForm((prev) => ({
       ...prev,
       [studentId]: status,
     }));
   };
-
-  // ========================================
-  // SUBMIT ONLY CHANGED STUDENTS
-  // ========================================
 
   const submitAttendance = async () => {
     const user = JSON.parse(localStorage.getItem("user"));
@@ -308,10 +265,6 @@ const Attendances = () => {
     }
   };
 
-  // ========================================
-  // CANCEL
-  // ========================================
-
   const cancelMarkingAttendance = () => {
     setMarkingAttendance(false);
 
@@ -321,10 +274,6 @@ const Attendances = () => {
 
     setOriginalAttendance({});
   };
-
-  // ========================================
-  // STATISTICS
-  // ========================================
 
   const stats = {
     total: attendanceRecords.length,
@@ -343,10 +292,6 @@ const Attendances = () => {
 
   const attendancePercentage =
     stats.total > 0 ? Math.round((stats.present / stats.total) * 100) : 0;
-
-  // ========================================
-  // JSX
-  // ========================================
 
   return (
     <div className="w-full min-w-0">

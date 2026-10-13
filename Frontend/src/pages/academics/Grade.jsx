@@ -1,5 +1,3 @@
-import { useEffect, useState } from "react";
-
 import {
   FiBarChart2,
   FiTrendingUp,
@@ -7,11 +5,9 @@ import {
   FiBook,
   FiPlus,
   FiDownload,
-  FiEdit2,
 } from "react-icons/fi";
-
+import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-
 import {
   Add_Grade,
   Fetch_ALL_Grade,
@@ -19,31 +15,22 @@ import {
   Fetch_Grade_By_Course,
   Fetch_Grade_By_Student,
 } from "../../services/gradeService";
-
-import { Fetch_Courses, Enrolled_Courses } from "../../services/courseService";
-
-import { Fetch_Students } from "../../services/studentService";
-
-import { useAuth } from "../../context/AuthContext";
-
-import Button from "../../components/common/Button";
-
 import toast from "react-hot-toast";
+import { useAuth } from "../../context/AuthContext";
+import Button from "../../components/common/Button";
+import { Fetch_Students } from "../../services/studentService";
+import { Fetch_Courses, Enrolled_Courses } from "../../services/courseService";
 
 const Grade = () => {
   const { id } = useParams();
   const { user } = useAuth();
-
   const [grades, setGrades] = useState([]);
   const [courses, setCourses] = useState([]);
   const [students, setStudents] = useState([]);
-
   const [loading, setLoading] = useState(true);
   const [showAddGrade, setShowAddGrade] = useState(false);
-
   const [selectedCourse, setSelectedCourse] = useState("all");
   const [selectedStudent, setSelectedStudent] = useState("all");
-
   const [gradeForm, setGradeForm] = useState({
     student_id: "",
     course_id: "",
@@ -52,9 +39,7 @@ const Grade = () => {
     semester: "2025-Spring",
     academic_year: "2025-2026",
   });
-
   const [gradeDistribution, setGradeDistribution] = useState({});
-
   const examTypes = ["assignment", "quiz", "project", "midterm", "final"];
 
   const calculateLetterGrade = (score) => {
