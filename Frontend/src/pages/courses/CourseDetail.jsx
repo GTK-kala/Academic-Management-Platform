@@ -19,13 +19,13 @@ import { Fetch_Course, Enrolled_Courses } from "../../services/courseService";
 
 const CourseDetail = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [course, setCourse] = useState(null);
-  const [enrolledStudents, setEnrolledStudents] = useState([]);
-  const [attendanceStats, setAttendanceStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("students");
+  const [attendanceStats, setAttendanceStats] = useState(null);
+  const [enrolledStudents, setEnrolledStudents] = useState([]);
 
   useEffect(() => {
     const fetchCourseDetails = async () => {

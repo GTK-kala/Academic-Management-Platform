@@ -6,18 +6,17 @@ import { Link, useNavigate } from "react-router-dom";
 const Register = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
-
-  const [role, setRole] = useState("student");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [dateOfBirth, setDateOfBirth] = useState("");
-  const [gender, setGender] = useState("male");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
-  const [department, setDepartment] = useState("");
+  const [role, setRole] = useState("student");
+  const [lastName, setLastName] = useState("");
+  const [password, setPassword] = useState("");
+  const [gender, setGender] = useState("male");
   const [loading, setLoading] = useState(false);
+  const [firstName, setFirstName] = useState("");
+  const [department, setDepartment] = useState("");
+  const [dateOfBirth, setDateOfBirth] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();

@@ -15,11 +15,11 @@ import Button from "../../components/common/Button";
 
 const Schedule = () => {
   const { user } = useAuth();
-  const [currentDate, setCurrentDate] = useState(new Date());
+  const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState("week"); // 'day', 'week', 'month'
   const [scheduleItems, setScheduleItems] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [showAddEvent, setShowAddEvent] = useState(false);
+  const [currentDate, setCurrentDate] = useState(new Date());
 
   // New event form
   const [eventForm, setEventForm] = useState({

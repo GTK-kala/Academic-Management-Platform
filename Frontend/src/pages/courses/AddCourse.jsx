@@ -7,15 +7,14 @@ import { useNavigate, useParams, Link } from "react-router-dom";
 import { Fetch_Course, Edit_Course } from "../../services/courseService";
 
 const AddCourse = () => {
-  const navigate = useNavigate();
   const { id } = useParams(); // If id exists, we're in edit mode
+  const navigate = useNavigate();
   const isEditMode = Boolean(id);
-
-  const [loading, setLoading] = useState(false);
-  const [fetchLoading, setFetchLoading] = useState(isEditMode);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [teachers, setTeachers] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [fetchLoading, setFetchLoading] = useState(isEditMode);
 
   // Form state
   const [form, setForm] = useState({

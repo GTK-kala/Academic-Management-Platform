@@ -18,11 +18,11 @@ const CourseList = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
-  const [filteredCourses, setFilteredCourses] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedDepartment, setSelectedDepartment] = useState("all");
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredCourses, setFilteredCourses] = useState([]);
   const [enrolledCourseIds, setEnrolledCourseIds] = useState([]);
+  const [selectedDepartment, setSelectedDepartment] = useState("all");
 
   useEffect(() => {
     const fetchCourses = async () => {
