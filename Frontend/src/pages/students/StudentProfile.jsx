@@ -1,5 +1,3 @@
-import { useState, useEffect } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
 import {
   FiArrowLeft,
   FiMail,
@@ -18,31 +16,31 @@ import {
   FiActivity,
 } from "react-icons/fi";
 import api from "../../services/api";
+import { useState, useEffect } from "react";
 import Button from "../../components/common/Button";
 import { useAuth } from "../../context/AuthContext";
-import { Payed_Fee_Structure } from "../../services/feeService";
 import { Fetch_Student } from "../../services/studentService";
 import { Delete_Student } from "../../services/studentService";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { Enrolled_Courses } from "../../services/courseService";
+import { Payed_Fee_Structure } from "../../services/feeService";
 import { Fetch_Attendances } from "../../services/attendanceService";
 import { Fetch_Grade_By_Student } from "../../services/gradeService";
 
 const StudentProfile = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
   const { user } = useAuth();
-
-  // State management
-  const [student, setStudent] = useState(null);
-  const [enrolledCourses, setEnrolledCourses] = useState([]);
-  const [attendanceRecords, setAttendanceRecords] = useState([]);
-  const [gradeRecords, setGradeRecords] = useState([]);
-  const [feeRecords, setFeeRecords] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
   const [error, setError] = useState("");
+  const [student, setStudent] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [feeRecords, setFeeRecords] = useState([]);
+  const [gradeRecords, setGradeRecords] = useState([]);
   const [activeTab, setActiveTab] = useState("overview");
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [enrolledCourses, setEnrolledCourses] = useState([]);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [attendanceRecords, setAttendanceRecords] = useState([]);
 
   // Fetch all student data
   useEffect(() => {
@@ -62,11 +60,11 @@ const StudentProfile = () => {
         const enrollments = enrollmentsRes?.enrollments || [];
         setEnrolledCourses(enrollments);
 
-        // // Fetch attendance records
+        // Fetch attendance records
         const attendanceRes = await Fetch_Attendances("all", "student", id);
         setAttendanceRecords(attendanceRes?.attendance || []);
 
-        // // Fetch grades
+        // Fetch grades
         const gradesRes = await Fetch_Grade_By_Student(
           id,
           "student",
@@ -74,7 +72,7 @@ const StudentProfile = () => {
         );
         setGradeRecords(gradesRes?.grades || []);
 
-        // // Fetch fee payments
+        // Fetch fee payments
         const feesRes = await Payed_Fee_Structure(id, user?.role);
         setFeeRecords(feesRes?.fee_results || []);
       } catch (err) {

@@ -1,29 +1,22 @@
-import { useEffect, useState } from "react";
-
 import toast from "react-hot-toast";
-
+import { useEffect, useState } from "react";
 import { FiArrowLeft } from "react-icons/fi";
-
 import Button from "../../components/common/Button";
-
 import { useNavigate, Link, useParams } from "react-router-dom";
-
 import { Fetch_Student, Edit_Student } from "../../services/studentService";
 
 const EditStudent = () => {
-  const navigate = useNavigate();
   const { id } = useParams();
-
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [password, setPassword] = useState("");
-  const [dateOfBirth, setDateOfBirth] = useState("");
-  const [gender, setGender] = useState("male");
+  const navigate = useNavigate();
+  const [error, setError] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
-
-  const [error, setError] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [password, setPassword] = useState("");
+  const [gender, setGender] = useState("male");
   const [loading, setLoading] = useState(false);
+  const [firstName, setFirstName] = useState("");
+  const [dateOfBirth, setDateOfBirth] = useState("");
 
   useEffect(() => {
     const FetchInitialData = async () => {

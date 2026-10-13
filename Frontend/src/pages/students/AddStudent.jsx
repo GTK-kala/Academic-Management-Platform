@@ -1,28 +1,22 @@
 import { useState } from "react";
-
 import toast from "react-hot-toast";
-
 import { FiArrowLeft } from "react-icons/fi";
-
 import Button from "../../components/common/Button";
-
 import { useNavigate, Link } from "react-router-dom";
-
 import { Add_Student } from "../../services/studentService";
 
 const AddStudent = () => {
   const navigate = useNavigate();
-
-  const [firstName, setFirstName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [error, setError] = useState("");
+  const [address, setAddress] = useState("");
   const [lastName, setLastName] = useState("");
   const [password, setPassword] = useState("");
-  const [email, setEmail] = useState("");
-  const [dateOfBirth, setDateOfBirth] = useState("");
   const [gender, setGender] = useState("male");
-  const [phone, setPhone] = useState("");
-  const [address, setAddress] = useState("");
-  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [firstName, setFirstName] = useState("");
+  const [dateOfBirth, setDateOfBirth] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
